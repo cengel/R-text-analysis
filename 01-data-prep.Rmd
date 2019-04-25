@@ -1,0 +1,24 @@
+```{r, echo=FALSE, purl=FALSE, message = FALSE}
+knitr::opts_chunk$set(results='hide', comment = "#>", purl = FALSE)
+```
+
+# Analysing Texts {#textanalysis}
+
+
+> Learning Objectives
+>
+> - to come
+
+------------
+
+- Reading text into R
+
+- string operations (?)
+
+- stop words
+
+- Tokenize, lowercase, stemming  
+
+- Lemmatization, tagging.. 
+
+

@@ -1,0 +1,5 @@
+[
+["index.html", "Text Analysis with R Prerequisites References", " Text Analysis with R Claudia Engel, Scott Bailey Last updated: April 24, 2019 Prerequisites You should have some basic knowledge of R, and be familiar with the topics covered in the Introduction to R. Have a recent version of R and RStudio installed. Libraries: tidyverse tidytext readtext tm quanteda … References J. Silge and D. Robinson, 2017: Text Mining with R: A Tidy Approach "],
+["textanalysis.html", "Chapter 1 Analysing Texts", " Chapter 1 Analysing Texts Learning Objectives to come Reading text into R string operations (?) stop words Tokenize, lowercase, stemming Lemmatization, tagging.. "],
+["textprep.html", "Chapter 2 Preparing Textual Data", " Chapter 2 Preparing Textual Data Learning Objectives to come DTM Frequencies n-grams co-ocurrence sentiment a topic m Visualization? "]
+]

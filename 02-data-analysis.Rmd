@@ -1,0 +1,28 @@
+```{r, echo=FALSE, purl=FALSE, message = FALSE}
+knitr::opts_chunk$set(results='hide', comment = "#>", purl = FALSE)
+```
+
+# Preparing Textual Data {#textprep}
+
+
+> Learning Objectives
+>
+> - to come
+
+------------
+
+- DTM
+
+- Frequencies
+
+- n-grams
+
+- co-ocurrence
+
+- sentiment a
+
+- topic m
+
+- Visualization?
+
+

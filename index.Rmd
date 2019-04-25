@@ -1,0 +1,34 @@
+--- 
+title: "Text Analysis with R"
+author: "Claudia Engel, Scott Bailey"
+date: "Last updated: `r format(Sys.time(), '%B %d, %Y')`"
+site: bookdown::bookdown_site
+output: bookdown::gitbook
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: cengel/R-text-analysis
+description: "Workshop materials for Text Analysis in R"
+---
+
+
+# Prerequisites {-}
+
+- You should have some **basic knowledge** of R, and be familiar with the topics covered in the [Introduction to R](https://cengel.github.io/R-intro/).
+
+- Have a recent version of [R](https://cran.r-project.org/) and [RStudio](https://www.rstudio.com/) installed. 
+
+- Libraries:
+  - `tidyverse`
+  - `tidytext`
+  - `readtext`
+  - `tm`
+  - `quanteda`
+  - ...
+
+
+## References  {-}
+
+J. Silge and D. Robinson, 2017: [Text Mining with R: A Tidy Approach](http://tidytextmining.com/)
+

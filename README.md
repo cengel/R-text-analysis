@@ -1,2 +1,4 @@
 # R-text-analysis
-The repo for the CIDR R textanalysis workshop
+
+These are the materials for CIDR R textanalysis at
+https://cengel.github.io/R-text-analysis/
