@@ -25,4 +25,39 @@ knitr::opts_chunk$set(results='hide', comment = "#>", purl = FALSE)
 
 - Visualization?
 
+First, we'll load the libraries we need. 
+
+```{r}
+library(tidyverse)
+library(tidytext)
+```
+
+Let's remind ourselves of what our data looks like. 
+
+```{r}
+tidy_sotu_words
+```
+
+Since our unit of analysis at this point is a word, let's do some straightforward counting to figure out which words occur most frequently in the corpus as a whole. 
+
+```{r}
+tidy_sotu_words %>%
+  count(word, sort = TRUE)
+```
+
+We could start adding in a bit of visualization here. Let's show the most frequent words that occur more than 2000 times. 
+
+```{r}
+tidy_sotu_words %>%
+  count(word, sort = TRUE) %>%
+  filter(n > 2000) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(word, n)) +
+  geom_col() +
+  xlab(NULL) +
+  coord_flip()
+
+```
+
+
 
