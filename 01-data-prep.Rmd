@@ -39,7 +39,7 @@ fp <- sotu_dir()
 head(fp)
 ```
 
-Now that we have the files in disk, and a list of filepaths stored in the `fp` variable, we can use `readtext` to read the texts into a new variable.
+Now that we have the files on disk, and a list of filepaths stored in the `fp` variable, we can use `readtext` to read the texts into a new variable.
 
 ```{r}
 # let's then read in the files with readtext
@@ -70,9 +70,50 @@ Now that we have our data, we need to think about cleaning it. Depending on the 
 
 ## String operations
 
-TODO
+R has many functions available to manipulate strings including functions like `grep` and `paste`, which come with the R base install. 
 
-(For spell check: https://CRAN.R-project.org/package=spelling,  https://CRAN.R-project.org/package=hunspell)
+Perhaps one of the most comprehensive packages is `stringi`. However, we will here take a look at the `stringr` package, which is part of the `tidyverse`, wraps a lot of the stringi functions, and is easier to begin with.
+
+Below are a examples for a few functions that might be useful.
+
+
+- How many words in each speech?
+
+```{r str-word-count}
+str_count(sotu_whole$text, boundary("word"))
+
+```
+
+
+- Measured by the average number of words per sentence for each speech - what is the length of the speech with the shortest/longest sentences? 
+
+```{r avg-sentence-length}
+range(str_count(sotu_whole$text, boundary("word"))/str_count(sotu_whole$text, boundary("sentence")))
+```
+
+
+How man times does the word "citizen" appear in the speeches?
+```{r str-count-citizen}
+str_count(sotu_whole$text, "[C|c]itizen")
+```
+
+What are the names of the documents in of the speeches where the word "citizen" does **not** occur?
+
+```{r str-detect}
+sotu_whole$doc_id[!str_detect(sotu_whole$text, "[C|c]itizen")]
+```
+
+
+Remove newline character (`\n`) from the speech text:
+
+```{r str-replace-newl}
+sotu_whole$text[1]
+str_replace_all(sotu_whole$text[1], "\\n", " ")
+```
+
+
+(For spell checks take a look at https://CRAN.R-project.org/package=spelling or https://CRAN.R-project.org/package=hunspell)
+
 
 ## Tokenize, lowercase
 
