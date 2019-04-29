@@ -81,7 +81,6 @@ Below are a examples for a few functions that might be useful.
 
 ```{r str-word-count}
 str_count(sotu_whole$text, boundary("word"))
-
 ```
 
 
@@ -103,12 +102,20 @@ What are the names of the documents in of the speeches where the word "citizen" 
 sotu_whole$doc_id[!str_detect(sotu_whole$text, "[C|c]itizen")]
 ```
 
+- Get me the first 5 words for each speech
 
-Remove newline character (`\n`) from the speech text:
+```{r extract-words}
+word(sotu_whole$text, end = 5) %>% 
+  unique()
+```
+
+ - Now remove newline character (`\n`) and get rid of the leading white space:
 
 ```{r str-replace-newl}
-sotu_whole$text[1]
-str_replace_all(sotu_whole$text[1], "\\n", " ")
+word(sotu_whole$text, end = 5) %>% 
+  unique() %>% 
+  str_replace_all("\\n", " ") %>% 
+  str_trim()
 ```
 
 
@@ -162,7 +169,7 @@ head(stop_words, n = 60)
 
 You can see that we now have one word per row with associated metadata. We can now remove stopwords using an `anti-join`.
 
-```{r}
+```{r, message=FALSE}
 tidy_sotu_words <- tidy_sotu %>% 
   anti_join(stop_words)
 

@@ -25,8 +25,12 @@ description: "Workshop materials for Text Analysis in R"
   - `readtext`
   - `sotu`
   - `SnowballC`
+  - `widyr`
+  - `igraph`
+  - `ggraph`
   - `tm`
-  - `quanteda`
+  - `quanteda` ?
+  - `cleanNLP` ?
 
 
 ## References  {-}

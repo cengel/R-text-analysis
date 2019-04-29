@@ -254,10 +254,49 @@ bigram_tf_idf %>%
 ```
 
 
-
-
 ## Co-ocurrcence
-https://www.tidytextmining.com/nasa.html#word-co-ocurrences-and-correlations
+
+Co-occurances give us a sense of words that appear in the same text, but not necessarily next to each other.
+
+For this section we will make use of the `widyr` package. It allows us to turn our table into a wide matrix. In our case that matrix will be made up of the individual words and the cell values will be the counts of how many times they co-occur. Then we will turn the matrix back into a tidy form, where each row contains the word pairs and the count of their co-occurrence. This lets us count common pairs of words co-appearing within the same speech.
+
+The function which helps us do this is the `pairwise_count()` function. 
+
+Since processing the entire corpus would take too long here, we will only look at the last 20 words of each speech.
+
+
+```{r pairwise-count}
+library(widyr)
+
+# extract last 100 words from text
+sotu_whole$speech_end <- word(sotu_whole$text, -100, end = -1)
+
+sotu_word_pairs <- sotu_whole %>% 
+  unnest_tokens(word, speech_end) %>% 
+  filter(!word %in% stop_words$word) %>% # remove stopwords
+  pairwise_count(word, doc_id, sort = TRUE, upper = FALSE) # don't include upper triangle of matrix
+
+```
+
+To plot the co-ocurrcance network, we use the `igraph` library to convert our table into a network graph and `ggraph` which adds functionality to ggplot and makes it easier create a network plot.
+
+```{r plot-network} 
+library(igraph)
+library(ggraph)
+
+sotu_word_pairs %>% 
+  filter(n >= 10) %>%  # only word pairs that occur 10 or more times
+  graph_from_data_frame() %>% #convert to graph
+  ggraph(layout = "fr") + # place nodes according to the force-directed algorithm of Fruchterman and Reingold
+  geom_edge_link(aes(edge_alpha = n, edge_width = n), edge_colour = "tomato") +
+  geom_node_point(size = 5) +
+  geom_node_text(aes(label = name), repel = TRUE, 
+                 point.padding = unit(0.2, "lines")) +
+  theme_void()
+```
+
+
+There are alternative approaches for this as well. See for example the `findAssocs` function in the `tm` package.
 
 ## DTM
 https://www.tidytextmining.com/dtm.html
