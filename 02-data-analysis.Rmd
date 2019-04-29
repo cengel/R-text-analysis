@@ -11,10 +11,6 @@ knitr::opts_chunk$set(results='hide', comment = "#>", purl = FALSE)
 
 ------------
 
-- DTM
-- n-grams
-- co-ocurrence
-
 First, we'll load the libraries we need. 
 
 ```{r load-tidylibs, eval=FALSE}
@@ -194,9 +190,21 @@ obama_tf_idf %>%
   theme(axis.text.y = element_text(angle = 45)) 
 ```
 
+## N-Grams
+https://www.tidytextmining.com/ngrams.html#counting-and-correlating-pairs-of-words-with-the-widyr-package
 
-TODO: document-term matrix  
+## Co-ocurrcence
+https://www.tidytextmining.com/nasa.html#word-co-ocurrences-and-correlations
+
+## DTM
+https://www.tidytextmining.com/dtm.html
+use tm package
+
+
+## Sentiment analysis and topic modeling
+
+TODO: Just say some thing
+
+
 TODO: length over time...other similar measures  
-TODO: variation between the different presidents?  
-TODO: say something about sentiment analysis and topic modeling
-
+TODO: variation between the different presidents? 

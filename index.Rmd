@@ -24,6 +24,7 @@ description: "Workshop materials for Text Analysis in R"
   - `tidytext`
   - `readtext`
   - `sotu`
+  - `SnowballC`
   - `tm`
   - `quanteda`
 

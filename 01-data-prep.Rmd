@@ -87,6 +87,26 @@ tidy_sotu
 
 Before we move on, we should note that the `unnest_tokens` function didn't just tokenize our texts at the word level. It also lowercased each word, and it could do quite a bit more. For instance, we could tokenize the text at the level of ngrams or sentences, if those are the best units of analysis for our work. We could also leave punctuation, which has been removed by default. Depending on what you need to do for analysis, you use do these operations during this step, or write custom functions and do it before you unnest tokens.
 
+```{r}
+# Word tokenization with punctuation
+tidy_sotu_w_punct <- sotu_whole %>%
+  unnest_tokens(word, text, strip_punct = FALSE)
+
+tidy_sotu_w_punct
+
+# Sentence tokenization
+tidy_sotu_sentences <- sotu_whole %>%
+  unnest_tokens(sentence, text, token = "sentences", to_lower = FALSE)
+
+tidy_sotu_sentences
+
+# N-gram tokenization
+tidy_sotu_trigram <- sotu_whole %>%
+  unnest_tokens(trigram, text, token = "ngrams", n = 3)
+
+tidy_sotu_trigram
+```
+
 
 ## Stopwords 
 
@@ -108,33 +128,23 @@ tidy_sotu_words <- tidy_sotu %>%
 tidy_sotu_words
 ```
 
-We went from 1,965,212 to 778,161 rows, which means we had a lot of stopwords in our corpus. This is a huge removal, so for serious analysis, we might want to take a closer look at the stopwords and determine if we should use a different stopword list or otherwise create our own. 
+We went from `r nrow(tidy_sotu)` to `r nrow(tidy_sotu_words)` rows, which means we had a lot of stopwords in our corpus. This is a huge removal, so for serious analysis, we might want to take a closer look at the stopwords and determine if we should use a different stopword list or otherwise create our own. 
 
+
+## Word Stemming 
+
+Another thing you may want to do is to stem your words, that is, to reduce them to their word stem or root form, like reducing *fishing*, *fished*, and *fisher* to the stem *fish*.
+ 
+`tidytext` does not implement its own word stemmer. Instead it relies on separate packages like `hunspell` or `SnowballC`. 
+
+We will give an example here for the `SnowballC` package. (`hunspell` appears to run much slower, and it also returns a list instead of a vector, so in this context `SnowballC` seems to be more convenient.)
 
 ```{r}
-# Word tokenization with punctuation
-tidy_sotu_w_punct <- sotu_whole %>%
-  unnest_tokens(word, text, strip_punct = FALSE)
-
-tidy_sotu_w_punct
-
-# Sentence tokenization
-tidy_sotu_sentences <- sotu_whole %>%
-  unnest_tokens(sentence, text, token = "sentences", to_lower = FALSE)
-
-tidy_sotu_sentences
-
-# N-gram tokenization
-tidy_sotu_trigram <- sotu_whole %>%
-  unnest_tokens(trigram, text, token = "ngrams", n = 3)
-
-tidy_sotu_trigram
+tidy_sotu_words %>%
+        mutate(word_stem = wordStem(word)) %>% head()
 ```
- 
 
-## Stemming and Lemmatization? 
-
-- hunspell, SnowballC?
+For lemmatization, you may want to take a look a the [`koRpus`](https://CRAN.R-project.org/package=koRpus) package, another [comprehensive R package for text analysis](https://cran.r-project.org/web/packages/koRpus/vignettes/koRpus_vignette.html). It allows to use [TreeTagger](http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/), a widely used part-of-speech tagger. For full functionality of the R package a local installation of TreeTagger is recommended.
 
 
 ## Tagging
