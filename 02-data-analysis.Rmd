@@ -192,6 +192,69 @@ obama_tf_idf %>%
 
 ## N-Grams
 https://www.tidytextmining.com/ngrams.html#counting-and-correlating-pairs-of-words-with-the-widyr-package
+We have mentioned n-grams in the intro, let's revisit this here and take a look at the most common bigrams in the speeches. Remember this is what we get back:
+
+```{r bigrams-unnest}
+sotu_whole %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) # create bigram
+```
+
+Let's see the most common bigrams:
+
+```{r bigrams-count}
+sotu_whole %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>% 
+  count(bigram, sort = TRUE) # count ocurrences and sord descending
+```
+
+Ok, so we again need to remove the stopwords. This time let's use dplyr's `filter` function for this. And before that we will `separate` the two words into two columns.
+
+```{r bigrams-remove-stop}
+sotu_bigrams <- sotu_whole %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>% 
+  separate(bigram, c("word1", "word2"), sep = " ") %>% # separate into cols
+  filter(!word1 %in% stop_words$word) %>% # remove stopwords
+  filter(!word2 %in% stop_words$word)
+
+sotu_bigrams %>% 
+  count(word1, word2, sort = TRUE)
+```
+
+(Bonus question: What happened on that June 30th?)
+
+A bigram can also be treated as a term in a document in the same way that we treated individual words. That means we can look at tf-idf values in the same way. 
+
+First we will re-unite the two word columns again, and then generate the tf-idf count as above.
+
+```{r bigram-tf-idf}
+bigram_tf_idf <- sotu_bigrams %>%
+  unite(bigram, word1, word2, sep = " ") %>% # combine columns
+  count(president, bigram) %>%
+  bind_tf_idf(bigram, president, n) %>%
+  arrange(desc(tf_idf))
+```
+
+
+What makes the speeches of different presidents unique?
+
+Let's pick a few presidents and plot their highest scoreing tf-idf values here.
+
+```{r bigram-tf-idf-plot}
+potus <- c("John F. Kennedy", "Richard M. Nixon", "William J. Clinton", "George Bush", "George W. Bush", "Jimmy Carter")
+
+bigram_tf_idf %>%
+  filter(president %in% potus) %>% 
+  group_by(president) %>% 
+  top_n(20) %>% 
+  ggplot(aes(reorder(bigram, tf_idf), tf_idf, fill = president)) +
+  geom_col(show.legend = FALSE) +
+  labs(x = NULL, y = "tf-idf") +
+  facet_wrap(~president, scales = "free", nrow = 2) +
+  coord_flip()
+```
+
+
+
 
 ## Co-ocurrcence
 https://www.tidytextmining.com/nasa.html#word-co-ocurrences-and-correlations
