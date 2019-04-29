@@ -23,12 +23,19 @@ description: "Workshop materials for Text Analysis in R"
   - `tidyverse`
   - `tidytext`
   - `readtext`
+  - `sotu`
   - `tm`
   - `quanteda`
-  - ...
 
 
 ## References  {-}
 
-J. Silge and D. Robinson, 2017: [Text Mining with R: A Tidy Approach](http://tidytextmining.com/)
+Feinerer, I., Hornik, K., and Meyer, D. (2008). Text Mining Infrastructure in R. Journal of Statistical Software, 25(5), 1 - 54. doi:http://dx.doi.org/10.18637/jss.v025.i05
 
+Gries, Stefan Thomas, 2009: [Quantitative Corpus Linguistics with R: A Practical Introduction](http://www.stgries.info/research/qclwr/qclwr.html). Routledge.
+
+Silge, J and D. Robinson, 2017: [Text Mining with R: A Tidy Approach](http://tidytextmining.com/)
+
+Kasper Welbers, Wouter Van Atteveldt & Kenneth Benoit (2017) Text Analysis in R, Communication Methods and Measures, 11:4, 245-265, DOI: 10.1080/19312458.2017.1387238
+
+[CRAN Task View: Natural Language Processing](https://CRAN.R-project.org/view=NaturalLanguageProcessing)

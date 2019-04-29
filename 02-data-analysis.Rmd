@@ -12,22 +12,12 @@ knitr::opts_chunk$set(results='hide', comment = "#>", purl = FALSE)
 ------------
 
 - DTM
-
-- Frequencies
-
 - n-grams
-
 - co-ocurrence
-
-- sentiment a
-
-- topic m
-
-- Visualization?
 
 First, we'll load the libraries we need. 
 
-```{r}
+```{r load-tidylibs, eval=FALSE}
 library(tidyverse)
 library(tidytext)
 ```
@@ -37,6 +27,8 @@ Let's remind ourselves of what our data looks like.
 ```{r}
 tidy_sotu_words
 ```
+
+## Frequencies
 
 Since our unit of analysis at this point is a word, let's do some straightforward counting to figure out which words occur most frequently in the corpus as a whole. 
 
@@ -116,7 +108,9 @@ tidy_sotu_words %>%
 ```
 
 
-Sometimes, a raw count of a word is less important than understanding how often that word appears in respect to the total number of words in a text. This ratio would be the term frequency. 
+## Term frequency
+
+Sometimes, a raw count of a word is less important than understanding how often that word appears in respect to the total number of words in a text. This ratio would be the **term frequency**. 
 
 ```{r}
 doc_words <- doc_words %>%
@@ -125,7 +119,7 @@ doc_words <- doc_words %>%
 doc_words 
 ```
 
-Let's graph the term_freq for one of these speeches so we can understand the frequency distribution of words over a text.
+Let's graph the term frequency for one of these speeches so we can understand the frequency distribution of words over a text.
 
 ```{r}
 doc_words %>%
@@ -134,9 +128,13 @@ doc_words %>%
   geom_histogram(show.legend = FALSE) +
   xlim(NA, .012)
 ```
+
 This should make sense. Most words are used relatively rarely in a text. Only a few have a high term frequency. 
 
 We could keep filtering this data to see which terms have the high frequency, thus maybe increased significance, for different presidents and different particular speeches. We could also subset based on decade, and get a sense of what was important in each decade. We're going to take a slightly different approach though. We've been looking at term frequency per document. What if we want to know about words that seem more important based on the contents of the entire corpus?
+
+
+## Tf-idf 
 
 For this, we can use term-frequency according to inverse document frequency (tf-idf). Tf-idf meansures how important a word is within a corpus by scaling term frequency per document according to the inverse of the term's document frequency (how many documents within the corpus in which the term appears divided by the number of documents). 
 
@@ -149,7 +147,10 @@ doc_words <- doc_words %>%
 doc_words
 ```
 
-The tf-idf value will be very low for words that appear in many documents in the corpus. It will be higher for words that appear in very few documents. 
+The tf-idf value will be:
+
+- lower for words that appear in many documents in the corpus, and lowest when the word occurs in virtually all documents. 
+- high for words that appear many times in few documents in the corpus, this lending high discrimiatory power to those doucments. 
 
 Let's look at some of the words in the corpus that have the highest tf-idf scores, which means words that are particularly distinctive for their documents. 
 
@@ -157,8 +158,6 @@ Let's look at some of the words in the corpus that have the highest tf-idf score
 doc_words %>%
   select(-total) %>%
   arrange(desc(tf_idf))
-
-
 ```
 
 These results seem appropriate given our history. To understand the occurence of the years we might need to look more closely at the speeches themselves, and determine whether the years are significant or whether they need to be removed from the text. It might be that even if they don't need to be removed from the text overall, they still need to be filtered out within the context of this analysis. 
@@ -196,8 +195,8 @@ obama_tf_idf %>%
 ```
 
 
-TODO: document-term matrix
-TODO: variation between the different presidents?
-TODO: length over time...other similar measures
-
+TODO: document-term matrix  
+TODO: length over time...other similar measures  
+TODO: variation between the different presidents?  
+TODO: say something about sentiment analysis and topic modeling
 
