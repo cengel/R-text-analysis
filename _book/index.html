@@ -137,13 +137,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.2" data-path="textanalysis.html"><a href="textanalysis.html#string-operations"><i class="fa fa-check"></i><b>1.2</b> String operations</a></li>
 <li class="chapter" data-level="1.3" data-path="textanalysis.html"><a href="textanalysis.html#tokenize-lowercase"><i class="fa fa-check"></i><b>1.3</b> Tokenize, lowercase</a></li>
 <li class="chapter" data-level="1.4" data-path="textanalysis.html"><a href="textanalysis.html#stopwords"><i class="fa fa-check"></i><b>1.4</b> Stopwords</a></li>
-<li class="chapter" data-level="1.5" data-path="textanalysis.html"><a href="textanalysis.html#stemming-and-lemmatization"><i class="fa fa-check"></i><b>1.5</b> Stemming and Lemmatization?</a></li>
-<li class="chapter" data-level="1.6" data-path="textanalysis.html"><a href="textanalysis.html#tagging"><i class="fa fa-check"></i><b>1.6</b> Tagging</a></li>
+<li class="chapter" data-level="1.5" data-path="textanalysis.html"><a href="textanalysis.html#word-stemming"><i class="fa fa-check"></i><b>1.5</b> Word Stemming</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="textprep.html"><a href="textprep.html"><i class="fa fa-check"></i><b>2</b> Preparing Textual Data</a><ul>
 <li class="chapter" data-level="2.1" data-path="textprep.html"><a href="textprep.html#frequencies"><i class="fa fa-check"></i><b>2.1</b> Frequencies</a></li>
 <li class="chapter" data-level="2.2" data-path="textprep.html"><a href="textprep.html#term-frequency"><i class="fa fa-check"></i><b>2.2</b> Term frequency</a></li>
 <li class="chapter" data-level="2.3" data-path="textprep.html"><a href="textprep.html#tf-idf"><i class="fa fa-check"></i><b>2.3</b> Tf-idf</a></li>
+<li class="chapter" data-level="2.4" data-path="textprep.html"><a href="textprep.html#n-grams"><i class="fa fa-check"></i><b>2.4</b> N-Grams</a></li>
+<li class="chapter" data-level="2.5" data-path="textprep.html"><a href="textprep.html#co-ocurrcence"><i class="fa fa-check"></i><b>2.5</b> Co-ocurrcence</a></li>
+<li class="chapter" data-level="2.6" data-path="textprep.html"><a href="textprep.html#document-term-matrix"><i class="fa fa-check"></i><b>2.6</b> Document-Term Matrix</a></li>
+<li class="chapter" data-level="2.7" data-path="textprep.html"><a href="textprep.html#sentiment-analysis"><i class="fa fa-check"></i><b>2.7</b> Sentiment analysis</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -168,7 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">Text Analysis with R</h1>
 <p class="author"><em>Claudia Engel, Scott Bailey</em></p>
-<p class="date"><em>Last updated: April 28, 2019</em></p>
+<p class="date"><em>Last updated: April 29, 2019</em></p>
 </div>
 <div id="prerequisites" class="section level1 unnumbered">
 <h1>Prerequisites</h1>
@@ -181,8 +184,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><code>tidytext</code></li>
 <li><code>readtext</code></li>
 <li><code>sotu</code></li>
+<li><code>SnowballC</code></li>
+<li><code>widyr</code></li>
+<li><code>igraph</code></li>
+<li><code>ggraph</code></li>
 <li><code>tm</code></li>
-<li><code>quanteda</code></li>
+<li><code>quanteda</code> ?</li>
+<li><code>cleanNLP</code> ?</li>
 </ul></li>
 </ul>
 <div id="references" class="section level2 unnumbered">

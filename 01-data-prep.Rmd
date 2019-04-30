@@ -188,6 +188,7 @@ Another thing you may want to do is to stem your words, that is, to reduce them 
 We will give an example here for the `SnowballC` package. (`hunspell` appears to run much slower, and it also returns a list instead of a vector, so in this context `SnowballC` seems to be more convenient.)
 
 ```{r}
+library(SnowballC)
 tidy_sotu_words %>%
         mutate(word_stem = wordStem(word)) %>% head()
 ```

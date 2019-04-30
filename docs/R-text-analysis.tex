@@ -125,7 +125,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{Last updated: April 28, 2019}
+    \date{Last updated: April 29, 2019}
 
 \usepackage{booktabs}
 \usepackage{amsthm}
@@ -166,9 +166,19 @@
   \item
     \texttt{sotu}
   \item
+    \texttt{SnowballC}
+  \item
+    \texttt{widyr}
+  \item
+    \texttt{igraph}
+  \item
+    \texttt{ggraph}
+  \item
     \texttt{tm}
   \item
-    \texttt{quanteda}
+    \texttt{quanteda} ?
+  \item
+    \texttt{cleanNLP} ?
   \end{itemize}
 \end{itemize}
 
@@ -227,7 +237,7 @@ First, let's look at the data in the \texttt{sotu} package. The metadata and tex
 \end{Highlighting}
 \end{Shaded}
 
-Now that we have the files in disk, and a list of filepaths stored in the \texttt{fp} variable, we can use \texttt{readtext} to read the texts into a new variable.
+Now that we have the files on disk, and a list of filepaths stored in the \texttt{fp} variable, we can use \texttt{readtext} to read the texts into a new variable.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -263,9 +273,81 @@ Now that we have our data, we need to think about cleaning it. Depending on the 
 \hypertarget{string-operations}{%
 \section{String operations}\label{string-operations}}
 
-TODO
+R has many functions available to manipulate strings including functions like \texttt{grep} and \texttt{paste}, which come with the R base install.
 
-(For spell check: \url{https://CRAN.R-project.org/package=spelling}, \url{https://CRAN.R-project.org/package=hunspell})
+Perhaps one of the most comprehensive packages is \texttt{stringi}. However, we will here take a look at the \texttt{stringr} package, which is part of the \texttt{tidyverse}, wraps a lot of the stringi functions, and is easier to begin with.
+
+Below are a examples for a few functions that might be useful.
+
+\begin{itemize}
+\tightlist
+\item
+  How many words in each speech?
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{str_count}\NormalTok{(sotu_whole}\OperatorTok{$}\NormalTok{text, }\KeywordTok{boundary}\NormalTok{(}\StringTok{"word"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Measured by the average number of words per sentence for each speech - what is the length of the speech with the shortest/longest sentences?
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{range}\NormalTok{(}\KeywordTok{str_count}\NormalTok{(sotu_whole}\OperatorTok{$}\NormalTok{text, }\KeywordTok{boundary}\NormalTok{(}\StringTok{"word"}\NormalTok{))}\OperatorTok{/}\KeywordTok{str_count}\NormalTok{(sotu_whole}\OperatorTok{$}\NormalTok{text, }\KeywordTok{boundary}\NormalTok{(}\StringTok{"sentence"}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+How man times does the word ``citizen'' appear in the speeches?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{str_count}\NormalTok{(sotu_whole}\OperatorTok{$}\NormalTok{text, }\StringTok{"[C|c]itizen"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+What are the names of the documents in of the speeches where the word ``citizen'' does \textbf{not} occur?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sotu_whole}\OperatorTok{$}\NormalTok{doc_id[}\OperatorTok{!}\KeywordTok{str_detect}\NormalTok{(sotu_whole}\OperatorTok{$}\NormalTok{text, }\StringTok{"[C|c]itizen"}\NormalTok{)]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Get me the first 5 words for each speech
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{word}\NormalTok{(sotu_whole}\OperatorTok{$}\NormalTok{text, }\DataTypeTok{end =} \DecValTok{5}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{unique}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Now remove newline character (\texttt{\textbackslash{}n}) and get rid of the leading white space:
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{word}\NormalTok{(sotu_whole}\OperatorTok{$}\NormalTok{text, }\DataTypeTok{end =} \DecValTok{5}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{unique}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{str_replace_all}\NormalTok{(}\StringTok{"}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{n"}\NormalTok{, }\StringTok{" "}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{str_trim}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+(For spell checks take a look at \url{https://CRAN.R-project.org/package=spelling} or \url{https://CRAN.R-project.org/package=hunspell})
 
 \hypertarget{tokenize-lowercase}{%
 \section{Tokenize, lowercase}\label{tokenize-lowercase}}
@@ -282,41 +364,6 @@ A very common part of data cleaning involves tokenization. While our data is alr
 \end{Shaded}
 
 Before we move on, we should note that the \texttt{unnest\_tokens} function didn't just tokenize our texts at the word level. It also lowercased each word, and it could do quite a bit more. For instance, we could tokenize the text at the level of ngrams or sentences, if those are the best units of analysis for our work. We could also leave punctuation, which has been removed by default. Depending on what you need to do for analysis, you use do these operations during this step, or write custom functions and do it before you unnest tokens.
-
-\hypertarget{stopwords}{%
-\section{Stopwords}\label{stopwords}}
-
-Another common type of cleaning in text analysis is to remove stopwords, or common words that theoretically provide less information about the content of a text. Depending on the type of analysis you're doing, you might leave these words in or use a highly curated list of stopwords. For now, as we move toward looking at words in documents based on frequency, we will remove some standard stopwords using a tidytext approach.
-
-First, let's look at the stopwords that tidytext gives us to get a sense of what they are.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{data}\NormalTok{(stop_words)}
-\KeywordTok{head}\NormalTok{(stop_words, }\DataTypeTok{n =} \DecValTok{60}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-You can see that we now have one word per row with associated metadata. We can now remove stopwords using an \texttt{anti-join}.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{tidy_sotu_words <-}\StringTok{ }\NormalTok{tidy_sotu }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{anti_join}\NormalTok{(stop_words)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-#> Joining, by = "word"
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{tidy_sotu_words}
-\end{Highlighting}
-\end{Shaded}
-
-We went from 1,965,212 to 778,161 rows, which means we had a lot of stopwords in our corpus. This is a huge removal, so for serious analysis, we might want to take a closer look at the stopwords and determine if we should use a different stopword list or otherwise create our own.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -340,21 +387,55 @@ We went from 1,965,212 to 778,161 rows, which means we had a lot of stopwords in
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{stemming-and-lemmatization}{%
-\section{Stemming and Lemmatization?}\label{stemming-and-lemmatization}}
+\hypertarget{stopwords}{%
+\section{Stopwords}\label{stopwords}}
 
-\begin{itemize}
-\tightlist
-\item
-  hunspell, SnowballC?
-\end{itemize}
+Another common type of cleaning in text analysis is to remove stopwords, or common words that theoretically provide less information about the content of a text. Depending on the type of analysis you're doing, you might leave these words in or use a highly curated list of stopwords. For now, as we move toward looking at words in documents based on frequency, we will remove some standard stopwords using a tidytext approach.
 
-\hypertarget{tagging}{%
-\section{Tagging}\label{tagging}}
+First, let's look at the stopwords that tidytext gives us to get a sense of what they are.
 
-TODO?: Tag text with cleanNLP maybe?
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{data}\NormalTok{(stop_words)}
+\KeywordTok{head}\NormalTok{(stop_words, }\DataTypeTok{n =} \DecValTok{60}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+You can see that we now have one word per row with associated metadata. We can now remove stopwords using an \texttt{anti-join}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tidy_sotu_words <-}\StringTok{ }\NormalTok{tidy_sotu }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{anti_join}\NormalTok{(stop_words)}
+
+\NormalTok{tidy_sotu_words}
+\end{Highlighting}
+\end{Shaded}
+
+We went from 1965212 to 778161 rows, which means we had a lot of stopwords in our corpus. This is a huge removal, so for serious analysis, we might want to take a closer look at the stopwords and determine if we should use a different stopword list or otherwise create our own.
+
+\hypertarget{word-stemming}{%
+\section{Word Stemming}\label{word-stemming}}
+
+Another thing you may want to do is to stem your words, that is, to reduce them to their word stem or root form, like reducing \emph{fishing}, \emph{fished}, and \emph{fisher} to the stem \emph{fish}.
+
+\texttt{tidytext} does not implement its own word stemmer. Instead it relies on separate packages like \texttt{hunspell} or \texttt{SnowballC}.
+
+We will give an example here for the \texttt{SnowballC} package. (\texttt{hunspell} appears to run much slower, and it also returns a list instead of a vector, so in this context \texttt{SnowballC} seems to be more convenient.)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(SnowballC)}
+\NormalTok{tidy_sotu_words }\OperatorTok{%>%}
+\StringTok{        }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{word_stem =} \KeywordTok{wordStem}\NormalTok{(word)) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{head}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+For lemmatization, you may want to take a look a the \href{https://CRAN.R-project.org/package=koRpus}{\texttt{koRpus}} package, another \href{https://cran.r-project.org/web/packages/koRpus/vignettes/koRpus_vignette.html}{comprehensive R package for text analysis}. It allows to use \href{http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/}{TreeTagger}, a widely used part-of-speech tagger. For full functionality of the R package a local installation of TreeTagger is recommended.
 
 Now that we've read in our text and metadata, reshaped it a bit into the tidytext format, and cleaned it a bit while doing so, let's move on to some basic analysis.
+
+TODO?: Tag text with cleanNLP maybe?
 
 \hypertarget{textprep}{%
 \chapter{Preparing Textual Data}\label{textprep}}
@@ -370,16 +451,6 @@ Learning Objectives
 \end{quote}
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
-
-\begin{itemize}
-\tightlist
-\item
-  DTM
-\item
-  n-grams
-\item
-  co-ocurrence
-\end{itemize}
 
 First, we'll load the libraries we need.
 
@@ -425,7 +496,7 @@ We could start adding in a bit of visualization here. Let's show the most freque
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-text-analysis_files/figure-latex/unnamed-chunk-13-1.pdf}
+\includegraphics{R-text-analysis_files/figure-latex/unnamed-chunk-14-1.pdf}
 
 What if we're interested in most used words per speech?
 
@@ -468,7 +539,7 @@ Let's graph the top words per book
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-text-analysis_files/figure-latex/unnamed-chunk-15-1.pdf}
+\includegraphics{R-text-analysis_files/figure-latex/unnamed-chunk-16-1.pdf}
 
 That's cool looking, but let's split it into facets so we can see by speech.
 
@@ -484,7 +555,7 @@ That's cool looking, but let's split it into facets so we can see by speech.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-text-analysis_files/figure-latex/unnamed-chunk-16-1.pdf}
+\includegraphics{R-text-analysis_files/figure-latex/unnamed-chunk-17-1.pdf}
 
 We could keep cleaning this figure up by setting some minimum sizing, determining the spacing between y-axis labels better, and so forth, but now we'll accept it as showing some sense of variation across speeches where certain words are used most.
 
@@ -503,7 +574,7 @@ What if we want to check the most highly common words per speech for a single pr
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-text-analysis_files/figure-latex/unnamed-chunk-17-1.pdf}
+\includegraphics{R-text-analysis_files/figure-latex/unnamed-chunk-18-1.pdf}
 
 \hypertarget{term-frequency}{%
 \section{Term frequency}\label{term-frequency}}
@@ -543,7 +614,7 @@ Let's graph the term frequency for one of these speeches so we can understand th
 #> Warning: Removed 1 rows containing missing values (geom_bar).
 \end{verbatim}
 
-\includegraphics{R-text-analysis_files/figure-latex/unnamed-chunk-19-1.pdf}
+\includegraphics{R-text-analysis_files/figure-latex/unnamed-chunk-20-1.pdf}
 
 This should make sense. Most words are used relatively rarely in a text. Only a few have a high term frequency.
 
@@ -657,12 +728,245 @@ Let's try graphing these results, showing the top tf-idf terms per speech for Ob
 #> Selecting by tf_idf
 \end{verbatim}
 
-\includegraphics{R-text-analysis_files/figure-latex/unnamed-chunk-23-1.pdf}
+\includegraphics{R-text-analysis_files/figure-latex/unnamed-chunk-24-1.pdf}
 
-TODO: document-term matrix\\
-TODO: length over time\ldots other similar measures\\
+\hypertarget{n-grams}{%
+\section{N-Grams}\label{n-grams}}
+
+\url{https://www.tidytextmining.com/ngrams.html\#counting-and-correlating-pairs-of-words-with-the-widyr-package}
+We have mentioned n-grams in the intro, let's revisit this here and take a look at the most common bigrams in the speeches. Remember this is what we get back:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sotu_whole }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{unnest_tokens}\NormalTok{(bigram, text, }\DataTypeTok{token =} \StringTok{"ngrams"}\NormalTok{, }\DataTypeTok{n =} \DecValTok{2}\NormalTok{) }\CommentTok{# create bigram}
+\end{Highlighting}
+\end{Shaded}
+
+Let's see the most common bigrams:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sotu_whole }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{unnest_tokens}\NormalTok{(bigram, text, }\DataTypeTok{token =} \StringTok{"ngrams"}\NormalTok{, }\DataTypeTok{n =} \DecValTok{2}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{count}\NormalTok{(bigram, }\DataTypeTok{sort =} \OtherTok{TRUE}\NormalTok{) }\CommentTok{# count ocurrences and sord descending}
+\end{Highlighting}
+\end{Shaded}
+
+Ok, so we again need to remove the stopwords. This time let's use dplyr's \texttt{filter} function for this. And before that we will \texttt{separate} the two words into two columns.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sotu_bigrams <-}\StringTok{ }\NormalTok{sotu_whole }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{unnest_tokens}\NormalTok{(bigram, text, }\DataTypeTok{token =} \StringTok{"ngrams"}\NormalTok{, }\DataTypeTok{n =} \DecValTok{2}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{separate}\NormalTok{(bigram, }\KeywordTok{c}\NormalTok{(}\StringTok{"word1"}\NormalTok{, }\StringTok{"word2"}\NormalTok{), }\DataTypeTok{sep =} \StringTok{" "}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# separate into cols}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\NormalTok{word1 }\OperatorTok{%in%}\StringTok{ }\NormalTok{stop_words}\OperatorTok{$}\NormalTok{word) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# remove stopwords}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\NormalTok{word2 }\OperatorTok{%in%}\StringTok{ }\NormalTok{stop_words}\OperatorTok{$}\NormalTok{word)}
+
+\NormalTok{sotu_bigrams }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{count}\NormalTok{(word1, word2, }\DataTypeTok{sort =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+(Bonus question: What happened on that June 30th?)
+
+A bigram can also be treated as a term in a document in the same way that we treated individual words. That means we can look at tf-idf values in the same way.
+
+First we will re-unite the two word columns again, and then generate the tf-idf count as above.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{bigram_tf_idf <-}\StringTok{ }\NormalTok{sotu_bigrams }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{unite}\NormalTok{(bigram, word1, word2, }\DataTypeTok{sep =} \StringTok{" "}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# combine columns}
+\StringTok{  }\KeywordTok{count}\NormalTok{(president, bigram) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{bind_tf_idf}\NormalTok{(bigram, president, n) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{arrange}\NormalTok{(}\KeywordTok{desc}\NormalTok{(tf_idf))}
+\end{Highlighting}
+\end{Shaded}
+
+What makes the speeches of different presidents unique?
+
+Let's pick a few presidents and plot their highest scoreing tf-idf values here.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{potus <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"John F. Kennedy"}\NormalTok{, }\StringTok{"Richard M. Nixon"}\NormalTok{, }\StringTok{"William J. Clinton"}\NormalTok{, }\StringTok{"George Bush"}\NormalTok{, }\StringTok{"George W. Bush"}\NormalTok{, }\StringTok{"Jimmy Carter"}\NormalTok{)}
+
+\NormalTok{bigram_tf_idf }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(president }\OperatorTok{%in%}\StringTok{ }\NormalTok{potus) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(president) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{top_n}\NormalTok{(}\DecValTok{20}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\KeywordTok{reorder}\NormalTok{(bigram, tf_idf), tf_idf, }\DataTypeTok{fill =}\NormalTok{ president)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_col}\NormalTok{(}\DataTypeTok{show.legend =} \OtherTok{FALSE}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \OtherTok{NULL}\NormalTok{, }\DataTypeTok{y =} \StringTok{"tf-idf"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\NormalTok{president, }\DataTypeTok{scales =} \StringTok{"free"}\NormalTok{, }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{coord_flip}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+#> Selecting by tf_idf
+\end{verbatim}
+
+\includegraphics{R-text-analysis_files/figure-latex/bigram-tf-idf-plot-1.pdf}
+
+\hypertarget{co-ocurrcence}{%
+\section{Co-ocurrcence}\label{co-ocurrcence}}
+
+Co-occurances give us a sense of words that appear in the same text, but not necessarily next to each other.
+
+For this section we will make use of the \texttt{widyr} package. It allows us to turn our table into a wide matrix. In our case that matrix will be made up of the individual words and the cell values will be the counts of how many times they co-occur. Then we will turn the matrix back into a tidy form, where each row contains the word pairs and the count of their co-occurrence. This lets us count common pairs of words co-appearing within the same speech.
+
+The function which helps us do this is the \texttt{pairwise\_count()} function.
+
+Since processing the entire corpus would take too long here, we will only look at the last 20 words of each speech.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(widyr)}
+
+\CommentTok{# extract last 100 words from text}
+\NormalTok{sotu_whole}\OperatorTok{$}\NormalTok{speech_end <-}\StringTok{ }\KeywordTok{word}\NormalTok{(sotu_whole}\OperatorTok{$}\NormalTok{text, }\DecValTok{-100}\NormalTok{, }\DataTypeTok{end =} \DecValTok{-1}\NormalTok{)}
+
+\NormalTok{sotu_word_pairs <-}\StringTok{ }\NormalTok{sotu_whole }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{unnest_tokens}\NormalTok{(word, speech_end) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\NormalTok{word }\OperatorTok{%in%}\StringTok{ }\NormalTok{stop_words}\OperatorTok{$}\NormalTok{word) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# remove stopwords}
+\StringTok{  }\KeywordTok{pairwise_count}\NormalTok{(word, doc_id, }\DataTypeTok{sort =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{upper =} \OtherTok{FALSE}\NormalTok{) }\CommentTok{# don't include upper triangle of matrix}
+\end{Highlighting}
+\end{Shaded}
+
+To plot the co-ocurrcance network, we use the \texttt{igraph} library to convert our table into a network graph and \texttt{ggraph} which adds functionality to ggplot and makes it easier create a network plot.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(igraph)}
+\KeywordTok{library}\NormalTok{(ggraph)}
+
+\NormalTok{sotu_word_pairs }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(n }\OperatorTok{>=}\StringTok{ }\DecValTok{10}\NormalTok{) }\OperatorTok{%>%}\StringTok{  }\CommentTok{# only word pairs that occur 10 or more times}
+\StringTok{  }\KeywordTok{graph_from_data_frame}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }\CommentTok{#convert to graph}
+\StringTok{  }\KeywordTok{ggraph}\NormalTok{(}\DataTypeTok{layout =} \StringTok{"fr"}\NormalTok{) }\OperatorTok{+}\StringTok{ }\CommentTok{# place nodes according to the force-directed algorithm of Fruchterman and Reingold}
+\StringTok{  }\KeywordTok{geom_edge_link}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{edge_alpha =}\NormalTok{ n, }\DataTypeTok{edge_width =}\NormalTok{ n), }\DataTypeTok{edge_colour =} \StringTok{"tomato"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_node_point}\NormalTok{(}\DataTypeTok{size =} \DecValTok{5}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_node_text}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{label =}\NormalTok{ name), }\DataTypeTok{repel =} \OtherTok{TRUE}\NormalTok{, }
+                 \DataTypeTok{point.padding =} \KeywordTok{unit}\NormalTok{(}\FloatTok{0.2}\NormalTok{, }\StringTok{"lines"}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme_void}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{R-text-analysis_files/figure-latex/plot-network-1.pdf}
+
+There are alternative approaches for this as well. See for example the \texttt{findAssocs} function in the \texttt{tm} package.
+
+\hypertarget{document-term-matrix}{%
+\section{Document-Term Matrix}\label{document-term-matrix}}
+
+A \href{https://en.wikipedia.org/wiki/Document-term_matrix}{document-term matrix (DTM)} is a format which is frequently used in textanalysis. It is a matrix where we can see the counts of each term per document. In a DTM each row represents a document, each column represents a term, and the cell values are the counts of the ocurrences of the term for the particular document.
+
+\texttt{tidytext} provides functionality to convert to and from DTMs, if for example, your analyis requires specific functions that require you to use a different R package which only works with DTM objects.
+
+The \texttt{cast\_dtm} function can be used to create a DTM object from a tidy table.
+
+Let's assume that for some reason we want to use the \texttt{findAssoc} function from the \texttt{tm} package.
+
+First we use dplyr to create a table with the document name, the term, and the count.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# make a table with document, term, count}
+\NormalTok{tidy_sotu_words }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{count}\NormalTok{(doc_id, word) }
+\end{Highlighting}
+\end{Shaded}
+
+Now we cast it as a DTM.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sotu_dtm <-}\StringTok{ }\NormalTok{tidy_sotu_words }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{count}\NormalTok{(doc_id, word) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{cast_dtm}\NormalTok{(doc_id, word, n) }
+
+\KeywordTok{class}\NormalTok{(sotu_dtm)}
+\end{Highlighting}
+\end{Shaded}
+
+Finally, let's use it in the \texttt{tm} package.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tm)}
+
+\CommentTok{# look at the terms with tm function}
+\KeywordTok{Terms}\NormalTok{(sotu_dtm) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{tail}\NormalTok{()}
+
+\CommentTok{# most frequent terms}
+\KeywordTok{findFreqTerms}\NormalTok{(sotu_dtm, }\DataTypeTok{lowfreq =} \DecValTok{5000}\NormalTok{)}
+              
+\CommentTok{# find terms associated with ...}
+\KeywordTok{findAssocs}\NormalTok{(sotu_dtm, }\StringTok{"citizen"}\NormalTok{, }\DataTypeTok{corlimit =} \FloatTok{0.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Conversely, \texttt{tidytext} implements the \texttt{tidy} function (originally from the \texttt{broom} package) to import DocumentTermMatrix objects. Note that it only takes the cells from the DTM that are not 0, so there will be no rows with 0 counts.
+
+\hypertarget{sentiment-analysis}{%
+\section{Sentiment analysis}\label{sentiment-analysis}}
+
+\texttt{tidytext} comes with a dataset \texttt{sentiments} which contains several sentiment lexicons, where each word is attributed a certain sentiment, like this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sentiments}
+\end{Highlighting}
+\end{Shaded}
+
+Here we will take a look at how the sentiment of the speeches change over time. We will use the lexicon from \href{https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html}{Bing Liu and collaborators}, which assigns positive/negative labels for each word:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{bing_lex <-}\StringTok{ }\KeywordTok{get_sentiments}\NormalTok{(}\StringTok{"bing"}\NormalTok{)}
+\NormalTok{bing_lex}
+\end{Highlighting}
+\end{Shaded}
+
+Since this is a regular tibble, we can use these sentiments and join them to the words of our speeches. We will use \texttt{inner\_join} from \texttt{dplyr}. Since our columns to join on have the same name (\texttt{word}) we don't need to explicitly name it.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tidy_sotu_words }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{inner_join}\NormalTok{(bing_lex) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# join}
+\StringTok{  }\KeywordTok{count}\NormalTok{(year, sentiment) }\CommentTok{# group by year and sentiment}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+#> Joining, by = "word"
+\end{verbatim}
+
+Finally we can visualize it like this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tidy_sotu_words }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{inner_join}\NormalTok{(bing_lex) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# join}
+\StringTok{  }\KeywordTok{count}\NormalTok{(year, sentiment) }\OperatorTok{%>%}\StringTok{ }\CommentTok{# group by year and sentiment}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(year, n, }\DataTypeTok{color =}\NormalTok{ sentiment)) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{geom_line}\NormalTok{() }\OperatorTok{+}
+\StringTok{    }\KeywordTok{scale_x_continuous}\NormalTok{(}\DataTypeTok{breaks =} \KeywordTok{seq}\NormalTok{(}\DecValTok{1790}\NormalTok{, }\DecValTok{2016}\NormalTok{, }\DataTypeTok{by =} \DecValTok{10}\NormalTok{)) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{angle =} \DecValTok{45}\NormalTok{, }\DataTypeTok{hjust =} \DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+#> Joining, by = "word"
+\end{verbatim}
+
+\includegraphics{R-text-analysis_files/figure-latex/sentiment-plot-1.pdf}
+
+TODO: length over time\ldots other similar measures ?
 TODO: variation between the different presidents?\\
-TODO: say something about sentiment analysis and topic modeling
+TODO: topic modeling ?
 
 \bibliography{book.bib,packages.bib}
 

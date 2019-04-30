@@ -137,13 +137,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.2" data-path="textanalysis.html"><a href="textanalysis.html#string-operations"><i class="fa fa-check"></i><b>1.2</b> String operations</a></li>
 <li class="chapter" data-level="1.3" data-path="textanalysis.html"><a href="textanalysis.html#tokenize-lowercase"><i class="fa fa-check"></i><b>1.3</b> Tokenize, lowercase</a></li>
 <li class="chapter" data-level="1.4" data-path="textanalysis.html"><a href="textanalysis.html#stopwords"><i class="fa fa-check"></i><b>1.4</b> Stopwords</a></li>
-<li class="chapter" data-level="1.5" data-path="textanalysis.html"><a href="textanalysis.html#stemming-and-lemmatization"><i class="fa fa-check"></i><b>1.5</b> Stemming and Lemmatization?</a></li>
-<li class="chapter" data-level="1.6" data-path="textanalysis.html"><a href="textanalysis.html#tagging"><i class="fa fa-check"></i><b>1.6</b> Tagging</a></li>
+<li class="chapter" data-level="1.5" data-path="textanalysis.html"><a href="textanalysis.html#word-stemming"><i class="fa fa-check"></i><b>1.5</b> Word Stemming</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="textprep.html"><a href="textprep.html"><i class="fa fa-check"></i><b>2</b> Preparing Textual Data</a><ul>
 <li class="chapter" data-level="2.1" data-path="textprep.html"><a href="textprep.html#frequencies"><i class="fa fa-check"></i><b>2.1</b> Frequencies</a></li>
 <li class="chapter" data-level="2.2" data-path="textprep.html"><a href="textprep.html#term-frequency"><i class="fa fa-check"></i><b>2.2</b> Term frequency</a></li>
 <li class="chapter" data-level="2.3" data-path="textprep.html"><a href="textprep.html#tf-idf"><i class="fa fa-check"></i><b>2.3</b> Tf-idf</a></li>
+<li class="chapter" data-level="2.4" data-path="textprep.html"><a href="textprep.html#n-grams"><i class="fa fa-check"></i><b>2.4</b> N-Grams</a></li>
+<li class="chapter" data-level="2.5" data-path="textprep.html"><a href="textprep.html#co-ocurrcence"><i class="fa fa-check"></i><b>2.5</b> Co-ocurrcence</a></li>
+<li class="chapter" data-level="2.6" data-path="textprep.html"><a href="textprep.html#document-term-matrix"><i class="fa fa-check"></i><b>2.6</b> Document-Term Matrix</a></li>
+<li class="chapter" data-level="2.7" data-path="textprep.html"><a href="textprep.html#sentiment-analysis"><i class="fa fa-check"></i><b>2.7</b> Sentiment analysis</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -174,11 +177,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 </blockquote>
 <hr />
-<ul>
-<li>DTM</li>
-<li>n-grams</li>
-<li>co-ocurrence</li>
-</ul>
 <p>First, we’ll load the libraries we need.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
 <span class="kw">library</span>(tidytext)</code></pre>
@@ -198,7 +196,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span class="st">  </span><span class="kw">geom_col</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_flip</span>()</code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <p>What if we’re interested in most used words per speech?</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Count words by book</span>
 doc_words &lt;-<span class="st"> </span>tidy_sotu_words <span class="op">%&gt;%</span>
@@ -220,7 +218,7 @@ doc_words &lt;-<span class="st"> </span><span class="kw">left_join</span>(doc_wo
 <span class="st">  </span><span class="kw">geom_col</span>() <span class="op">+</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_flip</span>()</code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 <p>That’s cool looking, but let’s split it into facets so we can see by speech.</p>
 <pre class="sourceCode r"><code class="sourceCode r">doc_words <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">filter</span>(n <span class="op">&gt;</span><span class="st"> </span><span class="dv">100</span>) <span class="op">%&gt;%</span>
@@ -229,7 +227,7 @@ doc_words &lt;-<span class="st"> </span><span class="kw">left_join</span>(doc_wo
 <span class="st">  </span><span class="kw">xlab</span>(<span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>doc_id, <span class="dt">ncol =</span> <span class="dv">2</span>) <span class="op">+</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">90</span>, <span class="dt">hjust =</span> <span class="dv">1</span>))</code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <p>We could keep cleaning this figure up by setting some minimum sizing, determining the spacing between y-axis labels better, and so forth, but now we’ll accept it as showing some sense of variation across speeches where certain words are used most.</p>
 <p>What if we want to check the most highly common words per speech for a single president? We could filter this <code>doc_words</code> dataset based on the president’s name being in the doc_id, but I think it’s easier to filter from the initial tidy data and recount.</p>
 <pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words <span class="op">%&gt;%</span>
@@ -240,7 +238,7 @@ doc_words &lt;-<span class="st"> </span><span class="kw">left_join</span>(doc_wo
 <span class="st">  </span><span class="kw">geom_col</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>doc_id, <span class="dt">ncol =</span> <span class="dv">2</span>) <span class="op">+</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">90</span>, <span class="dt">hjust =</span> <span class="dv">1</span>))</code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 </div>
 <div id="term-frequency" class="section level2">
 <h2><span class="header-section-number">2.2</span> Term frequency</h2>
@@ -258,7 +256,7 @@ doc_words </code></pre>
 <pre><code>#&gt; `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <pre><code>#&gt; Warning: Removed 2 rows containing non-finite values (stat_bin).</code></pre>
 <pre><code>#&gt; Warning: Removed 1 rows containing missing values (geom_bar).</code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <p>This should make sense. Most words are used relatively rarely in a text. Only a few have a high term frequency.</p>
 <p>We could keep filtering this data to see which terms have the high frequency, thus maybe increased significance, for different presidents and different particular speeches. We could also subset based on decade, and get a sense of what was important in each decade. We’re going to take a slightly different approach though. We’ve been looking at term frequency per document. What if we want to know about words that seem more important based on the contents of the entire corpus?</p>
 </div>
@@ -328,11 +326,161 @@ obama_tf_idf</code></pre>
 #&gt; Warning in mutate_impl(.data, dots): binding character and factor vector,
 #&gt; coercing into character vector</code></pre>
 <pre><code>#&gt; Selecting by tf_idf</code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
-<p>TODO: document-term matrix<br />
-TODO: length over time…other similar measures<br />
+<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+</div>
+<div id="n-grams" class="section level2">
+<h2><span class="header-section-number">2.4</span> N-Grams</h2>
+<p><a href="https://www.tidytextmining.com/ngrams.html#counting-and-correlating-pairs-of-words-with-the-widyr-package" class="uri">https://www.tidytextmining.com/ngrams.html#counting-and-correlating-pairs-of-words-with-the-widyr-package</a>
+We have mentioned n-grams in the intro, let’s revisit this here and take a look at the most common bigrams in the speeches. Remember this is what we get back:</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_whole <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">unnest_tokens</span>(bigram, text, <span class="dt">token =</span> <span class="st">&quot;ngrams&quot;</span>, <span class="dt">n =</span> <span class="dv">2</span>) <span class="co"># create bigram</span></code></pre>
+<p>Let’s see the most common bigrams:</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_whole <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">unnest_tokens</span>(bigram, text, <span class="dt">token =</span> <span class="st">&quot;ngrams&quot;</span>, <span class="dt">n =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">count</span>(bigram, <span class="dt">sort =</span> <span class="ot">TRUE</span>) <span class="co"># count ocurrences and sord descending</span></code></pre>
+<p>Ok, so we again need to remove the stopwords. This time let’s use dplyr’s <code>filter</code> function for this. And before that we will <code>separate</code> the two words into two columns.</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_bigrams &lt;-<span class="st"> </span>sotu_whole <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">unnest_tokens</span>(bigram, text, <span class="dt">token =</span> <span class="st">&quot;ngrams&quot;</span>, <span class="dt">n =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">separate</span>(bigram, <span class="kw">c</span>(<span class="st">&quot;word1&quot;</span>, <span class="st">&quot;word2&quot;</span>), <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># separate into cols</span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>word1 <span class="op">%in%</span><span class="st"> </span>stop_words<span class="op">$</span>word) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># remove stopwords</span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>word2 <span class="op">%in%</span><span class="st"> </span>stop_words<span class="op">$</span>word)
+
+sotu_bigrams <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">count</span>(word1, word2, <span class="dt">sort =</span> <span class="ot">TRUE</span>)</code></pre>
+<p>(Bonus question: What happened on that June 30th?)</p>
+<p>A bigram can also be treated as a term in a document in the same way that we treated individual words. That means we can look at tf-idf values in the same way.</p>
+<p>First we will re-unite the two word columns again, and then generate the tf-idf count as above.</p>
+<pre class="sourceCode r"><code class="sourceCode r">bigram_tf_idf &lt;-<span class="st"> </span>sotu_bigrams <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">unite</span>(bigram, word1, word2, <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># combine columns</span>
+<span class="st">  </span><span class="kw">count</span>(president, bigram) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">bind_tf_idf</span>(bigram, president, n) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(tf_idf))</code></pre>
+<p>What makes the speeches of different presidents unique?</p>
+<p>Let’s pick a few presidents and plot their highest scoreing tf-idf values here.</p>
+<pre class="sourceCode r"><code class="sourceCode r">potus &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;John F. Kennedy&quot;</span>, <span class="st">&quot;Richard M. Nixon&quot;</span>, <span class="st">&quot;William J. Clinton&quot;</span>, <span class="st">&quot;George Bush&quot;</span>, <span class="st">&quot;George W. Bush&quot;</span>, <span class="st">&quot;Jimmy Carter&quot;</span>)
+
+bigram_tf_idf <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(president <span class="op">%in%</span><span class="st"> </span>potus) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(president) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">top_n</span>(<span class="dv">20</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="kw">reorder</span>(bigram, tf_idf), tf_idf, <span class="dt">fill =</span> president)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_col</span>(<span class="dt">show.legend =</span> <span class="ot">FALSE</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="st">&quot;tf-idf&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>president, <span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="dt">nrow =</span> <span class="dv">2</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_flip</span>()</code></pre>
+<pre><code>#&gt; Selecting by tf_idf</code></pre>
+<p><img src="R-text-analysis_files/figure-html/bigram-tf-idf-plot-1.png" width="672" /></p>
+</div>
+<div id="co-ocurrcence" class="section level2">
+<h2><span class="header-section-number">2.5</span> Co-ocurrcence</h2>
+<p>Co-occurances give us a sense of words that appear in the same text, but not necessarily next to each other.</p>
+<p>For this section we will make use of the <code>widyr</code> package. It allows us to turn our table into a wide matrix. In our case that matrix will be made up of the individual words and the cell values will be the counts of how many times they co-occur. Then we will turn the matrix back into a tidy form, where each row contains the word pairs and the count of their co-occurrence. This lets us count common pairs of words co-appearing within the same speech.</p>
+<p>The function which helps us do this is the <code>pairwise_count()</code> function.</p>
+<p>Since processing the entire corpus would take too long here, we will only look at the last 20 words of each speech.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(widyr)
+
+<span class="co"># extract last 100 words from text</span>
+sotu_whole<span class="op">$</span>speech_end &lt;-<span class="st"> </span><span class="kw">word</span>(sotu_whole<span class="op">$</span>text, <span class="dv">-100</span>, <span class="dt">end =</span> <span class="dv">-1</span>)
+
+sotu_word_pairs &lt;-<span class="st"> </span>sotu_whole <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">unnest_tokens</span>(word, speech_end) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>word <span class="op">%in%</span><span class="st"> </span>stop_words<span class="op">$</span>word) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># remove stopwords</span>
+<span class="st">  </span><span class="kw">pairwise_count</span>(word, doc_id, <span class="dt">sort =</span> <span class="ot">TRUE</span>, <span class="dt">upper =</span> <span class="ot">FALSE</span>) <span class="co"># don&#39;t include upper triangle of matrix</span></code></pre>
+<p>To plot the co-ocurrcance network, we use the <code>igraph</code> library to convert our table into a network graph and <code>ggraph</code> which adds functionality to ggplot and makes it easier create a network plot.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(igraph)</code></pre>
+<pre><code>#&gt; 
+#&gt; Attaching package: &#39;igraph&#39;</code></pre>
+<pre><code>#&gt; The following objects are masked from &#39;package:dplyr&#39;:
+#&gt; 
+#&gt;     as_data_frame, groups, union</code></pre>
+<pre><code>#&gt; The following objects are masked from &#39;package:purrr&#39;:
+#&gt; 
+#&gt;     compose, simplify</code></pre>
+<pre><code>#&gt; The following object is masked from &#39;package:tidyr&#39;:
+#&gt; 
+#&gt;     crossing</code></pre>
+<pre><code>#&gt; The following object is masked from &#39;package:tibble&#39;:
+#&gt; 
+#&gt;     as_data_frame</code></pre>
+<pre><code>#&gt; The following objects are masked from &#39;package:stats&#39;:
+#&gt; 
+#&gt;     decompose, spectrum</code></pre>
+<pre><code>#&gt; The following object is masked from &#39;package:base&#39;:
+#&gt; 
+#&gt;     union</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggraph)
+
+sotu_word_pairs <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(n <span class="op">&gt;=</span><span class="st"> </span><span class="dv">10</span>) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># only word pairs that occur 10 or more times</span>
+<span class="st">  </span><span class="kw">graph_from_data_frame</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#convert to graph</span>
+<span class="st">  </span><span class="kw">ggraph</span>(<span class="dt">layout =</span> <span class="st">&quot;fr&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="co"># place nodes according to the force-directed algorithm of Fruchterman and Reingold</span>
+<span class="st">  </span><span class="kw">geom_edge_link</span>(<span class="kw">aes</span>(<span class="dt">edge_alpha =</span> n, <span class="dt">edge_width =</span> n), <span class="dt">edge_colour =</span> <span class="st">&quot;tomato&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_node_point</span>(<span class="dt">size =</span> <span class="dv">5</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_node_text</span>(<span class="kw">aes</span>(<span class="dt">label =</span> name), <span class="dt">repel =</span> <span class="ot">TRUE</span>, 
+                 <span class="dt">point.padding =</span> <span class="kw">unit</span>(<span class="fl">0.2</span>, <span class="st">&quot;lines&quot;</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_void</span>()</code></pre>
+<p><img src="R-text-analysis_files/figure-html/plot-network-1.png" width="672" /></p>
+<p>There are alternative approaches for this as well. See for example the <code>findAssocs</code> function in the <code>tm</code> package.</p>
+</div>
+<div id="document-term-matrix" class="section level2">
+<h2><span class="header-section-number">2.6</span> Document-Term Matrix</h2>
+<p>A <a href="https://en.wikipedia.org/wiki/Document-term_matrix">document-term matrix (DTM)</a> is a format which is frequently used in textanalysis. It is a matrix where we can see the counts of each term per document. In a DTM each row represents a document, each column represents a term, and the cell values are the counts of the ocurrences of the term for the particular document.</p>
+<p><code>tidytext</code> provides functionality to convert to and from DTMs, if for example, your analyis requires specific functions that require you to use a different R package which only works with DTM objects.</p>
+<p>The <code>cast_dtm</code> function can be used to create a DTM object from a tidy table.</p>
+<p>Let’s assume that for some reason we want to use the <code>findAssoc</code> function from the <code>tm</code> package.</p>
+<p>First we use dplyr to create a table with the document name, the term, and the count.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># make a table with document, term, count</span>
+tidy_sotu_words <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">count</span>(doc_id, word) </code></pre>
+<p>Now we cast it as a DTM.</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_dtm &lt;-<span class="st"> </span>tidy_sotu_words <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">count</span>(doc_id, word) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">cast_dtm</span>(doc_id, word, n) 
+
+<span class="kw">class</span>(sotu_dtm)</code></pre>
+<p>Finally, let’s use it in the <code>tm</code> package.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tm)</code></pre>
+<pre><code>#&gt; Loading required package: NLP</code></pre>
+<pre><code>#&gt; 
+#&gt; Attaching package: &#39;NLP&#39;</code></pre>
+<pre><code>#&gt; The following object is masked from &#39;package:ggplot2&#39;:
+#&gt; 
+#&gt;     annotate</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># look at the terms with tm function</span>
+<span class="kw">Terms</span>(sotu_dtm) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tail</span>()
+
+<span class="co"># most frequent terms</span>
+<span class="kw">findFreqTerms</span>(sotu_dtm, <span class="dt">lowfreq =</span> <span class="dv">5000</span>)
+              
+<span class="co"># find terms associated with ...</span>
+<span class="kw">findAssocs</span>(sotu_dtm, <span class="st">&quot;citizen&quot;</span>, <span class="dt">corlimit =</span> <span class="fl">0.5</span>)</code></pre>
+<p>Conversely, <code>tidytext</code> implements the <code>tidy</code> function (originally from the <code>broom</code> package) to import DocumentTermMatrix objects. Note that it only takes the cells from the DTM that are not 0, so there will be no rows with 0 counts.</p>
+</div>
+<div id="sentiment-analysis" class="section level2">
+<h2><span class="header-section-number">2.7</span> Sentiment analysis</h2>
+<p><code>tidytext</code> comes with a dataset <code>sentiments</code> which contains several sentiment lexicons, where each word is attributed a certain sentiment, like this:</p>
+<pre class="sourceCode r"><code class="sourceCode r">sentiments</code></pre>
+<p>Here we will take a look at how the sentiment of the speeches change over time. We will use the lexicon from <a href="https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html">Bing Liu and collaborators</a>, which assigns positive/negative labels for each word:</p>
+<pre class="sourceCode r"><code class="sourceCode r">bing_lex &lt;-<span class="st"> </span><span class="kw">get_sentiments</span>(<span class="st">&quot;bing&quot;</span>)
+bing_lex</code></pre>
+<p>Since this is a regular tibble, we can use these sentiments and join them to the words of our speeches. We will use <code>inner_join</code> from <code>dplyr</code>. Since our columns to join on have the same name (<code>word</code>) we don’t need to explicitly name it.</p>
+<pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">inner_join</span>(bing_lex) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># join</span>
+<span class="st">  </span><span class="kw">count</span>(year, sentiment) <span class="co"># group by year and sentiment</span></code></pre>
+<pre><code>#&gt; Joining, by = &quot;word&quot;</code></pre>
+<p>Finally we can visualize it like this:</p>
+<pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">inner_join</span>(bing_lex) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># join</span>
+<span class="st">  </span><span class="kw">count</span>(year, sentiment) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># group by year and sentiment</span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(year, n, <span class="dt">color =</span> sentiment)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_line</span>() <span class="op">+</span>
+<span class="st">    </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="dv">1790</span>, <span class="dv">2016</span>, <span class="dt">by =</span> <span class="dv">10</span>)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">45</span>, <span class="dt">hjust =</span> <span class="dv">1</span>))</code></pre>
+<pre><code>#&gt; Joining, by = &quot;word&quot;</code></pre>
+<p><img src="R-text-analysis_files/figure-html/sentiment-plot-1.png" width="576" /></p>
+<p>TODO: length over time…other similar measures ?
 TODO: variation between the different presidents?<br />
-TODO: say something about sentiment analysis and topic modeling</p>
+TODO: topic modeling ?</p>
 
 </div>
 </div>

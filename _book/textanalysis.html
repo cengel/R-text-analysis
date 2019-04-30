@@ -137,13 +137,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.2" data-path="textanalysis.html"><a href="textanalysis.html#string-operations"><i class="fa fa-check"></i><b>1.2</b> String operations</a></li>
 <li class="chapter" data-level="1.3" data-path="textanalysis.html"><a href="textanalysis.html#tokenize-lowercase"><i class="fa fa-check"></i><b>1.3</b> Tokenize, lowercase</a></li>
 <li class="chapter" data-level="1.4" data-path="textanalysis.html"><a href="textanalysis.html#stopwords"><i class="fa fa-check"></i><b>1.4</b> Stopwords</a></li>
-<li class="chapter" data-level="1.5" data-path="textanalysis.html"><a href="textanalysis.html#stemming-and-lemmatization"><i class="fa fa-check"></i><b>1.5</b> Stemming and Lemmatization?</a></li>
-<li class="chapter" data-level="1.6" data-path="textanalysis.html"><a href="textanalysis.html#tagging"><i class="fa fa-check"></i><b>1.6</b> Tagging</a></li>
+<li class="chapter" data-level="1.5" data-path="textanalysis.html"><a href="textanalysis.html#word-stemming"><i class="fa fa-check"></i><b>1.5</b> Word Stemming</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="textprep.html"><a href="textprep.html"><i class="fa fa-check"></i><b>2</b> Preparing Textual Data</a><ul>
 <li class="chapter" data-level="2.1" data-path="textprep.html"><a href="textprep.html#frequencies"><i class="fa fa-check"></i><b>2.1</b> Frequencies</a></li>
 <li class="chapter" data-level="2.2" data-path="textprep.html"><a href="textprep.html#term-frequency"><i class="fa fa-check"></i><b>2.2</b> Term frequency</a></li>
 <li class="chapter" data-level="2.3" data-path="textprep.html"><a href="textprep.html#tf-idf"><i class="fa fa-check"></i><b>2.3</b> Tf-idf</a></li>
+<li class="chapter" data-level="2.4" data-path="textprep.html"><a href="textprep.html#n-grams"><i class="fa fa-check"></i><b>2.4</b> N-Grams</a></li>
+<li class="chapter" data-level="2.5" data-path="textprep.html"><a href="textprep.html#co-ocurrcence"><i class="fa fa-check"></i><b>2.5</b> Co-ocurrcence</a></li>
+<li class="chapter" data-level="2.6" data-path="textprep.html"><a href="textprep.html#document-term-matrix"><i class="fa fa-check"></i><b>2.6</b> Document-Term Matrix</a></li>
+<li class="chapter" data-level="2.7" data-path="textprep.html"><a href="textprep.html#sentiment-analysis"><i class="fa fa-check"></i><b>2.7</b> Sentiment analysis</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -187,7 +190,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span class="co"># sotu_dir writes the text files to a temporary dir, but you could specific where you want them.</span>
 fp &lt;-<span class="st"> </span><span class="kw">sotu_dir</span>()
 <span class="kw">head</span>(fp)</code></pre>
-<p>Now that we have the files in disk, and a list of filepaths stored in the <code>fp</code> variable, we can use <code>readtext</code> to read the texts into a new variable.</p>
+<p>Now that we have the files on disk, and a list of filepaths stored in the <code>fp</code> variable, we can use <code>readtext</code> to read the texts into a new variable.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># let&#39;s then read in the files with readtext</span>
 texts &lt;-<span class="st"> </span><span class="kw">readtext</span>(fp)
 <span class="kw">head</span>(texts)</code></pre>
@@ -205,8 +208,34 @@ sotu_whole &lt;-<span class="st"> </span><span class="kw">bind_cols</span>(sotu_
 </div>
 <div id="string-operations" class="section level2">
 <h2><span class="header-section-number">1.2</span> String operations</h2>
-<p>TODO</p>
-<p>(For spell check: <a href="https://CRAN.R-project.org/package=spelling" class="uri">https://CRAN.R-project.org/package=spelling</a>, <a href="https://CRAN.R-project.org/package=hunspell" class="uri">https://CRAN.R-project.org/package=hunspell</a>)</p>
+<p>R has many functions available to manipulate strings including functions like <code>grep</code> and <code>paste</code>, which come with the R base install.</p>
+<p>Perhaps one of the most comprehensive packages is <code>stringi</code>. However, we will here take a look at the <code>stringr</code> package, which is part of the <code>tidyverse</code>, wraps a lot of the stringi functions, and is easier to begin with.</p>
+<p>Below are a examples for a few functions that might be useful.</p>
+<ul>
+<li>How many words in each speech?</li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str_count</span>(sotu_whole<span class="op">$</span>text, <span class="kw">boundary</span>(<span class="st">&quot;word&quot;</span>))</code></pre>
+<ul>
+<li>Measured by the average number of words per sentence for each speech - what is the length of the speech with the shortest/longest sentences?</li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">range</span>(<span class="kw">str_count</span>(sotu_whole<span class="op">$</span>text, <span class="kw">boundary</span>(<span class="st">&quot;word&quot;</span>))<span class="op">/</span><span class="kw">str_count</span>(sotu_whole<span class="op">$</span>text, <span class="kw">boundary</span>(<span class="st">&quot;sentence&quot;</span>)))</code></pre>
+<p>How man times does the word “citizen” appear in the speeches?</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str_count</span>(sotu_whole<span class="op">$</span>text, <span class="st">&quot;[C|c]itizen&quot;</span>)</code></pre>
+<p>What are the names of the documents in of the speeches where the word “citizen” does <strong>not</strong> occur?</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_whole<span class="op">$</span>doc_id[<span class="op">!</span><span class="kw">str_detect</span>(sotu_whole<span class="op">$</span>text, <span class="st">&quot;[C|c]itizen&quot;</span>)]</code></pre>
+<ul>
+<li>Get me the first 5 words for each speech</li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">word</span>(sotu_whole<span class="op">$</span>text, <span class="dt">end =</span> <span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">unique</span>()</code></pre>
+<ul>
+<li>Now remove newline character (<code>\n</code>) and get rid of the leading white space:</li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">word</span>(sotu_whole<span class="op">$</span>text, <span class="dt">end =</span> <span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">unique</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">str_replace_all</span>(<span class="st">&quot;</span><span class="ch">\\</span><span class="st">n&quot;</span>, <span class="st">&quot; &quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">str_trim</span>()</code></pre>
+<p>(For spell checks take a look at <a href="https://CRAN.R-project.org/package=spelling" class="uri">https://CRAN.R-project.org/package=spelling</a> or <a href="https://CRAN.R-project.org/package=hunspell" class="uri">https://CRAN.R-project.org/package=hunspell</a>)</p>
 </div>
 <div id="tokenize-lowercase" class="section level2">
 <h2><span class="header-section-number">1.3</span> Tokenize, lowercase</h2>
@@ -216,19 +245,6 @@ sotu_whole &lt;-<span class="st"> </span><span class="kw">bind_cols</span>(sotu_
 
 tidy_sotu</code></pre>
 <p>Before we move on, we should note that the <code>unnest_tokens</code> function didn’t just tokenize our texts at the word level. It also lowercased each word, and it could do quite a bit more. For instance, we could tokenize the text at the level of ngrams or sentences, if those are the best units of analysis for our work. We could also leave punctuation, which has been removed by default. Depending on what you need to do for analysis, you use do these operations during this step, or write custom functions and do it before you unnest tokens.</p>
-</div>
-<div id="stopwords" class="section level2">
-<h2><span class="header-section-number">1.4</span> Stopwords</h2>
-<p>Another common type of cleaning in text analysis is to remove stopwords, or common words that theoretically provide less information about the content of a text. Depending on the type of analysis you’re doing, you might leave these words in or use a highly curated list of stopwords. For now, as we move toward looking at words in documents based on frequency, we will remove some standard stopwords using a tidytext approach.</p>
-<p>First, let’s look at the stopwords that tidytext gives us to get a sense of what they are.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(stop_words)
-<span class="kw">head</span>(stop_words, <span class="dt">n =</span> <span class="dv">60</span>)</code></pre>
-<p>You can see that we now have one word per row with associated metadata. We can now remove stopwords using an <code>anti-join</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words &lt;-<span class="st"> </span>tidy_sotu <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">anti_join</span>(stop_words)</code></pre>
-<pre><code>#&gt; Joining, by = &quot;word&quot;</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words</code></pre>
-<p>We went from 1,965,212 to 778,161 rows, which means we had a lot of stopwords in our corpus. This is a huge removal, so for serious analysis, we might want to take a closer look at the stopwords and determine if we should use a different stopword list or otherwise create our own.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Word tokenization with punctuation</span>
 tidy_sotu_w_punct &lt;-<span class="st"> </span>sotu_whole <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">unnest_tokens</span>(word, text, <span class="dt">strip_punct =</span> <span class="ot">FALSE</span>)
@@ -247,16 +263,30 @@ tidy_sotu_trigram &lt;-<span class="st"> </span>sotu_whole <span class="op">%&gt
 
 tidy_sotu_trigram</code></pre>
 </div>
-<div id="stemming-and-lemmatization" class="section level2">
-<h2><span class="header-section-number">1.5</span> Stemming and Lemmatization?</h2>
-<ul>
-<li>hunspell, SnowballC?</li>
-</ul>
+<div id="stopwords" class="section level2">
+<h2><span class="header-section-number">1.4</span> Stopwords</h2>
+<p>Another common type of cleaning in text analysis is to remove stopwords, or common words that theoretically provide less information about the content of a text. Depending on the type of analysis you’re doing, you might leave these words in or use a highly curated list of stopwords. For now, as we move toward looking at words in documents based on frequency, we will remove some standard stopwords using a tidytext approach.</p>
+<p>First, let’s look at the stopwords that tidytext gives us to get a sense of what they are.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(stop_words)
+<span class="kw">head</span>(stop_words, <span class="dt">n =</span> <span class="dv">60</span>)</code></pre>
+<p>You can see that we now have one word per row with associated metadata. We can now remove stopwords using an <code>anti-join</code>.</p>
+<pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words &lt;-<span class="st"> </span>tidy_sotu <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">anti_join</span>(stop_words)
+
+tidy_sotu_words</code></pre>
+<p>We went from 1965212 to 778161 rows, which means we had a lot of stopwords in our corpus. This is a huge removal, so for serious analysis, we might want to take a closer look at the stopwords and determine if we should use a different stopword list or otherwise create our own.</p>
 </div>
-<div id="tagging" class="section level2">
-<h2><span class="header-section-number">1.6</span> Tagging</h2>
-<p>TODO?: Tag text with cleanNLP maybe?</p>
+<div id="word-stemming" class="section level2">
+<h2><span class="header-section-number">1.5</span> Word Stemming</h2>
+<p>Another thing you may want to do is to stem your words, that is, to reduce them to their word stem or root form, like reducing <em>fishing</em>, <em>fished</em>, and <em>fisher</em> to the stem <em>fish</em>.</p>
+<p><code>tidytext</code> does not implement its own word stemmer. Instead it relies on separate packages like <code>hunspell</code> or <code>SnowballC</code>.</p>
+<p>We will give an example here for the <code>SnowballC</code> package. (<code>hunspell</code> appears to run much slower, and it also returns a list instead of a vector, so in this context <code>SnowballC</code> seems to be more convenient.)</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(SnowballC)
+tidy_sotu_words <span class="op">%&gt;%</span>
+<span class="st">        </span><span class="kw">mutate</span>(<span class="dt">word_stem =</span> <span class="kw">wordStem</span>(word)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</code></pre>
+<p>For lemmatization, you may want to take a look a the <a href="https://CRAN.R-project.org/package=koRpus"><code>koRpus</code></a> package, another <a href="https://cran.r-project.org/web/packages/koRpus/vignettes/koRpus_vignette.html">comprehensive R package for text analysis</a>. It allows to use <a href="http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/">TreeTagger</a>, a widely used part-of-speech tagger. For full functionality of the R package a local installation of TreeTagger is recommended.</p>
 <p>Now that we’ve read in our text and metadata, reshaped it a bit into the tidytext format, and cleaned it a bit while doing so, let’s move on to some basic analysis.</p>
+<p>TODO?: Tag text with cleanNLP maybe?</p>
 
 </div>
 </div>
