@@ -295,18 +295,61 @@ sotu_word_pairs %>%
   theme_void()
 ```
 
-
 There are alternative approaches for this as well. See for example the `findAssocs` function in the `tm` package.
 
-## DTM
-https://www.tidytextmining.com/dtm.html
-use tm package
+
+## Document-Term Matrix
+
+A [document-term matrix (DTM)](https://en.wikipedia.org/wiki/Document-term_matrix) is a format which is frequently used in textanalysis. It is a matrix where we can see the counts of each term per document. In a DTM each row represents a document, each column represents a term, and the cell values are the counts of the ocurrences of the term for the particular document.
+
+`tidytext` provides functionality to convert to and from DTMs, if for example, your analyis requires specific functions that require you to use a different R package which only works with DTM objects.
+
+The `cast_dtm` function can be used to create a DTM object from a tidy table.
+
+Let's assume that for some reason we want to use the `findAssoc` function from the `tm` package.
+
+First we use dplyr to create a table with the document name, the term, and the count.
+
+```{r term-count}
+# make a table with document, term, count
+tidy_sotu_words %>% 
+  count(doc_id, word) 
+```
+
+Now we cast it as a DTM.
+
+```{r cast-dtm}
+sotu_dtm <- tidy_sotu_words %>% 
+  count(doc_id, word) %>% 
+  cast_dtm(doc_id, word, n) 
+
+class(sotu_dtm)
+```
+
+Finally, let's use it in the `tm` package.
+
+```{r tm-dtm}
+library(tm)
+
+# look at the terms with tm function
+Terms(sotu_dtm) %>% tail()
+
+# most frequent terms
+findFreqTerms(sotu_dtm, lowfreq = 5000)
+              
+# find terms associated with ...
+findAssocs(sotu_dtm, "citizen", corlimit = 0.5)
+```
+
+Conversely, `tidytext` implements the `tidy` function (originally from the `broom` package) to import DocumentTermMatrix objects. Note that it only takes the cells from the DTM that are not 0, so there will be no rows with 0 counts.
 
 
-## Sentiment analysis and topic modeling
+## Sentiment analysis
 
-TODO: Just say some thing
+
 
 
 TODO: length over time...other similar measures  
-TODO: variation between the different presidents? 
+TODO: variation between the different presidents?  
+TODO: Sentiment analysis and topic modeling ?  
+

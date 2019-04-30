@@ -194,10 +194,8 @@ tidy_sotu_words %>%
 
 For lemmatization, you may want to take a look a the [`koRpus`](https://CRAN.R-project.org/package=koRpus) package, another [comprehensive R package for text analysis](https://cran.r-project.org/web/packages/koRpus/vignettes/koRpus_vignette.html). It allows to use [TreeTagger](http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/), a widely used part-of-speech tagger. For full functionality of the R package a local installation of TreeTagger is recommended.
 
-
-## Tagging
+Now that we've read in our text and metadata, reshaped it a bit into the tidytext format, and cleaned it a bit while doing so, let's move on to some basic analysis. 
 
 TODO?: Tag text with cleanNLP maybe?
  
-Now that we've read in our text and metadata, reshaped it a bit into the tidytext format, and cleaned it a bit while doing so, let's move on to some basic analysis. 
 
