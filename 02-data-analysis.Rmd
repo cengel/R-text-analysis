@@ -346,10 +346,41 @@ Conversely, `tidytext` implements the `tidy` function (originally from the `broo
 
 ## Sentiment analysis
 
+`tidytext` comes with a dataset `sentiments` which contains several sentiment lexicons, where each word is attributed a certain sentiment, like this:
+
+```{r sentiments}
+sentiments
+```
+
+Here we will take a look at how the sentiment of the speeches change over time. We will use the lexicon from [Bing Liu and collaborators](https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html), which assigns positive/negative labels for each word:
+
+```{r bing}
+bing_lex <- get_sentiments("bing")
+bing_lex
+```
+
+Since this is a regular tibble, we can use these sentiments and join them to the words of our speeches. We will use `inner_join` from `dplyr`. Since our columns to join on have the same name (`word`) we don't need to explicitly name it.
+
+```{r join-sentiments}
+tidy_sotu_words %>% 
+  inner_join(bing_lex) %>% # join
+  count(year, sentiment) # group by year and sentiment
+```
+
+Finally we can visualize it like this:
+
+```{r sentiment-plot, fig.width = 6}
+tidy_sotu_words %>% 
+  inner_join(bing_lex) %>% # join
+  count(year, sentiment) %>% # group by year and sentiment
+  ggplot(aes(year, n, color = sentiment)) +
+    geom_line() +
+    scale_x_continuous(breaks = seq(1790, 2016, by = 10)) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
 
 
-
-TODO: length over time...other similar measures  
+TODO: length over time...other similar measures ? 
 TODO: variation between the different presidents?  
-TODO: Sentiment analysis and topic modeling ?  
+TODO: topic modeling ?  
 
