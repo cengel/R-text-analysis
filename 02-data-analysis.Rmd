@@ -2,7 +2,7 @@
 knitr::opts_chunk$set(results='hide', comment = "#>", purl = FALSE)
 ```
 
-# Preparing Textual Data {#textprep}
+# Analyzing Texts {#textanalysis}
 
 
 > Learning Objectives
@@ -65,7 +65,7 @@ doc_words <- left_join(doc_words, total_words)
 doc_words 
 ```
 
-Let's graph the top words per book
+Let's graph the top words per book.
 
 ```{r}
 doc_words %>% 
@@ -88,9 +88,9 @@ doc_words %>%
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-We could keep cleaning this figure up by setting some minimum sizing, determining the spacing between y-axis labels better, and so forth, but now we'll accept it as showing some sense of variation across speeches where certain words are used most. 
+We could keep cleaning this figure up by setting some minimum sizing, determining the spacing between y-axis labels better, and so forth, but for now we'll accept it as showing some sense of variation across speeches where certain words are used most. 
 
-What if we want to check the most highly common words per speech for a single president? We could filter this `doc_words` dataset based on the president's name being in the doc_id, but I think it's easier to filter from the initial tidy data and recount. 
+What if we want to check the most common words per speech for a single president? We could filter this `doc_words` dataset based on the president's name being in the doc_id, but I think it's easier to filter from the initial tidy data and recount. 
 
 ```{r}
 tidy_sotu_words %>%
@@ -125,14 +125,14 @@ doc_words %>%
   xlim(NA, .012)
 ```
 
-This should make sense. Most words are used relatively rarely in a text. Only a few have a high term frequency. 
+This distribution makes sense. Most words are used relatively rarely in a text. Only a few have a high term frequency. 
 
-We could keep filtering this data to see which terms have the high frequency, thus maybe increased significance, for different presidents and different particular speeches. We could also subset based on decade, and get a sense of what was important in each decade. We're going to take a slightly different approach though. We've been looking at term frequency per document. What if we want to know about words that seem more important based on the contents of the entire corpus?
+We could keep filtering this data to see which terms have high frequency, thus maybe increased significance, for different presidents and different particular speeches. We could also subset based on decade, and get a sense of what was important in each decade. We're going to take a slightly different approach though. We've been looking at term frequency per document. What if we want to know about words that seem more important based on the contents of the entire corpus?
 
 
 ## Tf-idf 
 
-For this, we can use term-frequency according to inverse document frequency (tf-idf). Tf-idf meansures how important a word is within a corpus by scaling term frequency per document according to the inverse of the term's document frequency (how many documents within the corpus in which the term appears divided by the number of documents). 
+For this, we can use term-frequency according to inverse document frequency (tf-idf). Tf-idf measures how important a word is within a corpus by scaling term frequency per document according to the inverse of the term's document frequency (number of documents within the corpus in which the term appears divided by the number of documents). 
 
 We could write our own function for tf-idf, but in this case we'll take advantage of tidytext's implementation. 
 
@@ -146,7 +146,7 @@ doc_words
 The tf-idf value will be:
 
 - lower for words that appear in many documents in the corpus, and lowest when the word occurs in virtually all documents. 
-- high for words that appear many times in few documents in the corpus, this lending high discrimiatory power to those doucments. 
+- high for words that appear many times in few documents in the corpus, this lending high discriminatory power to those documents. 
 
 Let's look at some of the words in the corpus that have the highest tf-idf scores, which means words that are particularly distinctive for their documents. 
 
@@ -156,7 +156,7 @@ doc_words %>%
   arrange(desc(tf_idf))
 ```
 
-These results seem appropriate given our history. To understand the occurence of the years we might need to look more closely at the speeches themselves, and determine whether the years are significant or whether they need to be removed from the text. It might be that even if they don't need to be removed from the text overall, they still need to be filtered out within the context of this analysis. 
+These results seem appropriate given our history. To understand the occurrence of the years we might need to look more closely at the speeches themselves, and determine whether the years are significant or whether they need to be removed from the text. It might be that even if they don't need to be removed from the text overall, they still need to be filtered out within the context of this analysis. 
 
 In the same way that we narrowed our analysis to Obama speeches earlier, we could subset the corpus before we calculate the tf-idf score to understand which words are most important for a single president within their sotu speeches. Let's do that for Obama. 
 
@@ -192,7 +192,7 @@ obama_tf_idf %>%
 
 ## N-Grams
 https://www.tidytextmining.com/ngrams.html#counting-and-correlating-pairs-of-words-with-the-widyr-package
-We have mentioned n-grams in the intro, let's revisit this here and take a look at the most common bigrams in the speeches. Remember this is what we get back:
+We mentioned n-grams in the intro, but let's revisit them here and take a look at the most common bigrams in the speeches. Remember this is what we get back:
 
 ```{r bigrams-unnest}
 sotu_whole %>%
@@ -237,7 +237,7 @@ bigram_tf_idf <- sotu_bigrams %>%
 
 What makes the speeches of different presidents unique?
 
-Let's pick a few presidents and plot their highest scoreing tf-idf values here.
+Let's pick a few presidents and plot their highest scoring tf-idf values here.
 
 ```{r bigram-tf-idf-plot}
 potus <- c("John F. Kennedy", "Richard M. Nixon", "William J. Clinton", "George Bush", "George W. Bush", "Jimmy Carter")
@@ -254,9 +254,9 @@ bigram_tf_idf %>%
 ```
 
 
-## Co-ocurrcence
+## Co-occurrence
 
-Co-occurances give us a sense of words that appear in the same text, but not necessarily next to each other.
+Co-occurrences give us a sense of words that appear in the same text, but not necessarily next to each other.
 
 For this section we will make use of the `widyr` package. It allows us to turn our table into a wide matrix. In our case that matrix will be made up of the individual words and the cell values will be the counts of how many times they co-occur. Then we will turn the matrix back into a tidy form, where each row contains the word pairs and the count of their co-occurrence. This lets us count common pairs of words co-appearing within the same speech.
 
@@ -278,7 +278,7 @@ sotu_word_pairs <- sotu_whole %>%
 
 ```
 
-To plot the co-ocurrcance network, we use the `igraph` library to convert our table into a network graph and `ggraph` which adds functionality to ggplot and makes it easier create a network plot.
+To plot the co-occurrence network, we use the `igraph` library to convert our table into a network graph and `ggraph` which adds functionality to ggplot and makes it easier to create a network plot.
 
 ```{r plot-network} 
 library(igraph)
@@ -300,7 +300,7 @@ There are alternative approaches for this as well. See for example the `findAsso
 
 ## Document-Term Matrix
 
-A [document-term matrix (DTM)](https://en.wikipedia.org/wiki/Document-term_matrix) is a format which is frequently used in textanalysis. It is a matrix where we can see the counts of each term per document. In a DTM each row represents a document, each column represents a term, and the cell values are the counts of the ocurrences of the term for the particular document.
+A [document-term matrix (DTM)](https://en.wikipedia.org/wiki/Document-term_matrix) is a format which is frequently used in text analysis. It is a matrix where we can see the counts of each term per document. In a DTM each row represents a document, each column represents a term, and the cell values are the counts of the occurrences of the term for the particular document.
 
 `tidytext` provides functionality to convert to and from DTMs, if for example, your analyis requires specific functions that require you to use a different R package which only works with DTM objects.
 
@@ -378,9 +378,4 @@ tidy_sotu_words %>%
     scale_x_continuous(breaks = seq(1790, 2016, by = 10)) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
-
-
-TODO: length over time...other similar measures ? 
-TODO: variation between the different presidents?  
-TODO: topic modeling ?  
 
