@@ -7,8 +7,12 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE,comment = "#>", purl = FALSE)
 
 > Learning Objectives
 >
-> - to come
-
+> - perform basic text analysis operations in R
+> - determine differnd kinds of frequency counts
+> - use the `widyr` package to calculate co-ocurrance
+> - use `igraph` and `ggraph` to plot a co-ocurrance graph
+> - import and export a Document-Term Matrix into `tidytext`
+> - use the `sentiments` dataset from `tidytext` to perform a sentiment analysis
 ------------
 
 First, we'll load the libraries we need. 

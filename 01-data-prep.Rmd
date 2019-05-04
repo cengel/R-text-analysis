@@ -13,7 +13,11 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE,comment = "#>", purl = FALSE)
 
 > Learning Objectives
 >
-> - to come
+> - read textual data into R using `readtext`
+> - use `stringr` package to manipulate strings
+> - use `tidytext` functions to tokenize texts and remove stopwords
+> - use `SnowballC` to stem words
+
 
 ------------
 
