@@ -19,7 +19,7 @@ description: "Workshop materials for Text Analysis in R"
 
 - Have a recent version of [R](https://cran.r-project.org/) and [RStudio](https://www.rstudio.com/) installed. 
 
-- Libraries:
+- Libraries needed:
   - `tidyverse`
   - `tidytext`
   - `readtext`
@@ -29,8 +29,6 @@ description: "Workshop materials for Text Analysis in R"
   - `igraph`
   - `ggraph`
   - `tm`
-  - `quanteda` ?
-  - `cleanNLP` ?
 
 
 ## References  {-}
