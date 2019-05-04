@@ -13,6 +13,8 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE,comment = "#>", purl = FALSE)
 > - use `igraph` and `ggraph` to plot a co-ocurrance graph
 > - import and export a Document-Term Matrix into `tidytext`
 > - use the `sentiments` dataset from `tidytext` to perform a sentiment analysis
+
+
 ------------
 
 First, we'll load the libraries we need. 
@@ -195,7 +197,7 @@ obama_tf_idf %>%
 ```
 
 ## N-Grams
-https://www.tidytextmining.com/ngrams.html#counting-and-correlating-pairs-of-words-with-the-widyr-package
+
 We mentioned n-grams in the intro, but let's revisit them here and take a look at the most common bigrams in the speeches. Remember this is what we get back:
 
 ```{r bigrams-unnest}
@@ -244,7 +246,7 @@ What makes the speeches of different presidents unique?
 Let's pick a few presidents and plot their highest scoring tf-idf values here.
 
 ```{r bigram-tf-idf-plot}
-potus <- c("John F. Kennedy", "Richard M. Nixon", "William J. Clinton", "George Bush", "George W. Bush", "Jimmy Carter")
+potus <- c("John F. Kennedy", "Richard M. Nixon", "George Bush", "George W. Bush")
 
 bigram_tf_idf %>%
   filter(president %in% potus) %>% 
@@ -280,6 +282,7 @@ sotu_word_pairs <- sotu_whole %>%
   filter(!word %in% stop_words$word) %>% # remove stopwords
   pairwise_count(word, doc_id, sort = TRUE, upper = FALSE) # don't include upper triangle of matrix
 
+sotu_word_pairs
 ```
 
 To plot the co-occurrence network, we use the `igraph` library to convert our table into a network graph and `ggraph` which adds functionality to ggplot and makes it easier to create a network plot.
@@ -373,7 +376,7 @@ tidy_sotu_words %>%
 
 Finally we can visualize it like this:
 
-```{r sentiment-plot, fig.width = 6}
+```{r sentiment-plot, fig.width = 6, fig.height = 4}
 tidy_sotu_words %>% 
   inner_join(bing_lex) %>% # join
   count(year, sentiment) %>% # group by year and sentiment
