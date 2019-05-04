@@ -1,5 +1,5 @@
 ```{r, echo=FALSE, purl=FALSE, message = FALSE}
-knitr::opts_chunk$set(results='hide', comment = "#>", purl = FALSE)
+knitr::opts_chunk$set(warning=FALSE, message=FALSE,comment = "#>", purl = FALSE)
 ```
 
 # Analyzing Texts {#textanalysis}

@@ -5,7 +5,7 @@ library(tidyverse)
 library(tidytext)
 library(readtext)
 
-knitr::opts_chunk$set(results='hide', comment = "#>", purl = FALSE)
+knitr::opts_chunk$set(warning=FALSE, message=FALSE,comment = "#>", purl = FALSE)
 ```
 
 # Preparing Textual Data {#textprep}
