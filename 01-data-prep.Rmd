@@ -8,7 +8,7 @@ library(readtext)
 knitr::opts_chunk$set(results='hide', comment = "#>", purl = FALSE)
 ```
 
-# Analysing Texts {#textanalysis}
+# Preparing Textual Data {#textprep}
 
 
 > Learning Objectives
@@ -42,7 +42,7 @@ head(fp)
 Now that we have the files on disk, and a list of filepaths stored in the `fp` variable, we can use `readtext` to read the texts into a new variable.
 
 ```{r}
-# let's then read in the files with readtext
+# let's read in the files with readtext
 texts <- readtext(fp)
 head(texts)
 ```
@@ -56,10 +56,9 @@ sotu_meta_tib <- as_tibble(sotu_meta) %>%
 head(sotu_meta_tib)
 ```
 
+We can now combine the sotu metadata with the texts. We'll turn both pieces of data into tibbles, then combine.
 
 ```{r}
-# We can now combine the sotu metadata with the texts
-# first, we'll turn both pieces of data into tibbles, then combine
 sotu_texts <- as_tibble(texts)
 sotu_whole <- bind_cols(sotu_meta_tib, sotu_texts)
 glimpse(sotu_whole)
@@ -74,8 +73,7 @@ R has many functions available to manipulate strings including functions like `g
 
 Perhaps one of the most comprehensive packages is `stringi`. However, we will here take a look at the `stringr` package, which is part of the `tidyverse`, wraps a lot of the stringi functions, and is easier to begin with.
 
-Below are a examples for a few functions that might be useful.
-
+Below are examples for a few functions that might be useful.
 
 - How many words in each speech?
 
@@ -83,33 +81,32 @@ Below are a examples for a few functions that might be useful.
 str_count(sotu_whole$text, boundary("word"))
 ```
 
-
 - Measured by the average number of words per sentence for each speech - what is the length of the speech with the shortest/longest sentences? 
 
 ```{r avg-sentence-length}
 range(str_count(sotu_whole$text, boundary("word"))/str_count(sotu_whole$text, boundary("sentence")))
 ```
 
-
 How man times does the word "citizen" appear in the speeches?
+
 ```{r str-count-citizen}
 str_count(sotu_whole$text, "[C|c]itizen")
 ```
 
-What are the names of the documents in of the speeches where the word "citizen" does **not** occur?
+What are the names of the documents where the word "citizen" does **not** occur?
 
 ```{r str-detect}
 sotu_whole$doc_id[!str_detect(sotu_whole$text, "[C|c]itizen")]
 ```
 
-- Get me the first 5 words for each speech
+- Get me the first 5 words for each speech.
 
 ```{r extract-words}
 word(sotu_whole$text, end = 5) %>% 
   unique()
 ```
 
- - Now remove newline character (`\n`) and get rid of the leading white space:
+ - Now remove the newline character (`\n`) and get rid of any leading white space:
 
 ```{r str-replace-newl}
 word(sotu_whole$text, end = 5) %>% 
@@ -133,7 +130,7 @@ tidy_sotu <- sotu_whole %>%
 tidy_sotu
 ```
 
-Before we move on, we should note that the `unnest_tokens` function didn't just tokenize our texts at the word level. It also lowercased each word, and it could do quite a bit more. For instance, we could tokenize the text at the level of ngrams or sentences, if those are the best units of analysis for our work. We could also leave punctuation, which has been removed by default. Depending on what you need to do for analysis, you use do these operations during this step, or write custom functions and do it before you unnest tokens.
+Before we move on, we should note that the `unnest_tokens` function didn't just tokenize our texts at the word level. It also lowercased each word, and it could do quite a bit more. For instance, we could tokenize the text at the level of ngrams or sentences, if those are the best units of analysis for our work. We could also leave punctuation, which has been removed by default. Depending on what you need to do for analysis, you could do these operations during this step, or write custom functions and do it before you unnest tokens.
 
 ```{r}
 # Word tokenization with punctuation
@@ -197,6 +194,4 @@ For lemmatization, you may want to take a look a the [`koRpus`](https://CRAN.R-p
 
 Now that we've read in our text and metadata, reshaped it a bit into the tidytext format, and cleaned it a bit while doing so, let's move on to some basic analysis. 
 
-TODO?: Tag text with cleanNLP maybe?
  
-
