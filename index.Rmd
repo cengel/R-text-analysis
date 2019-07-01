@@ -17,9 +17,9 @@ description: "Workshop materials for Text Analysis in R"
 
 - You should have some **basic knowledge** of R, and be familiar with the topics covered in the [Introduction to R](https://cengel.github.io/R-intro/).
 
-- Have a recent version of [R](https://cran.r-project.org/) and [RStudio](https://www.rstudio.com/) installed. 
+- Have a **recent** version of [R](https://cran.r-project.org/) and [RStudio](https://www.rstudio.com/) installed. 
 
-- Libraries needed:
+- Packages needed:
   - `tidyverse`
   - `tidytext`
   - `readtext`
@@ -30,6 +30,7 @@ description: "Workshop materials for Text Analysis in R"
   - `ggraph`
   - `tm`
 
+It is recommended that you not only intall, but also load the packages, to make sure the respective versions get along with your R version.
 
 ## References  {-}
 
