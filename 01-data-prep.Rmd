@@ -21,7 +21,12 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE,comment = "#>", purl = FALSE)
 
 ------------
 
-We'll use several libraries today. `sotu` will provide the metadata and text of State of the Union speeches ranging from George Washington to Barack Obama. `tidyverse` provides many of the standard "verbs" for working with our data. `tidytext` provides specific functions for a "tidy" approach to working with textual data. `readtext` provides a function well suited to reading textual data from a large number of formats into R.  
+We'll use several R packages in this section: 
+
+- `sotu` will provide the metadata and text of State of the Union speeches ranging from George Washington to Barack Obama. 
+- `tidyverse` is a collection of R packages designed for data science, including `dplyr` with a set of verbs for common data manipulations and `ggplot2` for visualization. 
+- `tidytext` provides specific functions for a "tidy" approach to working with textual data, where one row represents one "token" or meaningful unit of text, for example a word. 
+- `readtext` provides a function well suited to reading textual data from a large number of formats into R, including metadata.  
 
 ```{r load-libs, eval=FALSE}
 library(sotu)
