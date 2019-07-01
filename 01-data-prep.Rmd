@@ -38,38 +38,38 @@ library(readtext)
 
 ## Reading text into R
 
-First, let's look at the data in the `sotu` package. The metadata and texts come separately. We'll use the supplied metadata object, but we're going to use a utility function (`sotu_dir`) in the package to write the texts to disk so that we can practice reading text files from disk. 
+First, let's look at the data in the `sotu` package. The metadata and texts come separately. Below is what the metadata look like. Can you tell how many speeches we have?
 
-```{r}
+```{r sotu-meta}
 # Let's take a quick look at the state of the union metadata
-summary(sotu_meta)
-# sotu_dir writes the text files to a temporary dir, but you could specific where you want them.
-fp <- sotu_dir()
-head(fp)
+str(sotu_meta)
 ```
 
-Now that we have the files on disk, and a list of filepaths stored in the `fp` variable, we can use `readtext` to read the texts into a new variable.
+In order to work with the speech texts and to later practice reading text files from disk we're going to use a function `sotu_dir` to write the texts out. This function by default writes to a temporary directory with one speech in each file. It returns a character vector where each element is the name of the path to the individual speech file. We save this vector into the `file_paths` variable.
 
-```{r}
+```{r file-paths}
+# sotu_dir writes the text files to disk in a temporary dir, 
+# but you could specific where you want them.
+file_paths <- sotu_dir()
+head(file_paths)
+```
+
+Now that we have the files on disk and a vector of filepaths, we can pass this vector directly into `readtext` to read the texts into a new variable.
+
+```{r readtext}
 # let's read in the files with readtext
-texts <- readtext(fp)
-head(texts)
+sotu_texts <- readtext(file_paths)
+head(sotu_texts)
 ```
 
-So that we can work with a single tabular dataset with a tidy approach, we'll convert the metadata and text tables to tibbles, and combine them into a single tibble. You can see that our texts are organized by alphabetical order, so first we'll need to sort our metadata to match. 
+To work with a single tabular dataset, we combine the text and metadata into a single tibble. You can see that our `sotu_texts` are organized by alphabetical order, so first we'll need to sort our metadata to match. 
 
-```{r}
-sotu_meta_tib <- as_tibble(sotu_meta) %>%
-  arrange(president)
+```{r text-meta-combine}
+sotu_whole <- 
+  sotu_meta %>%  
+  arrange(president) %>% # sort metadata
+  bind_cols(sotu_texts) # combine with texts
 
-head(sotu_meta_tib)
-```
-
-We can now combine the sotu metadata with the texts. We'll turn both pieces of data into tibbles, then combine.
-
-```{r}
-sotu_texts <- as_tibble(texts)
-sotu_whole <- bind_cols(sotu_meta_tib, sotu_texts)
 glimpse(sotu_whole)
 ```
 
