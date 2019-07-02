@@ -73,55 +73,91 @@ sotu_whole <-
 glimpse(sotu_whole)
 ```
 
-Now that we have our data, we need to think about cleaning it. Depending on the quality of your data, you might need to explicitly replace certain characters or words, remove urls or types of numbers, such as phone numbers, or otherwise clean up misspellings or errors. There are several ways to handle this sort of cleaning, but we'll look at some straightforward string manipulation and replacement. 
+Now that we have our data, we need to think about cleaning it. Depending on the quality of your data, you might need to explicitly replace certain characters or words, remove urls or types of numbers, such as phone numbers, or otherwise clean up misspellings or errors. There are several ways to handle this sort of cleaning, we'll show a few examples for string manipulation and replacement. 
 
 
 ## String operations
 
 R has many functions available to manipulate strings including functions like `grep` and `paste`, which come with the R base install. 
 
-Perhaps one of the most comprehensive packages is `stringi`. However, we will here take a look at the `stringr` package, which is part of the `tidyverse`, wraps a lot of the stringi functions, and is easier to begin with.
+Here we will here take a look at the `stringr` package, which is part of the `tidyverse`. Under the hood it wraps a lot of the functions from the `stringi` package which is perhaps one of the most comprehensive string manipulation packages.
 
 Below are examples for a few functions that might be useful.
 
-- How many words in each speech?
+`str_count` takes a characer vector as input and by default counts the number of pattern matches in a string. 
 
-```{r str-word-count}
-str_count(sotu_whole$text, boundary("word"))
-```
-
-- Measured by the average number of words per sentence for each speech - what is the length of the speech with the shortest/longest sentences? 
-
-```{r avg-sentence-length}
-range(str_count(sotu_whole$text, boundary("word"))/str_count(sotu_whole$text, boundary("sentence")))
-```
-
-How man times does the word "citizen" appear in the speeches?
+How man times does the word "citizen" appear in each of the speeches?
 
 ```{r str-count-citizen}
-str_count(sotu_whole$text, "[C|c]itizen")
+sotu_whole %>% 
+  pull(text) %>% # extract texts vector
+  str_count("citizen")
 ```
 
-What are the names of the documents where the word "citizen" does **not** occur?
+It is possible to use regular expressions, for example, this is how we would check how many times either "citizen" or "Citizen" appear in each of the speeches:
+
+```{r str-count-citizen-regex}
+sotu_whole %>% 
+  pull(text) %>% # extract texts vector
+  str_count("[C|c]itizen")
+```
+
+When used with the `boundary` argument `str_count` can count different entities like "character", "line_break", "sentence", or "word". Here we add a new column to the dataframe indicating how many words are there in each speech:
+
+```{r str-word-count}
+sotu_whole %>% 
+  mutate(n_words = str_count(text, boundary("word"))) 
+```
+
+>>> CHALLENGE: Use the code above and add another column `n_sentences` where you calculate the number of sentences per speech. Then create a third column `avg_word_per_sentence`, where you calculate the number of words per sentence for each speech. Finally use `filter` to find which speech has shortest/longest average sentences length and what is the avderage length.
+
+```{r avg-sentence-length, eval=FALSE, echo=FALSE}
+sotu_whole %>% 
+  mutate(n_words = str_count(text, boundary("word")),
+         n_sentences = str_count(text, boundary("sentence")),
+         avg_word_per_sentence = n_words/n_sentences) %>% 
+  filter(avg_word_per_sentence %in% range(avg_word_per_sentence))
+```
+
+
+`str_detect` also looks for patterns, but instead of counts it returns a logical vector (TRUE/FALSE) indiciating if the pattern is or is not found. So we typically want to use it with the `filter` "verb" from `dplyr`.
+
+What are the names of the documents where the words "citizen" and "Citizen" do **not** occur?
 
 ```{r str-detect}
-sotu_whole$doc_id[!str_detect(sotu_whole$text, "[C|c]itizen")]
+sotu_whole %>% 
+  filter(!str_detect(text, "[C|c]itizen")) %>% 
+  select(doc_id) 
 ```
 
-- Get me the first 5 words for each speech.
+The `word` function extracts specific words from a character vector of words. By default it returns the first word. If for example we wanted to extract the first 5 words of each speech by Woodrow Wilson we provide the `end` argument like this:
 
 ```{r extract-words}
-word(sotu_whole$text, end = 5) %>% 
-  unique()
+sotu_whole %>% 
+  filter(president == "Woodrow Wilson") %>%  # sample a few speeches as demo
+  pull(text) %>% # extract character vector
+  word(end = 5) # end = 5 to extract words 1 - 5.
 ```
 
- - Now remove the newline character (`\n`) and get rid of any leading white space:
+To clean this up a little we will first remove the newline characters (`\n`). We use  the `str_replace_all` function to replace all the ocurrences of the `\n` pattern with a white space `" "`. We need to add the escape character `\` in front of our pattern to be replaced so the backslash before the `n` is interpreted correctly.
 
-```{r str-replace-newl}
-word(sotu_whole$text, end = 5) %>% 
-  unique() %>% 
+```{r str-remove-newl}
+sotu_whole %>% 
+  filter(president == "Woodrow Wilson") %>%  
+  pull(text) %>%
+  str_replace_all("\\n", " ") %>% # replace newline
+  word(end = 5) 
+```
+
+This looks better, but we still have a problem to extract exactly 5 words because of the whitespaces. So let's get rid of any whitespaces before and also of repeated whitespaces within the string with the convenient `str_squish` function.
+
+```{r str-remove-spaces}
+sotu_whole %>% 
+  filter(president == "Woodrow Wilson") %>%  
+  pull(text) %>%
   str_replace_all("\\n", " ") %>% 
-  str_trim()
+  str_squish() %>%  # remove whitespaces
+  word(end = 5) 
 ```
 
 
