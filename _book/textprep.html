@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 1 Preparing Textual Data | Text Analysis with R</title>
-  <meta name="description" content="Workshop materials for Text Analysis in R">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <meta name="description" content="Workshop materials for Text Analysis in R" />
+  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 1 Preparing Textual Data | Text Analysis with R" />
   <meta property="og:type" content="book" />
@@ -22,13 +21,13 @@
   <meta name="twitter:description" content="Workshop materials for Text Analysis in R" />
   
 
-<meta name="author" content="Claudia Engel, Scott Bailey">
+<meta name="author" content="Claudia Engel, Scott Bailey" />
 
 
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
 <link rel="prev" href="index.html">
@@ -180,45 +179,45 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 </blockquote>
 <hr />
-<p>We’ll use several libraries today. <code>sotu</code> will provide the metadata and text of State of the Union speeches ranging from George Washington to Barack Obama. <code>tidyverse</code> provides many of the standard “verbs” for working with our data. <code>tidytext</code> provides specific functions for a “tidy” approach to working with textual data. <code>readtext</code> provides a function well suited to reading textual data from a large number of formats into R.</p>
+<p>We’ll use several R packages in this section:</p>
+<ul>
+<li><code>sotu</code> will provide the metadata and text of State of the Union speeches ranging from George Washington to Barack Obama.</li>
+<li><code>tidyverse</code> is a collection of R packages designed for data science, including <code>dplyr</code> with a set of verbs for common data manipulations and <code>ggplot2</code> for visualization.</li>
+<li><code>tidytext</code> provides specific functions for a “tidy” approach to working with textual data, where one row represents one “token” or meaningful unit of text, for example a word.</li>
+<li><code>readtext</code> provides a function well suited to reading textual data from a large number of formats into R, including metadata.</li>
+</ul>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(sotu)
 <span class="kw">library</span>(tidyverse)
 <span class="kw">library</span>(tidytext)
 <span class="kw">library</span>(readtext)</code></pre>
 <div id="reading-text-into-r" class="section level2">
 <h2><span class="header-section-number">1.1</span> Reading text into R</h2>
-<p>First, let’s look at the data in the <code>sotu</code> package. The metadata and texts come separately. We’ll use the supplied metadata object, but we’re going to use a utility function (<code>sotu_dir</code>) in the package to write the texts to disk so that we can practice reading text files from disk.</p>
+<p>First, let’s look at the data in the <code>sotu</code> package. The metadata and texts come separately. Below is what the metadata look like. Can you tell how many speeches we have?</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Let&#39;s take a quick look at the state of the union metadata</span>
-<span class="kw">summary</span>(sotu_meta)</code></pre>
-<pre><code>#&gt;   president              year      years_active          party          
-#&gt;  Length:236         Min.   :1790   Length:236         Length:236        
-#&gt;  Class :character   1st Qu.:1848   Class :character   Class :character  
-#&gt;  Mode  :character   Median :1906   Mode  :character   Mode  :character  
-#&gt;                     Mean   :1905                                        
-#&gt;                     3rd Qu.:1962                                        
-#&gt;                     Max.   :2016                                        
-#&gt;   sotu_type        
-#&gt;  Length:236        
-#&gt;  Class :character  
-#&gt;  Mode  :character  
-#&gt;                    
-#&gt;                    
-#&gt; </code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># sotu_dir writes the text files to a temporary dir, but you could specific where you want them.</span>
-fp &lt;-<span class="st"> </span><span class="kw">sotu_dir</span>()
-<span class="kw">head</span>(fp)</code></pre>
-<pre><code>#&gt; [1] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmp3Sozde/file11f05ea69b9/george-washington-1790a.txt&quot;
-#&gt; [2] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmp3Sozde/file11f05ea69b9/george-washington-1790b.txt&quot;
-#&gt; [3] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmp3Sozde/file11f05ea69b9/george-washington-1791.txt&quot; 
-#&gt; [4] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmp3Sozde/file11f05ea69b9/george-washington-1792.txt&quot; 
-#&gt; [5] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmp3Sozde/file11f05ea69b9/george-washington-1793.txt&quot; 
-#&gt; [6] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmp3Sozde/file11f05ea69b9/george-washington-1794.txt&quot;</code></pre>
-<p>Now that we have the files on disk, and a list of filepaths stored in the <code>fp</code> variable, we can use <code>readtext</code> to read the texts into a new variable.</p>
+<span class="kw">str</span>(sotu_meta)</code></pre>
+<pre><code>#&gt; Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    236 obs. of  5 variables:
+#&gt;  $ president   : chr  &quot;George Washington&quot; &quot;George Washington&quot; &quot;George Washington&quot; &quot;George Washington&quot; ...
+#&gt;  $ year        : int  1790 1790 1791 1792 1793 1794 1795 1796 1797 1798 ...
+#&gt;  $ years_active: chr  &quot;1789-1793&quot; &quot;1789-1793&quot; &quot;1789-1793&quot; &quot;1789-1793&quot; ...
+#&gt;  $ party       : chr  &quot;Nonpartisan&quot; &quot;Nonpartisan&quot; &quot;Nonpartisan&quot; &quot;Nonpartisan&quot; ...
+#&gt;  $ sotu_type   : chr  &quot;speech&quot; &quot;speech&quot; &quot;speech&quot; &quot;speech&quot; ...</code></pre>
+<p>In order to work with the speech texts and to later practice reading text files from disk we’re going to use a function <code>sotu_dir</code> to write the texts out. This function by default writes to a temporary directory with one speech in each file. It returns a character vector where each element is the name of the path to the individual speech file. We save this vector into the <code>file_paths</code> variable.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># sotu_dir writes the text files to disk in a temporary dir, </span>
+<span class="co"># but you could specific where you want them.</span>
+file_paths &lt;-<span class="st"> </span><span class="kw">sotu_dir</span>()
+<span class="kw">head</span>(file_paths)</code></pre>
+<pre><code>#&gt; [1] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file3047619a1dec/george-washington-1790a.txt&quot;
+#&gt; [2] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file3047619a1dec/george-washington-1790b.txt&quot;
+#&gt; [3] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file3047619a1dec/george-washington-1791.txt&quot; 
+#&gt; [4] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file3047619a1dec/george-washington-1792.txt&quot; 
+#&gt; [5] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file3047619a1dec/george-washington-1793.txt&quot; 
+#&gt; [6] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file3047619a1dec/george-washington-1794.txt&quot;</code></pre>
+<p>Now that we have the files on disk and a vector of filepaths, we can pass this vector directly into <code>readtext</code> to read the texts into a new variable.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># let&#39;s read in the files with readtext</span>
-texts &lt;-<span class="st"> </span><span class="kw">readtext</span>(fp)
-<span class="kw">head</span>(texts)</code></pre>
+sotu_texts &lt;-<span class="st"> </span><span class="kw">readtext</span>(file_paths)
+<span class="kw">head</span>(sotu_texts)</code></pre>
 <pre><code>#&gt; readtext object consisting of 6 documents and 0 docvars.
-#&gt; # Description: data.frame [6 × 2]
+#&gt; # Description: df[,2] [6 × 2]
 #&gt;   doc_id                   text                 
 #&gt; * &lt;chr&gt;                    &lt;chr&gt;                
 #&gt; 1 abraham-lincoln-1861.txt &quot;\&quot;\n\n Fellow-\&quot;...&quot;
@@ -227,23 +226,12 @@ texts &lt;-<span class="st"> </span><span class="kw">readtext</span>(fp)
 #&gt; 4 abraham-lincoln-1864.txt &quot;\&quot;\n\n Fellow-\&quot;...&quot;
 #&gt; 5 andrew-jackson-1829.txt  &quot;\&quot;\n\n Fellow \&quot;...&quot;
 #&gt; 6 andrew-jackson-1830.txt  &quot;\&quot;\n\n Fellow \&quot;...&quot;</code></pre>
-<p>So that we can work with a single tabular dataset with a tidy approach, we’ll convert the metadata and text tables to tibbles, and combine them into a single tibble. You can see that our texts are organized by alphabetical order, so first we’ll need to sort our metadata to match.</p>
-<pre class="sourceCode r"><code class="sourceCode r">sotu_meta_tib &lt;-<span class="st"> </span><span class="kw">as_tibble</span>(sotu_meta) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">arrange</span>(president)
+<p>To work with a single tabular dataset, we combine the text and metadata into a single tibble. You can see that our <code>sotu_texts</code> are organized by alphabetical order, so first we’ll need to sort our metadata to match.</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_whole &lt;-<span class="st"> </span>
+<span class="st">  </span>sotu_meta <span class="op">%&gt;%</span><span class="st">  </span>
+<span class="st">  </span><span class="kw">arrange</span>(president) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># sort metadata</span>
+<span class="st">  </span><span class="kw">bind_cols</span>(sotu_texts) <span class="co"># combine with texts</span>
 
-<span class="kw">head</span>(sotu_meta_tib)</code></pre>
-<pre><code>#&gt; # A tibble: 6 x 5
-#&gt;   president        year years_active party      sotu_type
-#&gt;   &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;    
-#&gt; 1 Abraham Lincoln  1861 1861-1865    Republican written  
-#&gt; 2 Abraham Lincoln  1862 1861-1865    Republican written  
-#&gt; 3 Abraham Lincoln  1863 1861-1865    Republican written  
-#&gt; 4 Abraham Lincoln  1864 1861-1865    Republican written  
-#&gt; 5 Andrew Jackson   1829 1829-1833    Democratic written  
-#&gt; 6 Andrew Jackson   1830 1829-1833    Democratic written</code></pre>
-<p>We can now combine the sotu metadata with the texts. We’ll turn both pieces of data into tibbles, then combine.</p>
-<pre class="sourceCode r"><code class="sourceCode r">sotu_texts &lt;-<span class="st"> </span><span class="kw">as_tibble</span>(texts)
-sotu_whole &lt;-<span class="st"> </span><span class="kw">bind_cols</span>(sotu_meta_tib, sotu_texts)
 <span class="kw">glimpse</span>(sotu_whole)</code></pre>
 <pre><code>#&gt; Observations: 236
 #&gt; Variables: 7
@@ -254,46 +242,33 @@ sotu_whole &lt;-<span class="st"> </span><span class="kw">bind_cols</span>(sotu_
 #&gt; $ sotu_type    &lt;chr&gt; &quot;written&quot;, &quot;written&quot;, &quot;written&quot;, &quot;written&quot;, &quot;writte…
 #&gt; $ doc_id       &lt;chr&gt; &quot;abraham-lincoln-1861.txt&quot;, &quot;abraham-lincoln-1862.t…
 #&gt; $ text         &lt;chr&gt; &quot;\n\n Fellow-Citizens of the Senate and House of Re…</code></pre>
-<p>Now that we have our data, we need to think about cleaning it. Depending on the quality of your data, you might need to explicitly replace certain characters or words, remove urls or types of numbers, such as phone numbers, or otherwise clean up misspellings or errors. There are several ways to handle this sort of cleaning, but we’ll look at some straightforward string manipulation and replacement.</p>
+<p>Now that we have our data, we need to think about cleaning it. Depending on the quality of your data, you might need to explicitly replace certain characters or words, remove urls or types of numbers, such as phone numbers, or otherwise clean up misspellings or errors. There are several ways to handle this sort of cleaning, we’ll show a few examples for string manipulation and replacement.</p>
 </div>
 <div id="string-operations" class="section level2">
 <h2><span class="header-section-number">1.2</span> String operations</h2>
 <p>R has many functions available to manipulate strings including functions like <code>grep</code> and <code>paste</code>, which come with the R base install.</p>
-<p>Perhaps one of the most comprehensive packages is <code>stringi</code>. However, we will here take a look at the <code>stringr</code> package, which is part of the <code>tidyverse</code>, wraps a lot of the stringi functions, and is easier to begin with.</p>
+<p>Here we will here take a look at the <code>stringr</code> package, which is part of the <code>tidyverse</code>. Under the hood it wraps a lot of the functions from the <code>stringi</code> package which is perhaps one of the most comprehensive string manipulation packages.</p>
 <p>Below are examples for a few functions that might be useful.</p>
-<ul>
-<li>How many words in each speech?</li>
-</ul>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str_count</span>(sotu_whole<span class="op">$</span>text, <span class="kw">boundary</span>(<span class="st">&quot;word&quot;</span>))</code></pre>
-<pre><code>#&gt;   [1]  6998  8410  6132  5975 10547 15109  7198  7887  7912 13472 10839
-#&gt;  [12] 12386  9258  7155 12032  9886  6092  7263  6909  7058  6851  7064
-#&gt;  [23]  6797  6078 13038 11559 16357 13718  6715  6978 10871 10333  8800
-#&gt;  [34]  8083 13382 10315  8414  8956  6997  6027  7295  1090  8339  4166
-#&gt;  [45]  4954  4995  5693  6260  2233  3536  3835  2743  4716  3785  3218
-#&gt;  [56]  3332  3523  4618  3842  3162  8202  9613 10152 11626 10512  4824
-#&gt;  [67]  3788  3964  5117  4380  3838  5390  5197  5071  5326  5571  5726
-#&gt;  [78]  1091  1404  2305  2100  1969  2922  1988  2879  4153  4999  4747
-#&gt;  [89] 19828 15196  5305 13275 12360 15972 14710 15568 27941  6090  5130
-#&gt; [100]  3418  5154  4000  5387  9737 11051  4560  5705  4232 13685 16396
-#&gt; [111] 12378 14085 16147 18251 16446 21366  1832  2448  2273  3248  3259
-#&gt; [122]  2115  3145  3367  4423  4378  4709  3447  5831  4733  6383  8416
-#&gt; [133]  4580 12155  3273 21588  3475 33537 33921  2062  2220  1507  1374
-#&gt; [144]  5300  6637  5429  9027  7745  6996  7329  8254  8436  8047  9331
-#&gt; [155]  3233  4453  5582  7221  4941  4137 11471 11520 13463  9007  8340
-#&gt; [166] 13273  9951  4482  4532  3997 17383  5199 22419  4469  5182  5582
-#&gt; [177]  4967  4235  3493  3814  4851 10755  7909 11670 13405 19708  9825
-#&gt; [188] 15017 17517 25147 23680 27519 19515  3228  2203  2270  2100  2930
-#&gt; [199]  2862  2387  2676  7720  8772  6480 10131 10058  9844 12238  6816
-#&gt; [210]  5621  5774 13947 27696 23838 25275  7029  7423  9203  6357  6780
-#&gt; [221]  7317  7513  9119 12157 20301 22907 19228  3566  4550  7735  2125
-#&gt; [232]  3931  5482  4765  2714  7637</code></pre>
-<ul>
-<li>Measured by the average number of words per sentence for each speech - what is the length of the speech with the shortest/longest sentences?</li>
-</ul>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">range</span>(<span class="kw">str_count</span>(sotu_whole<span class="op">$</span>text, <span class="kw">boundary</span>(<span class="st">&quot;word&quot;</span>))<span class="op">/</span><span class="kw">str_count</span>(sotu_whole<span class="op">$</span>text, <span class="kw">boundary</span>(<span class="st">&quot;sentence&quot;</span>)))</code></pre>
-<pre><code>#&gt; [1]  9.143737 37.219008</code></pre>
-<p>How man times does the word “citizen” appear in the speeches?</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str_count</span>(sotu_whole<span class="op">$</span>text, <span class="st">&quot;[C|c]itizen&quot;</span>)</code></pre>
+<p><code>str_count</code> takes a characer vector as input and by default counts the number of pattern matches in a string.</p>
+<p>How man times does the word “citizen” appear in each of the speeches?</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_whole <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">pull</span>(text) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># extract texts vector</span>
+<span class="st">  </span><span class="kw">str_count</span>(<span class="st">&quot;citizen&quot;</span>)</code></pre>
+<pre><code>#&gt;   [1]  9  7 15  3 19 14 23 19 14 25 10  9 11 10 11 12  3  6  3  6  7  3  2
+#&gt;  [24]  8 14 13 17 15 13  3  5  6  9  7 14  9 20 17 14 17 23  1  8  6  0  6
+#&gt;  [47]  4  3  3  1  2  2  6  1  3  2  1  1  6  2  3 12 17 17 29  2  3  4  1
+#&gt;  [70]  5  9  9  6  7  9 11 10  2  4  2  6  4 10  3  5  0  8  6 43 42  5 37
+#&gt;  [93] 19 16 21 16  7  5 10  6  8  4  2 11  9  3  4  1 13 41 30 35 29 42 34
+#&gt; [116] 15  3  3  4  4  4  2  3  5  7  8  6  3  6  1  7  9  4  9  3 15  4 24
+#&gt; [139] 25  8  2  3  1  2  7  6 10  6 11  8 13 13 11  9  5  3  2  6  2  2 14
+#&gt; [162] 27 17 13 13 16 14  0  0  0  8  2 10  2  4  3  4  5  2  3  0 15 17 27
+#&gt; [185] 20 13  1 19 27 31 28 18 10 10  6  7  3  9  6  5  8 15 16 17 22 20 28
+#&gt; [208] 29 22  4  5  9 10 10 27  1  2 21 12 10  9  3  8 20 12 26 13  4  2  8
+#&gt; [231]  0  0  0  0  0 11</code></pre>
+<p>It is possible to use regular expressions, for example, this is how we would check how many times either “citizen” or “Citizen” appear in each of the speeches:</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_whole <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">pull</span>(text) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># extract texts vector</span>
+<span class="st">  </span><span class="kw">str_count</span>(<span class="st">&quot;[C|c]itizen&quot;</span>)</code></pre>
 <pre><code>#&gt;   [1] 10  8 16  4 20 15 24 20 15 26 11 10 12 11 12 13  3  6  3  6  7  6  2
 #&gt;  [24]  8 14 13 17 15 13  3  5  6  9  7 14  9 20 17 14 17 23  2  8  6  0  6
 #&gt;  [47]  4  3  3  1  2  2  6  1  3  2  1  1  6  2  3 13 18 18 30  2  3  4  1
@@ -305,159 +280,95 @@ sotu_whole &lt;-<span class="st"> </span><span class="kw">bind_cols</span>(sotu_
 #&gt; [185] 21 13  1 19 27 31 28 18 10 11  6  7  3  9  6  5  8 15 16 17 22 20 28
 #&gt; [208] 29 22  4  5  9 10 10 27  1  2 22 12 11  9  3  8 20 12 26 13  4  2  8
 #&gt; [231]  0  0  0  0  0 12</code></pre>
-<p>What are the names of the documents where the word “citizen” does <strong>not</strong> occur?</p>
-<pre class="sourceCode r"><code class="sourceCode r">sotu_whole<span class="op">$</span>doc_id[<span class="op">!</span><span class="kw">str_detect</span>(sotu_whole<span class="op">$</span>text, <span class="st">&quot;[C|c]itizen&quot;</span>)]</code></pre>
-<pre><code>#&gt;  [1] &quot;dwight-d-eisenhower-1958.txt&quot; &quot;gerald-r-ford-1975.txt&quot;      
-#&gt;  [3] &quot;richard-m-nixon-1970.txt&quot;     &quot;richard-m-nixon-1971.txt&quot;    
-#&gt;  [5] &quot;richard-m-nixon-1972a.txt&quot;    &quot;ronald-reagan-1988.txt&quot;      
-#&gt;  [7] &quot;woodrow-wilson-1916.txt&quot;      &quot;woodrow-wilson-1917.txt&quot;     
-#&gt;  [9] &quot;woodrow-wilson-1918.txt&quot;      &quot;woodrow-wilson-1919.txt&quot;     
-#&gt; [11] &quot;woodrow-wilson-1920.txt&quot;</code></pre>
-<ul>
-<li>Get me the first 5 words for each speech.</li>
-</ul>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">word</span>(sotu_whole<span class="op">$</span>text, <span class="dt">end =</span> <span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">unique</span>()</code></pre>
-<pre><code>#&gt;  [1] &quot;\n\n Fellow-Citizens of the Senate&quot;            
-#&gt;  [2] &quot;\n\n Fellow Citizens of the&quot;                   
-#&gt;  [3] &quot;Madam Speaker, Mr. Vice President,&quot;            
-#&gt;  [4] &quot;Madam Speaker, Vice President Biden,&quot;          
-#&gt;  [5] &quot;Mr. Speaker, Mr. Vice President,&quot;              
-#&gt;  [6] &quot;Please, everybody, have a seat.&quot;               
-#&gt;  [7] &quot;The President. Mr. Speaker, Mr.&quot;               
-#&gt;  [8] &quot;Thank you. Mr. Speaker, Mr.&quot;                   
-#&gt;  [9] &quot;\n\n To the Senate and&quot;                        
-#&gt; [10] &quot;\n\nSince the close of the&quot;                    
-#&gt; [11] &quot;\n\nTo the Congress of the&quot;                    
-#&gt; [12] &quot;Members of the Congress: \n\nIn&quot;               
-#&gt; [13] &quot;\n\nMembers of the Congress: \n\nIn&quot;           
-#&gt; [14] &quot;\n\n Members of the Congress:&quot;                 
-#&gt; [15] &quot;\n\n To the Congress of&quot;                       
-#&gt; [16] &quot;Mr. President, Mr. Speaker, Members&quot;           
-#&gt; [17] &quot;\n\n[Recorded on film and tape&quot;                
-#&gt; [18] &quot;\n\n[Read before a joint session&quot;              
-#&gt; [19] &quot;To the Congress of the&quot;                        
-#&gt; [20] &quot;\n\n[Delivered in person before a&quot;             
-#&gt; [21] &quot;Mr. President, Mr. Speaker, Senators&quot;          
-#&gt; [22] &quot;Mr. Vice President, Mr. Speaker,&quot;              
-#&gt; [23] &quot;IN FULFILLING my duty to&quot;                      
-#&gt; [24] &quot;To the Congress: \n\nThis Nation&quot;              
-#&gt; [25] &quot;\n\nToday, in pursuance of my&quot;                 
-#&gt; [26] &quot;\n\nTo the Congress:\n\nIn considering the&quot;    
-#&gt; [27] &quot;\n\nMr. Speaker, Mr. President, and&quot;           
-#&gt; [28] &quot;\n\nMr. President, Mr. Speaker, Members&quot;       
-#&gt; [29] &quot;\n\nMr. President and Mr. Speaker&quot;             
-#&gt; [30] &quot;\n\nMr. Speaker and Mr. President,&quot;            
-#&gt; [31] &quot;Thank you very much. Mr.&quot;                      
-#&gt; [32] &quot;Mr. Speaker, Vice President Cheney,&quot;           
-#&gt; [33] &quot;Thank you all. Mr. Speaker,&quot;                   
-#&gt; [34] &quot;Thank you very much. And&quot;                      
-#&gt; [35] &quot;Thank you all. Madam Speaker,&quot;                 
-#&gt; [36] &quot;Fellow-Citizens of the Senate and&quot;             
-#&gt; [37] &quot;\n\nFellow-Citizens of the Senate and&quot;         
-#&gt; [38] &quot;\n\nMr. Speaker, Mr. Vice President,&quot;          
-#&gt; [39] &quot;[Released January 21, 1946. Dated&quot;             
-#&gt; [40] &quot;Mr. President, Mr. Speaker, and&quot;               
-#&gt; [41] &quot;To the Senate and House&quot;                       
-#&gt; [42] &quot;\n\nTo the Senate and House&quot;                   
-#&gt; [43] &quot;\n\n Gentlemen of the Senate&quot;                  
-#&gt; [44] &quot;\n\n[ As delivered in person&quot;                  
-#&gt; [45] &quot;\n\n[As delivered in person before&quot;            
-#&gt; [46] &quot;Mr. Speaker, Mr. President, Members&quot;           
-#&gt; [47] &quot;\n\n[ Delivered in person before&quot;              
-#&gt; [48] &quot;\n\nMr. Speaker, Mr. President, my&quot;            
-#&gt; [49] &quot;Mr. Speaker, Mr. President, my&quot;                
-#&gt; [50] &quot;Mr. Speaker, Mr. President, distinguished&quot;     
-#&gt; [51] &quot;Mr. Speaker, Mr. President, and&quot;               
-#&gt; [52] &quot;\n\n To The Senate and&quot;                        
-#&gt; [53] &quot;\n\n The Senate and House&quot;                     
-#&gt; [54] &quot;\n\nMR. SPEAKER AND MEMBERS OF&quot;                
-#&gt; [55] &quot;\n\nMEMBERS OF THE CONGRESS: \n\nSo&quot;           
-#&gt; [56] &quot;\n\nThe relations of the United&quot;               
-#&gt; [57] &quot;\n\n Jump to Part II&quot;                          
-#&gt; [58] &quot;\n\nGentlemen of the Congress:\n\nIn pursuance&quot;
-#&gt; [59] &quot;\n\nGENTLEMEN OF THE CONGRESS: \n\nThe&quot;        
-#&gt; [60] &quot;GENTLEMEN OF THE CONGRESS: \n\nSince&quot;          
-#&gt; [61] &quot;\n\nGENTLEMEN OF THE CONGRESS: \n\nIn&quot;         
-#&gt; [62] &quot;Gentlemen of the Congress:\n\nEight months&quot;    
-#&gt; [63] &quot;\n\nTO THE SENATE AND HOUSE&quot;                   
-#&gt; [64] &quot;\n\nGENTLEMEN OF THE CONGRESS:\n\nWhen I&quot;</code></pre>
-<ul>
-<li>Now remove the newline character (<code>\n</code>) and get rid of any leading white space:</li>
-</ul>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">word</span>(sotu_whole<span class="op">$</span>text, <span class="dt">end =</span> <span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">unique</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<p>When used with the <code>boundary</code> argument <code>str_count</code> can count different entities like “character”, “line_break”, “sentence”, or “word”. Here we add a new column to the dataframe indicating how many words are there in each speech:</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_whole <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">n_words =</span> <span class="kw">str_count</span>(text, <span class="kw">boundary</span>(<span class="st">&quot;word&quot;</span>))) </code></pre>
+<pre><code>#&gt; # A tibble: 236 x 8
+#&gt;    president   year years_active party  sotu_type doc_id  text      n_words
+#&gt;    &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;       &lt;int&gt;
+#&gt;  1 Abraham L…  1861 1861-1865    Repub… written   abraha… &quot;\n\n Fe…    6998
+#&gt;  2 Abraham L…  1862 1861-1865    Repub… written   abraha… &quot;\n\n Fe…    8410
+#&gt;  3 Abraham L…  1863 1861-1865    Repub… written   abraha… &quot;\n\n Fe…    6132
+#&gt;  4 Abraham L…  1864 1861-1865    Repub… written   abraha… &quot;\n\n Fe…    5975
+#&gt;  5 Andrew Ja…  1829 1829-1833    Democ… written   andrew… &quot;\n\n Fe…   10547
+#&gt;  6 Andrew Ja…  1830 1829-1833    Democ… written   andrew… &quot;\n\n Fe…   15109
+#&gt;  7 Andrew Ja…  1831 1829-1833    Democ… written   andrew… &quot;\n\n Fe…    7198
+#&gt;  8 Andrew Ja…  1832 1829-1833    Democ… written   andrew… &quot;\n\n Fe…    7887
+#&gt;  9 Andrew Ja…  1833 1833-1837    Democ… written   andrew… &quot;\n\n Fe…    7912
+#&gt; 10 Andrew Ja…  1834 1833-1837    Democ… written   andrew… &quot;\n\n Fe…   13472
+#&gt; # … with 226 more rows</code></pre>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>CHALLENGE: Use the code above and add another column <code>n_sentences</code> where you calculate the number of sentences per speech. Then create a third column <code>avg_word_per_sentence</code>, where you calculate the number of words per sentence for each speech. Finally use <code>filter</code> to find which speech has shortest/longest average sentences length and what is the avderage length.</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><code>str_detect</code> also looks for patterns, but instead of counts it returns a logical vector (TRUE/FALSE) indiciating if the pattern is or is not found. So we typically want to use it with the <code>filter</code> “verb” from <code>dplyr</code>.</p>
+<p>What are the names of the documents where the words “citizen” and “Citizen” do <strong>not</strong> occur?</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_whole <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">str_detect</span>(text, <span class="st">&quot;[C|c]itizen&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select</span>(doc_id) </code></pre>
+<pre><code>#&gt; # A tibble: 11 x 1
+#&gt;    doc_id                      
+#&gt;    &lt;chr&gt;                       
+#&gt;  1 dwight-d-eisenhower-1958.txt
+#&gt;  2 gerald-r-ford-1975.txt      
+#&gt;  3 richard-m-nixon-1970.txt    
+#&gt;  4 richard-m-nixon-1971.txt    
+#&gt;  5 richard-m-nixon-1972a.txt   
+#&gt;  6 ronald-reagan-1988.txt      
+#&gt;  7 woodrow-wilson-1916.txt     
+#&gt;  8 woodrow-wilson-1917.txt     
+#&gt;  9 woodrow-wilson-1918.txt     
+#&gt; 10 woodrow-wilson-1919.txt     
+#&gt; 11 woodrow-wilson-1920.txt</code></pre>
+<p>The <code>word</code> function extracts specific words from a character vector of words. By default it returns the first word. If for example we wanted to extract the first 5 words of each speech by Woodrow Wilson we provide the <code>end</code> argument like this:</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_whole <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(president <span class="op">==</span><span class="st"> &quot;Woodrow Wilson&quot;</span>) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># sample a few speeches as demo</span>
+<span class="st">  </span><span class="kw">pull</span>(text) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># extract character vector</span>
+<span class="st">  </span><span class="kw">word</span>(<span class="dt">end =</span> <span class="dv">5</span>) <span class="co"># end = 5 to extract words 1 - 5.</span></code></pre>
+<pre><code>#&gt; [1] &quot;\n\nGentlemen of the Congress:\n\nIn pursuance&quot;
+#&gt; [2] &quot;\n\nGENTLEMEN OF THE CONGRESS: \n\nThe&quot;        
+#&gt; [3] &quot;GENTLEMEN OF THE CONGRESS: \n\nSince&quot;          
+#&gt; [4] &quot;\n\nGENTLEMEN OF THE CONGRESS: \n\nIn&quot;         
+#&gt; [5] &quot;Gentlemen of the Congress:\n\nEight months&quot;    
+#&gt; [6] &quot;\n\nGENTLEMEN OF THE CONGRESS: \n\nThe&quot;        
+#&gt; [7] &quot;\n\nTO THE SENATE AND HOUSE&quot;                   
+#&gt; [8] &quot;\n\nGENTLEMEN OF THE CONGRESS:\n\nWhen I&quot;</code></pre>
+<p>To clean this up a little we will first remove the newline characters (<code>\n</code>). We use the <code>str_replace_all</code> function to replace all the ocurrences of the <code>\n</code> pattern with a white space <code>" "</code>. We need to add the escape character <code>\</code> in front of our pattern to be replaced so the backslash before the <code>n</code> is interpreted correctly.</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_whole <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(president <span class="op">==</span><span class="st"> &quot;Woodrow Wilson&quot;</span>) <span class="op">%&gt;%</span><span class="st">  </span>
+<span class="st">  </span><span class="kw">pull</span>(text) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">str_replace_all</span>(<span class="st">&quot;</span><span class="ch">\\</span><span class="st">n&quot;</span>, <span class="st">&quot; &quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># replace newline</span>
+<span class="st">  </span><span class="kw">word</span>(<span class="dt">end =</span> <span class="dv">5</span>) </code></pre>
+<pre><code>#&gt; [1] &quot;  Gentlemen of the&quot;          &quot;  GENTLEMEN OF THE&quot;         
+#&gt; [3] &quot;GENTLEMEN OF THE CONGRESS: &quot; &quot;  GENTLEMEN OF THE&quot;         
+#&gt; [5] &quot;Gentlemen of the Congress: &quot; &quot;  GENTLEMEN OF THE&quot;         
+#&gt; [7] &quot;  TO THE SENATE&quot;             &quot;  GENTLEMEN OF THE&quot;</code></pre>
+<p>This looks better, but we still have a problem to extract exactly 5 words because of the whitespaces. So let’s get rid of any whitespaces before and also of repeated whitespaces within the string with the convenient <code>str_squish</code> function.</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_whole <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(president <span class="op">==</span><span class="st"> &quot;Woodrow Wilson&quot;</span>) <span class="op">%&gt;%</span><span class="st">  </span>
+<span class="st">  </span><span class="kw">pull</span>(text) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">str_replace_all</span>(<span class="st">&quot;</span><span class="ch">\\</span><span class="st">n&quot;</span>, <span class="st">&quot; &quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">str_trim</span>()</code></pre>
-<pre><code>#&gt;  [1] &quot;Fellow-Citizens of the Senate&quot;            
-#&gt;  [2] &quot;Fellow Citizens of the&quot;                   
-#&gt;  [3] &quot;Madam Speaker, Mr. Vice President,&quot;       
-#&gt;  [4] &quot;Madam Speaker, Vice President Biden,&quot;     
-#&gt;  [5] &quot;Mr. Speaker, Mr. Vice President,&quot;         
-#&gt;  [6] &quot;Please, everybody, have a seat.&quot;          
-#&gt;  [7] &quot;The President. Mr. Speaker, Mr.&quot;          
-#&gt;  [8] &quot;Thank you. Mr. Speaker, Mr.&quot;              
-#&gt;  [9] &quot;To the Senate and&quot;                        
-#&gt; [10] &quot;Since the close of the&quot;                   
-#&gt; [11] &quot;To the Congress of the&quot;                   
-#&gt; [12] &quot;Members of the Congress:   In&quot;            
-#&gt; [13] &quot;Members of the Congress:   In&quot;            
-#&gt; [14] &quot;Members of the Congress:&quot;                 
-#&gt; [15] &quot;To the Congress of&quot;                       
-#&gt; [16] &quot;Mr. President, Mr. Speaker, Members&quot;      
-#&gt; [17] &quot;[Recorded on film and tape&quot;               
-#&gt; [18] &quot;[Read before a joint session&quot;             
-#&gt; [19] &quot;To the Congress of the&quot;                   
-#&gt; [20] &quot;[Delivered in person before a&quot;            
-#&gt; [21] &quot;Mr. President, Mr. Speaker, Senators&quot;     
-#&gt; [22] &quot;Mr. Vice President, Mr. Speaker,&quot;         
-#&gt; [23] &quot;IN FULFILLING my duty to&quot;                 
-#&gt; [24] &quot;To the Congress:   This Nation&quot;           
-#&gt; [25] &quot;Today, in pursuance of my&quot;                
-#&gt; [26] &quot;To the Congress:  In considering the&quot;     
-#&gt; [27] &quot;Mr. Speaker, Mr. President, and&quot;          
-#&gt; [28] &quot;Mr. President, Mr. Speaker, Members&quot;      
-#&gt; [29] &quot;Mr. President and Mr. Speaker&quot;            
-#&gt; [30] &quot;Mr. Speaker and Mr. President,&quot;           
-#&gt; [31] &quot;Thank you very much. Mr.&quot;                 
-#&gt; [32] &quot;Mr. Speaker, Vice President Cheney,&quot;      
-#&gt; [33] &quot;Thank you all. Mr. Speaker,&quot;              
-#&gt; [34] &quot;Thank you very much. And&quot;                 
-#&gt; [35] &quot;Thank you all. Madam Speaker,&quot;            
-#&gt; [36] &quot;Fellow-Citizens of the Senate and&quot;        
-#&gt; [37] &quot;Fellow-Citizens of the Senate and&quot;        
-#&gt; [38] &quot;Mr. Speaker, Mr. Vice President,&quot;         
-#&gt; [39] &quot;[Released January 21, 1946. Dated&quot;        
-#&gt; [40] &quot;Mr. President, Mr. Speaker, and&quot;          
-#&gt; [41] &quot;To the Senate and House&quot;                  
-#&gt; [42] &quot;To the Senate and House&quot;                  
-#&gt; [43] &quot;Gentlemen of the Senate&quot;                  
-#&gt; [44] &quot;[ As delivered in person&quot;                 
-#&gt; [45] &quot;[As delivered in person before&quot;           
-#&gt; [46] &quot;Mr. Speaker, Mr. President, Members&quot;      
-#&gt; [47] &quot;[ Delivered in person before&quot;             
-#&gt; [48] &quot;Mr. Speaker, Mr. President, my&quot;           
-#&gt; [49] &quot;Mr. Speaker, Mr. President, my&quot;           
-#&gt; [50] &quot;Mr. Speaker, Mr. President, distinguished&quot;
-#&gt; [51] &quot;Mr. Speaker, Mr. President, and&quot;          
-#&gt; [52] &quot;To The Senate and&quot;                        
-#&gt; [53] &quot;The Senate and House&quot;                     
-#&gt; [54] &quot;MR. SPEAKER AND MEMBERS OF&quot;               
-#&gt; [55] &quot;MEMBERS OF THE CONGRESS:   So&quot;            
-#&gt; [56] &quot;The relations of the United&quot;              
-#&gt; [57] &quot;Jump to Part II&quot;                          
-#&gt; [58] &quot;Gentlemen of the Congress:  In pursuance&quot; 
-#&gt; [59] &quot;GENTLEMEN OF THE CONGRESS:   The&quot;         
-#&gt; [60] &quot;GENTLEMEN OF THE CONGRESS:   Since&quot;       
-#&gt; [61] &quot;GENTLEMEN OF THE CONGRESS:   In&quot;          
-#&gt; [62] &quot;Gentlemen of the Congress:  Eight months&quot; 
-#&gt; [63] &quot;TO THE SENATE AND HOUSE&quot;                  
-#&gt; [64] &quot;GENTLEMEN OF THE CONGRESS:  When I&quot;</code></pre>
+<span class="st">  </span><span class="kw">str_squish</span>() <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># remove whitespaces</span>
+<span class="st">  </span><span class="kw">word</span>(<span class="dt">end =</span> <span class="dv">5</span>) </code></pre>
+<pre><code>#&gt; [1] &quot;Gentlemen of the Congress: In&quot;    &quot;GENTLEMEN OF THE CONGRESS: The&quot;  
+#&gt; [3] &quot;GENTLEMEN OF THE CONGRESS: Since&quot; &quot;GENTLEMEN OF THE CONGRESS: In&quot;   
+#&gt; [5] &quot;Gentlemen of the Congress: Eight&quot; &quot;GENTLEMEN OF THE CONGRESS: The&quot;  
+#&gt; [7] &quot;TO THE SENATE AND HOUSE&quot;          &quot;GENTLEMEN OF THE CONGRESS: When&quot;</code></pre>
 <p>(For spell checks take a look at <a href="https://CRAN.R-project.org/package=spelling" class="uri">https://CRAN.R-project.org/package=spelling</a> or <a href="https://CRAN.R-project.org/package=hunspell" class="uri">https://CRAN.R-project.org/package=hunspell</a>)</p>
 </div>
 <div id="tokenize-lowercase" class="section level2">
 <h2><span class="header-section-number">1.3</span> Tokenize, lowercase</h2>
-<p>A very common part of data cleaning involves tokenization. While our data is already “tidy” insofar as each row is a single observation, a single text with metdata, the tidytext approach goes a step further to make each word it’s own observation with metadata. We could write our own function to do this using a tokenizer, but <code>tidytext</code> provides a handy utility function just for this purpose.</p>
+<p>A very common part of preparing your text for analysis involves tokenization. Currently our data contains in each each row a single text with metdata, so the entire speech text is the unit of observation. When we tokenize we break down the text into “tokens” (most commonly single words), so each row contains a single word with its metadata as unit of observation.</p>
+<p><code>tidytext</code> provides a function <code>unnest_tokens</code> to convert our speech table into one that is tokenized. It takes three arguments:</p>
+<ul>
+<li>a tibble or data frame which contains the text;</li>
+<li>the name of the newly created column that will contain the tokens;</li>
+<li>the name of the column within the data frame which contains the text to be tokenized.</li>
+</ul>
+<p>In the example below we name the new column to hold the tokens <code>word</code>. Remember that the column that holds the speech text is called <code>text</code>.</p>
 <pre class="sourceCode r"><code class="sourceCode r">tidy_sotu &lt;-<span class="st"> </span>sotu_whole <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">unnest_tokens</span>(word, text)
 
@@ -476,72 +387,68 @@ tidy_sotu</code></pre>
 #&gt;  9 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… represe…
 #&gt; 10 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… in      
 #&gt; # … with 1,965,202 more rows</code></pre>
-<p>Before we move on, we should note that the <code>unnest_tokens</code> function didn’t just tokenize our texts at the word level. It also lowercased each word, and it could do quite a bit more. For instance, we could tokenize the text at the level of ngrams or sentences, if those are the best units of analysis for our work. We could also leave punctuation, which has been removed by default. Depending on what you need to do for analysis, you could do these operations during this step, or write custom functions and do it before you unnest tokens.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Word tokenization with punctuation</span>
-tidy_sotu_w_punct &lt;-<span class="st"> </span>sotu_whole <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">unnest_tokens</span>(word, text, <span class="dt">strip_punct =</span> <span class="ot">FALSE</span>)
-
-tidy_sotu_w_punct</code></pre>
+<p>Note that the <code>unnest_tokens</code> function didn’t just tokenize our texts at the word level. It also lowercased each word and stripped off the punctuation. We can tell it not to do this, by adding the following parameters:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Word tokenization with punctuation and no lowercasing</span>
+sotu_whole <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">unnest_tokens</span>(word, text, <span class="dt">to_lower =</span> <span class="ot">FALSE</span>, <span class="dt">strip_punct =</span> <span class="ot">FALSE</span>)</code></pre>
 <pre><code>#&gt; # A tibble: 2,157,777 x 7
 #&gt;    president     year years_active party   sotu_type doc_id        word    
 #&gt;    &lt;chr&gt;        &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;         &lt;chr&gt;   
-#&gt;  1 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… fellow  
+#&gt;  1 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… Fellow  
 #&gt;  2 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… -       
-#&gt;  3 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… citizens
+#&gt;  3 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… Citizens
 #&gt;  4 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… of      
 #&gt;  5 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… the     
-#&gt;  6 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… senate  
+#&gt;  6 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… Senate  
 #&gt;  7 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… and     
-#&gt;  8 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… house   
+#&gt;  8 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… House   
 #&gt;  9 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… of      
-#&gt; 10 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… represe…
+#&gt; 10 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… Represe…
 #&gt; # … with 2,157,767 more rows</code></pre>
+<p>We can also tokenize the text at the level of ngrams or sentences, if those are the best units of analysis for our work.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Sentence tokenization</span>
-tidy_sotu_sentences &lt;-<span class="st"> </span>sotu_whole <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">unnest_tokens</span>(sentence, text, <span class="dt">token =</span> <span class="st">&quot;sentences&quot;</span>, <span class="dt">to_lower =</span> <span class="ot">FALSE</span>)
-
-tidy_sotu_sentences</code></pre>
-<pre><code>#&gt; # A tibble: 69,158 x 7
-#&gt;    president   year years_active party  sotu_type doc_id   sentence        
-#&gt;    &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt;           
-#&gt;  1 Abraham L…  1861 1861-1865    Repub… written   abraham… Fellow-Citizens…
-#&gt;  2 Abraham L…  1861 1861-1865    Repub… written   abraham… You will not be…
-#&gt;  3 Abraham L…  1861 1861-1865    Repub… written   abraham… A disloyal port…
-#&gt;  4 Abraham L…  1861 1861-1865    Repub… written   abraham… A nation which …
-#&gt;  5 Abraham L…  1861 1861-1865    Repub… written   abraham… Nations thus te…
-#&gt;  6 Abraham L…  1861 1861-1865    Repub… written   abraham… The disloyal ci…
-#&gt;  7 Abraham L…  1861 1861-1865    Repub… written   abraham… If it were just…
-#&gt;  8 Abraham L…  1861 1861-1865    Repub… written   abraham… If we could dar…
-#&gt;  9 Abraham L…  1861 1861-1865    Repub… written   abraham… The principal l…
-#&gt; 10 Abraham L…  1861 1861-1865    Repub… written   abraham… Those nations, …
+sotu_whole <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">unnest_tokens</span>(sentence, text, <span class="dt">token =</span> <span class="st">&quot;sentences&quot;</span>, <span class="dt">to_lower =</span> <span class="ot">FALSE</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select</span>(sentence)</code></pre>
+<pre><code>#&gt; # A tibble: 69,158 x 1
+#&gt;    sentence                                                                
+#&gt;    &lt;chr&gt;                                                                   
+#&gt;  1 Fellow-Citizens of the Senate and House of Representatives:   In the mi…
+#&gt;  2 You will not be surprised to learn that in the peculiar exigencies of t…
+#&gt;  3 A disloyal portion of the American people have during the whole year be…
+#&gt;  4 A nation which endures factious domestic division is exposed to disresp…
+#&gt;  5 Nations thus tempted to interfere are not always able to resist the cou…
+#&gt;  6 The disloyal citizens of the United States who have offered the ruin of…
+#&gt;  7 If it were just to suppose, as the insurgents have seemed to assume, th…
+#&gt;  8 If we could dare to believe that foreign nations are actuated by no hig…
+#&gt;  9 The principal lever relied on by the insurgents for exciting foreign na…
+#&gt; 10 Those nations, however, not improbably saw from the first that it was t…
 #&gt; # … with 69,148 more rows</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># N-gram tokenization</span>
-tidy_sotu_trigram &lt;-<span class="st"> </span>sotu_whole <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">unnest_tokens</span>(trigram, text, <span class="dt">token =</span> <span class="st">&quot;ngrams&quot;</span>, <span class="dt">n =</span> <span class="dv">3</span>)
-
-tidy_sotu_trigram</code></pre>
-<pre><code>#&gt; # A tibble: 1,964,740 x 7
-#&gt;    president    year years_active party   sotu_type doc_id      trigram    
-#&gt;    &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;      
-#&gt;  1 Abraham Li…  1861 1861-1865    Republ… written   abraham-li… fellow cit…
-#&gt;  2 Abraham Li…  1861 1861-1865    Republ… written   abraham-li… citizens o…
-#&gt;  3 Abraham Li…  1861 1861-1865    Republ… written   abraham-li… of the sen…
-#&gt;  4 Abraham Li…  1861 1861-1865    Republ… written   abraham-li… the senate…
-#&gt;  5 Abraham Li…  1861 1861-1865    Republ… written   abraham-li… senate and…
-#&gt;  6 Abraham Li…  1861 1861-1865    Republ… written   abraham-li… and house …
-#&gt;  7 Abraham Li…  1861 1861-1865    Republ… written   abraham-li… house of r…
-#&gt;  8 Abraham Li…  1861 1861-1865    Republ… written   abraham-li… of represe…
-#&gt;  9 Abraham Li…  1861 1861-1865    Republ… written   abraham-li… representa…
-#&gt; 10 Abraham Li…  1861 1861-1865    Republ… written   abraham-li… in the mid…
+sotu_whole <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">unnest_tokens</span>(trigram, text, <span class="dt">token =</span> <span class="st">&quot;ngrams&quot;</span>, <span class="dt">n =</span> <span class="dv">3</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select</span>(trigram)</code></pre>
+<pre><code>#&gt; # A tibble: 1,964,740 x 1
+#&gt;    trigram                 
+#&gt;    &lt;chr&gt;                   
+#&gt;  1 fellow citizens of      
+#&gt;  2 citizens of the         
+#&gt;  3 of the senate           
+#&gt;  4 the senate and          
+#&gt;  5 senate and house        
+#&gt;  6 and house of            
+#&gt;  7 house of representatives
+#&gt;  8 of representatives in   
+#&gt;  9 representatives in the  
+#&gt; 10 in the midst            
 #&gt; # … with 1,964,730 more rows</code></pre>
 </div>
 <div id="stopwords" class="section level2">
 <h2><span class="header-section-number">1.4</span> Stopwords</h2>
-<p>Another common type of cleaning in text analysis is to remove stopwords, or common words that theoretically provide less information about the content of a text. Depending on the type of analysis you’re doing, you might leave these words in or use a highly curated list of stopwords. For now, as we move toward looking at words in documents based on frequency, we will remove some standard stopwords using a tidytext approach.</p>
-<p>First, let’s look at the stopwords that tidytext gives us to get a sense of what they are.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(stop_words)
-<span class="kw">head</span>(stop_words, <span class="dt">n =</span> <span class="dv">60</span>)</code></pre>
-<pre><code>#&gt; # A tibble: 60 x 2
+<p>Another common task of preparing text for analysis is to remove stopwords. Stopwords are common words that are considered to provide non-relevant information about the content of a text.</p>
+<p>Let’s look at the stopwords that come with the <code>tidytext</code> package to get a sense of what they are.</p>
+<pre class="sourceCode r"><code class="sourceCode r">stop_words</code></pre>
+<pre><code>#&gt; # A tibble: 1,149 x 2
 #&gt;    word        lexicon
 #&gt;    &lt;chr&gt;       &lt;chr&gt;  
 #&gt;  1 a           SMART  
@@ -554,8 +461,9 @@ tidy_sotu_trigram</code></pre>
 #&gt;  8 across      SMART  
 #&gt;  9 actually    SMART  
 #&gt; 10 after       SMART  
-#&gt; # … with 50 more rows</code></pre>
-<p>You can see that we now have one word per row with associated metadata. We can now remove stopwords using an <code>anti-join</code>.</p>
+#&gt; # … with 1,139 more rows</code></pre>
+<p>Depending on the type of analysis you’re doing, you might leave these words in or alternatively use your own curated list of stopwords. Stopword lists exist for many languages. For now we will remove the English stopwords as suggested here.</p>
+<p>There are a number of ways how to do this, here we use <code>anti_join</code> from <code>dplyr</code>. We can use it to return all rows from our table of tokens <code>tidy_sotu</code> where there are not matching values in our list of stopwords. Both of these tables have one column name in common <code>word</code> so by default the join will be on that colunmn, and dplyr will tell us so.</p>
 <pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words &lt;-<span class="st"> </span>tidy_sotu <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">anti_join</span>(stop_words)
 
@@ -574,27 +482,33 @@ tidy_sotu_words</code></pre>
 #&gt;  9 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… troubles
 #&gt; 10 Abraham Lin…  1861 1861-1865    Republ… written   abraham-linc… gratitu…
 #&gt; # … with 778,151 more rows</code></pre>
-<p>We went from 1965212 to 778161 rows, which means we had a lot of stopwords in our corpus. This is a huge removal, so for serious analysis, we might want to take a closer look at the stopwords and determine if we should use a different stopword list or otherwise create our own.</p>
+<p>If we compare this with <code>tidy_sotu</code> we see that the records with words like “of”, “the”, “and”, “in” are now removed.</p>
+<p>So we went from 1965212 to 778161 rows, which means we had a lot of stopwords in our corpus. This is a huge removal, so for serious analysis, we might want to scrutinize the stopword list carefully and determine if this is feasible.</p>
 </div>
 <div id="word-stemming" class="section level2">
 <h2><span class="header-section-number">1.5</span> Word Stemming</h2>
-<p>Another thing you may want to do is to stem your words, that is, to reduce them to their word stem or root form, like reducing <em>fishing</em>, <em>fished</em>, and <em>fisher</em> to the stem <em>fish</em>.</p>
+<p>Another way you may want to clean your data is to stem your words, that is, to reduce them to their word stem or root form, for example reducing <em>fishing</em>, <em>fished</em>, and <em>fisher</em> to the stem <em>fish</em>.</p>
 <p><code>tidytext</code> does not implement its own word stemmer. Instead it relies on separate packages like <code>hunspell</code> or <code>SnowballC</code>.</p>
-<p>We will give an example here for the <code>SnowballC</code> package. (<code>hunspell</code> appears to run much slower, and it also returns a list instead of a vector, so in this context <code>SnowballC</code> seems to be more convenient.)</p>
+<p>We will give an example here for the <code>SnowballC</code> package which comes with a function <code>wordStem</code>. (<code>hunspell</code> appears to run much slower, and it also returns a list instead of a vector, so in this context <code>SnowballC</code> seems to be more convenient.)</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(SnowballC)
 tidy_sotu_words <span class="op">%&gt;%</span>
-<span class="st">        </span><span class="kw">mutate</span>(<span class="dt">word_stem =</span> <span class="kw">wordStem</span>(word)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</code></pre>
-<pre><code>#&gt; # A tibble: 6 x 8
-#&gt;   president   year years_active party  sotu_type doc_id    word   word_stem
-#&gt;   &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;    
-#&gt; 1 Abraham L…  1861 1861-1865    Repub… written   abraham-… fellow fellow   
-#&gt; 2 Abraham L…  1861 1861-1865    Repub… written   abraham-… citiz… citizen  
-#&gt; 3 Abraham L…  1861 1861-1865    Repub… written   abraham-… senate senat    
-#&gt; 4 Abraham L…  1861 1861-1865    Repub… written   abraham-… house  hous     
-#&gt; 5 Abraham L…  1861 1861-1865    Repub… written   abraham-… repre… repres   
-#&gt; 6 Abraham L…  1861 1861-1865    Repub… written   abraham-… midst  midst</code></pre>
-<p>For lemmatization, you may want to take a look a the <a href="https://CRAN.R-project.org/package=koRpus"><code>koRpus</code></a> package, another <a href="https://cran.r-project.org/web/packages/koRpus/vignettes/koRpus_vignette.html">comprehensive R package for text analysis</a>. It allows to use <a href="http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/">TreeTagger</a>, a widely used part-of-speech tagger. For full functionality of the R package a local installation of TreeTagger is recommended.</p>
-<p>Now that we’ve read in our text and metadata, reshaped it a bit into the tidytext format, and cleaned it a bit while doing so, let’s move on to some basic analysis.</p>
+<span class="st">        </span><span class="kw">mutate</span>(<span class="dt">word_stem =</span> <span class="kw">wordStem</span>(word))</code></pre>
+<pre><code>#&gt; # A tibble: 778,161 x 8
+#&gt;    president   year years_active party  sotu_type doc_id   word   word_stem
+#&gt;    &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;    
+#&gt;  1 Abraham L…  1861 1861-1865    Repub… written   abraham… fellow fellow   
+#&gt;  2 Abraham L…  1861 1861-1865    Repub… written   abraham… citiz… citizen  
+#&gt;  3 Abraham L…  1861 1861-1865    Repub… written   abraham… senate senat    
+#&gt;  4 Abraham L…  1861 1861-1865    Repub… written   abraham… house  hous     
+#&gt;  5 Abraham L…  1861 1861-1865    Repub… written   abraham… repre… repres   
+#&gt;  6 Abraham L…  1861 1861-1865    Repub… written   abraham… midst  midst    
+#&gt;  7 Abraham L…  1861 1861-1865    Repub… written   abraham… unpre… unpreced 
+#&gt;  8 Abraham L…  1861 1861-1865    Repub… written   abraham… polit… polit    
+#&gt;  9 Abraham L…  1861 1861-1865    Repub… written   abraham… troub… troubl   
+#&gt; 10 Abraham L…  1861 1861-1865    Repub… written   abraham… grati… gratitud 
+#&gt; # … with 778,151 more rows</code></pre>
+<p>Lemmatization takes this another step further. While a stemmer operates on a single word without knowledge of the context, lemmatization attempts to discriminate between words which have different meanings depending on part of speech. For example, the word “better” has “good” as its lemma, something a stemmer would not detect.</p>
+<p>For lemmatization in R, you may want to take a look a the <a href="https://CRAN.R-project.org/package=koRpus"><code>koRpus</code></a> package, another <a href="https://cran.r-project.org/web/packages/koRpus/vignettes/koRpus_vignette.html">comprehensive R package for text analysis</a>. It allows to use <a href="http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/">TreeTagger</a>, a widely used part-of-speech tagger. For full functionality of the R package a local installation of TreeTagger is recommended.</p>
 
 </div>
 </div>

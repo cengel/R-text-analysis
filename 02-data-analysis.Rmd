@@ -17,7 +17,10 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE,comment = "#>", purl = FALSE)
 
 ------------
 
-First, we'll load the libraries we need. 
+
+Now that we've read in our text and metadata, tokenized and cleaned it a little, let's move on to some analysis. 
+
+First, we'll make sure we have loaded the libraries we'll need. 
 
 ```{r load-tidylibs, eval=FALSE}
 library(tidyverse)

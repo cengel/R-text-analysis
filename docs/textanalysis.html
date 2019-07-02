@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 2 Analyzing Texts | Text Analysis with R</title>
-  <meta name="description" content="Workshop materials for Text Analysis in R">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <meta name="description" content="Workshop materials for Text Analysis in R" />
+  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 2 Analyzing Texts | Text Analysis with R" />
   <meta property="og:type" content="book" />
@@ -22,13 +21,13 @@
   <meta name="twitter:description" content="Workshop materials for Text Analysis in R" />
   
 
-<meta name="author" content="Claudia Engel, Scott Bailey">
+<meta name="author" content="Claudia Engel, Scott Bailey" />
 
 
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
 <link rel="prev" href="textprep.html">
@@ -182,7 +181,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 </blockquote>
 <hr />
-<p>First, we’ll load the libraries we need.</p>
+<p>Now that we’ve read in our text and metadata, tokenized and cleaned it a little, let’s move on to some analysis.</p>
+<p>First, we’ll make sure we have loaded the libraries we’ll need.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
 <span class="kw">library</span>(tidytext)</code></pre>
 <p>Let’s remind ourselves of what our data looks like.</p>
@@ -229,7 +229,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span class="st">  </span><span class="kw">geom_col</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_flip</span>()</code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>What if we’re interested in most used words per speech?</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Count words by book</span>
 doc_words &lt;-<span class="st"> </span>tidy_sotu_words <span class="op">%&gt;%</span>
@@ -265,7 +265,7 @@ doc_words </code></pre>
 <span class="st">  </span><span class="kw">geom_col</span>() <span class="op">+</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_flip</span>()</code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>That’s cool looking, but let’s split it into facets so we can see by speech.</p>
 <pre class="sourceCode r"><code class="sourceCode r">doc_words <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">filter</span>(n <span class="op">&gt;</span><span class="st"> </span><span class="dv">100</span>) <span class="op">%&gt;%</span>
@@ -274,7 +274,7 @@ doc_words </code></pre>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="ot">NULL</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>doc_id, <span class="dt">ncol =</span> <span class="dv">2</span>) <span class="op">+</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">90</span>, <span class="dt">hjust =</span> <span class="dv">1</span>))</code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>We could keep cleaning this figure up by setting some minimum sizing, determining the spacing between y-axis labels better, and so forth, but for now we’ll accept it as showing some sense of variation across speeches where certain words are used most.</p>
 <p>What if we want to check the most common words per speech for a single president? We could filter this <code>doc_words</code> dataset based on the president’s name being in the doc_id, but I think it’s easier to filter from the initial tidy data and recount.</p>
 <pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words <span class="op">%&gt;%</span>
@@ -285,7 +285,7 @@ doc_words </code></pre>
 <span class="st">  </span><span class="kw">geom_col</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>doc_id, <span class="dt">ncol =</span> <span class="dv">2</span>) <span class="op">+</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">90</span>, <span class="dt">hjust =</span> <span class="dv">1</span>))</code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 </div>
 <div id="term-frequency" class="section level2">
 <h2><span class="header-section-number">2.2</span> Term frequency</h2>
@@ -314,7 +314,7 @@ doc_words </code></pre>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(term_freq)) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_histogram</span>(<span class="dt">show.legend =</span> <span class="ot">FALSE</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">xlim</span>(<span class="ot">NA</span>, <span class="fl">.012</span>)</code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>This distribution makes sense. Most words are used relatively rarely in a text. Only a few have a high term frequency.</p>
 <p>We could keep filtering this data to see which terms have high frequency, thus maybe increased significance, for different presidents and different particular speeches. We could also subset based on decade, and get a sense of what was important in each decade. We’re going to take a slightly different approach though. We’ve been looking at term frequency per document. What if we want to know about words that seem more important based on the contents of the entire corpus?</p>
 </div>
@@ -400,7 +400,7 @@ obama_tf_idf</code></pre>
 <span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>doc_id, <span class="dt">ncol =</span> <span class="dv">2</span>, <span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">coord_flip</span>() <span class="op">+</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.y =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">45</span>)) </code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 </div>
 <div id="n-grams" class="section level2">
 <h2><span class="header-section-number">2.4</span> N-Grams</h2>
@@ -586,37 +586,37 @@ tidy_sotu_words <span class="op">%&gt;%</span><span class="st"> </span>
 <h2><span class="header-section-number">2.7</span> Sentiment analysis</h2>
 <p><code>tidytext</code> comes with a dataset <code>sentiments</code> which contains several sentiment lexicons, where each word is attributed a certain sentiment, like this:</p>
 <pre class="sourceCode r"><code class="sourceCode r">sentiments</code></pre>
-<pre><code>#&gt; # A tibble: 27,314 x 4
-#&gt;    word        sentiment lexicon score
-#&gt;    &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;   &lt;int&gt;
-#&gt;  1 abacus      trust     nrc        NA
-#&gt;  2 abandon     fear      nrc        NA
-#&gt;  3 abandon     negative  nrc        NA
-#&gt;  4 abandon     sadness   nrc        NA
-#&gt;  5 abandoned   anger     nrc        NA
-#&gt;  6 abandoned   fear      nrc        NA
-#&gt;  7 abandoned   negative  nrc        NA
-#&gt;  8 abandoned   sadness   nrc        NA
-#&gt;  9 abandonment anger     nrc        NA
-#&gt; 10 abandonment fear      nrc        NA
-#&gt; # … with 27,304 more rows</code></pre>
+<pre><code>#&gt; # A tibble: 6,786 x 2
+#&gt;    word        sentiment
+#&gt;    &lt;chr&gt;       &lt;chr&gt;    
+#&gt;  1 2-faces     negative 
+#&gt;  2 abnormal    negative 
+#&gt;  3 abolish     negative 
+#&gt;  4 abominable  negative 
+#&gt;  5 abominably  negative 
+#&gt;  6 abominate   negative 
+#&gt;  7 abomination negative 
+#&gt;  8 abort       negative 
+#&gt;  9 aborted     negative 
+#&gt; 10 aborts      negative 
+#&gt; # … with 6,776 more rows</code></pre>
 <p>Here we will take a look at how the sentiment of the speeches change over time. We will use the lexicon from <a href="https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html">Bing Liu and collaborators</a>, which assigns positive/negative labels for each word:</p>
 <pre class="sourceCode r"><code class="sourceCode r">bing_lex &lt;-<span class="st"> </span><span class="kw">get_sentiments</span>(<span class="st">&quot;bing&quot;</span>)
 bing_lex</code></pre>
-<pre><code>#&gt; # A tibble: 6,788 x 2
+<pre><code>#&gt; # A tibble: 6,786 x 2
 #&gt;    word        sentiment
 #&gt;    &lt;chr&gt;       &lt;chr&gt;    
-#&gt;  1 2-faced     negative 
-#&gt;  2 2-faces     negative 
-#&gt;  3 a+          positive 
-#&gt;  4 abnormal    negative 
-#&gt;  5 abolish     negative 
-#&gt;  6 abominable  negative 
-#&gt;  7 abominably  negative 
-#&gt;  8 abominate   negative 
-#&gt;  9 abomination negative 
-#&gt; 10 abort       negative 
-#&gt; # … with 6,778 more rows</code></pre>
+#&gt;  1 2-faces     negative 
+#&gt;  2 abnormal    negative 
+#&gt;  3 abolish     negative 
+#&gt;  4 abominable  negative 
+#&gt;  5 abominably  negative 
+#&gt;  6 abominate   negative 
+#&gt;  7 abomination negative 
+#&gt;  8 abort       negative 
+#&gt;  9 aborted     negative 
+#&gt; 10 aborts      negative 
+#&gt; # … with 6,776 more rows</code></pre>
 <p>Since this is a regular tibble, we can use these sentiments and join them to the words of our speeches. We will use <code>inner_join</code> from <code>dplyr</code>. Since our columns to join on have the same name (<code>word</code>) we don’t need to explicitly name it.</p>
 <pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">inner_join</span>(bing_lex) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># join</span>
