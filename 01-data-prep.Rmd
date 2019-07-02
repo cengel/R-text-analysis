@@ -166,35 +166,46 @@ sotu_whole %>%
 
 ## Tokenize, lowercase
 
-A very common part of data cleaning involves tokenization. While our data is already "tidy" insofar as each row is a single observation, a single text with metdata, the tidytext approach goes a step further to make each word it's own observation with metadata. We could write our own function to do this using a tokenizer, but `tidytext` provides a handy utility function just for this purpose.
+A very common part of preparing your text for analysis involves tokenization. Currently our data contains in each each row a single text with metdata, so the entire speech text is the unit of observation. When we tokenize we break down the text into "tokens" (most commonly single words), so each row contains a single word with its metadata as unit of observation. 
 
-```{r}
+`tidytext` provides a function  `unnest_tokens` to convert our speech table into one that is tokenized. It takes three arguments: 
+
+- a tibble or data frame which contains the text; 
+- the name of the newly created column that will contain the tokens;
+- the name of the column within the data frame which contains the text to be tokenized.
+
+In the example below we name the new column to hold the tokens `word`. Remember that the column that holds the speech text is called `text`.
+
+```{r tokenize}
 tidy_sotu <- sotu_whole %>%
   unnest_tokens(word, text)
 
 tidy_sotu
 ```
 
-Before we move on, we should note that the `unnest_tokens` function didn't just tokenize our texts at the word level. It also lowercased each word, and it could do quite a bit more. For instance, we could tokenize the text at the level of ngrams or sentences, if those are the best units of analysis for our work. We could also leave punctuation, which has been removed by default. Depending on what you need to do for analysis, you could do these operations during this step, or write custom functions and do it before you unnest tokens.
+Note that the `unnest_tokens` function didn't just tokenize our texts at the word level. It also lowercased each word and stripped off the punctuation. We can tell it not to do this, by adding the following parameters:
+
+
+```{r punct-lowercase}
+# Word tokenization with punctuation and no lowercasing
+sotu_whole %>%
+  unnest_tokens(word, text, to_lower = FALSE, strip_punct = FALSE)
+```
+
+We can also tokenize the text at the level of ngrams or sentences, if those are the best units of analysis for our work. 
 
 ```{r}
-# Word tokenization with punctuation
-tidy_sotu_w_punct <- sotu_whole %>%
-  unnest_tokens(word, text, strip_punct = FALSE)
-
-tidy_sotu_w_punct
-
 # Sentence tokenization
-tidy_sotu_sentences <- sotu_whole %>%
-  unnest_tokens(sentence, text, token = "sentences", to_lower = FALSE)
+sotu_whole %>%
+  unnest_tokens(sentence, text, token = "sentences", to_lower = FALSE) %>% 
+  select(sentence)
 
-tidy_sotu_sentences
 
 # N-gram tokenization
-tidy_sotu_trigram <- sotu_whole %>%
-  unnest_tokens(trigram, text, token = "ngrams", n = 3)
+sotu_whole %>%
+  unnest_tokens(trigram, text, token = "ngrams", n = 3) %>% 
+  select(trigram)
 
-tidy_sotu_trigram
 ```
 
 
