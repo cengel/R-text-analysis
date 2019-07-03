@@ -190,7 +190,7 @@ tidy_sotu_words %>%
 To understand the occurrence of the years as being particularly distinctive we might need to look more closely at the speeches themselves, and determine whether the years are significant or whether they need to be removed from the text either permanently in the clean up or temporarily using `filter`.
 
 
->>> Challenge: Pick the same president you chose above. For each of his speeches, which is the term with highest tf-idf? Create a table as output. What do you think about the differences? (Hint: Remember to group by doc_id before you use top_n)
+>>> Challenge: Pick the same president you chose above. For each of his speeches, which is the term with highest tf-idf? Create a table as output. (Hint: Remember to group by doc_id before you use top_n)
 
 ```{r challenge-tfidf, eval=FALSE, echo=FALSE}
 tidy_sotu_words %>%
@@ -204,7 +204,7 @@ tidy_sotu_words %>%
 
 ## N-Grams
 
-We mentioned n-grams in the intro, but let's revisit them here and take a look at the most common bigrams in the speeches. Remember this is what we get back:
+We mentioned n-grams in the intro, but let's revisit them here and take a look at the most common bigrams in the speeches. Remember we use the `unnest_token` function on our texts and explicitly tell it to generate bigrams:
 
 ```{r bigrams-unnest}
 sotu_whole %>%
@@ -216,54 +216,66 @@ Let's see the most common bigrams:
 ```{r bigrams-count}
 sotu_whole %>%
   unnest_tokens(bigram, text, token = "ngrams", n = 2) %>% 
-  count(bigram, sort = TRUE) # count ocurrences and sord descending
+  count(bigram, sort = TRUE) # count ocurrences and sort descending
 ```
 
-Ok, so we again need to remove the stopwords. This time let's use dplyr's `filter` function for this. And before that we will `separate` the two words into two columns.
+Ok, so we again need to remove the stopwords. First let us separate the two words into two columns "word1" and "word2" with `separate` from the `tidyr` package:
+
+```{r bigrams-sep-words}
+sotu_whole %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>% 
+  separate(bigram, c("word1", "word2"), sep = " ")
+```
+
+Now we use dplyr's `filter` function to select only the words in each column that are not in the stopwords.
 
 ```{r bigrams-remove-stop}
-sotu_bigrams <- sotu_whole %>%
+sotu_whole %>%
   unnest_tokens(bigram, text, token = "ngrams", n = 2) %>% 
   separate(bigram, c("word1", "word2"), sep = " ") %>% # separate into cols
   filter(!word1 %in% stop_words$word) %>% # remove stopwords
   filter(!word2 %in% stop_words$word)
+```
+
+Lastly, we re-unite the two word columns into back into our bigrams and save it into a new table `sotu_bigrams`.
+
+```{r bigrams-unite}
+sotu_bigrams <- sotu_whole %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>% 
+  separate(bigram, c("word1", "word2"), sep = " ") %>% # separate into cols
+  filter(!word1 %in% stop_words$word) %>% # remove stopwords
+  filter(!word2 %in% stop_words$word) %>% 
+  unite(bigram, word1, word2, sep = " ")  # combine columns
+
 
 sotu_bigrams %>% 
-  count(word1, word2, sort = TRUE)
+  count(bigram, sort = TRUE)
 ```
 
 (Bonus question: What happened on that June 30th?)
 
-A bigram can also be treated as a term in a document in the same way that we treated individual words. That means we can look at tf-idf values in the same way. 
+A bigram can also be treated as a term in a document in the same way that we treated individual words. That means we can look at tf-idf values in the same way. For example, we can find out the most distinct bigrams that the presidents uttered in all their respective speeches taken together.
 
-First we will re-unite the two word columns again, and then generate the tf-idf count as above.
+We group by president and bigram and then bind the tf-idf value with the `bind_tf_idf` function.
 
 ```{r bigram-tf-idf}
-bigram_tf_idf <- sotu_bigrams %>%
-  unite(bigram, word1, word2, sep = " ") %>% # combine columns
+sotu_bigrams %>%
   count(president, bigram) %>%
   bind_tf_idf(bigram, president, n) %>%
   arrange(desc(tf_idf))
 ```
 
+>>> Challenge: Again, pick the same president you chose above. For each of his speeches, which is the bigram with highest tf-idf? Create a table as output. 
 
-What makes the speeches of different presidents unique?
-
-Let's pick a few presidents and plot their highest scoring tf-idf values here.
-
-```{r bigram-tf-idf-plot}
-potus <- c("John F. Kennedy", "Richard M. Nixon", "George Bush", "George W. Bush")
-
-bigram_tf_idf %>%
-  filter(president %in% potus) %>% 
-  group_by(president) %>% 
-  top_n(20) %>% 
-  ggplot(aes(reorder(bigram, tf_idf), tf_idf, fill = president)) +
-  geom_col(show.legend = FALSE) +
-  labs(x = NULL, y = "tf-idf") +
-  facet_wrap(~president, scales = "free", nrow = 2) +
-  coord_flip()
+```{r challenge-bigram-tfidf, eval=FALSE, echo=FALSE}
+sotu_bigrams %>%
+  filter(president == "Ronald Reagan") %>% 
+  count(doc_id, bigram) %>%  
+  bind_tf_idf(bigram, doc_id, n) %>%
+  group_by(doc_id) %>% 
+  top_n(1)
 ```
+
 
 
 ## Co-occurrence
