@@ -7,8 +7,7 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE,comment = "#>", purl = FALSE)
 
 > Learning Objectives
 >
-> - perform basic text analysis operations in R
-> - determine differnd kinds of frequency counts
+> - perform different frequency counts and generate plots
 > - use the `widyr` package to calculate co-ocurrance
 > - use `igraph` and `ggraph` to plot a co-ocurrance graph
 > - import and export a Document-Term Matrix into `tidytext`

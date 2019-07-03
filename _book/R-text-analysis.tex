@@ -21,6 +21,7 @@
 \usepackage{microtype}
 \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
+\usepackage[left=3cm,right=1cm,top=2cm,bottom=2cm]{geometry}
 \usepackage{hyperref}
 \hypersetup{unicode=true,
             pdftitle={Text Analysis with R},
@@ -270,12 +271,12 @@ In order to work with the speech texts and to later practice reading text files 
 \end{Shaded}
 
 \begin{verbatim}
-#> [1] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file304733ab7d52/george-washington-1790a.txt"
-#> [2] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file304733ab7d52/george-washington-1790b.txt"
-#> [3] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file304733ab7d52/george-washington-1791.txt" 
-#> [4] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file304733ab7d52/george-washington-1792.txt" 
-#> [5] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file304733ab7d52/george-washington-1793.txt" 
-#> [6] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file304733ab7d52/george-washington-1794.txt"
+#> [1] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpuPVAXF/file331b2195cdc6/george-washington-1790a.txt"
+#> [2] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpuPVAXF/file331b2195cdc6/george-washington-1790b.txt"
+#> [3] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpuPVAXF/file331b2195cdc6/george-washington-1791.txt" 
+#> [4] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpuPVAXF/file331b2195cdc6/george-washington-1792.txt" 
+#> [5] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpuPVAXF/file331b2195cdc6/george-washington-1793.txt" 
+#> [6] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpuPVAXF/file331b2195cdc6/george-washington-1794.txt"
 \end{verbatim}
 
 Now that we have the files on disk and a vector of filepaths, we can pass this vector directly into \texttt{readtext} to read the texts into a new variable.
@@ -750,9 +751,7 @@ Learning Objectives
 \begin{itemize}
 \tightlist
 \item
-  perform basic text analysis operations in R
-\item
-  determine differnd kinds of frequency counts
+  perform different frequency counts and generate plots
 \item
   use the \texttt{widyr} package to calculate co-ocurrance
 \item

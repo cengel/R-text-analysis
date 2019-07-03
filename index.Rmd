@@ -10,6 +10,7 @@ biblio-style: apalike
 link-citations: yes
 github-repo: cengel/R-text-analysis
 description: "Workshop materials for Text Analysis in R"
+geometry: "left=3cm,right=1cm,top=2cm,bottom=2cm"
 ---
 
 
