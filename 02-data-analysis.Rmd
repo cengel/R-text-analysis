@@ -393,22 +393,27 @@ bing_lex <- get_sentiments("bing")
 bing_lex
 ```
 
-Since this is a regular tibble, we can use these sentiments and join them to the words of our speeches. We will use `inner_join` from `dplyr`. Since our columns to join on have the same name (`word`) we don't need to explicitly name it.
+We can use these sentiments attached to each word and join them to the words of our speeches. We will use `inner_join` from `dplyr`. It will take all rows with words from `tidy_sotu_words` that match words in `bing_lex`, eliminating rows where the word cannot be found  in the lexicon. Since our columns to join on have the same name (`word`) we don't need to explicitly name it.
 
 ```{r join-sentiments}
-tidy_sotu_words %>% 
-  inner_join(bing_lex) %>% # join
-  count(year, sentiment) # group by year and sentiment
+sotu_sentiments <- tidy_sotu_words %>% 
+  inner_join(bing_lex)  # join to add semtinemt column
+
+sotu_sentiments
 ```
 
-Finally we can visualize it like this:
+
+Finally we can visualize the proportion of positive sentiment out of the total of positive and negative over time like this:
 
 ```{r sentiment-plot, fig.width = 6, fig.height = 4}
-tidy_sotu_words %>% 
-  inner_join(bing_lex) %>% # join
+sotu_sentiments %>% 
   count(year, sentiment) %>% # group by year and sentiment
-  ggplot(aes(year, n, color = sentiment)) +
-    geom_line() +
+  spread(sentiment, n) %>% # spread by seniment
+  mutate(pct_positive_sentiment = positive/(negative + positive) * 100) %>% # calculate %
+  ggplot(aes(year, pct_positive_sentiment)) +
+    geom_line(color="gray") +
+    geom_smooth(span = 0.3, se = FALSE) + # for easier viewing
+    geom_hline(yintercept = 50, linetype="dotted") + # 50% as reference
     scale_x_continuous(breaks = seq(1790, 2016, by = 10)) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
