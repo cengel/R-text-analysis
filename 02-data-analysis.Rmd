@@ -36,167 +36,171 @@ tidy_sotu_words
 
 Since our unit of analysis at this point is a word, let's do some straightforward counting to figure out which words occur most frequently in the corpus as a whole. 
 
-```{r}
+```{r word-freq}
 tidy_sotu_words %>%
   count(word, sort = TRUE)
 ```
 
-We could start adding in a bit of visualization here. Let's show the most frequent words that occur more than 2000 times. 
+We can pipe this into `ggplot` to make a graph of the words that occur more that 2000 times. We count the words and use `geom_col` to represent the n values.
 
-```{r}
+```{r word-freq-plot}
 tidy_sotu_words %>%
-  count(word, sort = TRUE) %>%
-  filter(n > 2000) %>%
-  mutate(word = reorder(word, n)) %>%
+  count(word) %>% 
+  filter(n > 2000) %>% 
+  mutate(word = reorder(word, n)) %>%  # reorder values by frequency
   ggplot(aes(word, n)) +
-  geom_col() +
-  xlab(NULL) +
-  coord_flip()
-
+     geom_col(fill = "gray") +
+     coord_flip()  # flip x and y coordinates so we can read the words better
 ```
 
-What if we're interested in most used words per speech?
 
-```{r}
-# Count words by book
-doc_words <- tidy_sotu_words %>%
-  count(doc_id, word, sort = TRUE)
+What if we want to check the most common words per speech for a single president and see which of the top words apppear in which speech?
 
-# Calculate the total number of words by book and save them to a tibble
-total_words <- doc_words %>%
-  group_by(doc_id) %>%
-  summarize(total = sum(n))
-
-# Join the total column with the rest of the data so we can calculate frequency
-doc_words <- left_join(doc_words, total_words)
-
-doc_words 
-```
-
-Let's graph the top words per book.
-
-```{r}
-doc_words %>% 
-  filter(n > 100) %>%
-  ggplot(aes(word, n, fill = doc_id)) +
-  geom_col() + 
-  xlab(NULL) +
-  coord_flip()
-```
-
-That's cool looking, but let's split it into facets so we can see by speech. 
-
-```{r}
-doc_words %>% 
-  filter(n > 100) %>%
-  ggplot(aes(word, n, fill = doc_id)) +
-  geom_col(show.legend = FALSE) + 
-  xlab(NULL) +
-  facet_wrap(~doc_id, ncol = 2) + 
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-```
-
-We could keep cleaning this figure up by setting some minimum sizing, determining the spacing between y-axis labels better, and so forth, but for now we'll accept it as showing some sense of variation across speeches where certain words are used most. 
-
-What if we want to check the most common words per speech for a single president? We could filter this `doc_words` dataset based on the president's name being in the doc_id, but I think it's easier to filter from the initial tidy data and recount. 
-
-```{r}
+```{r obama-topwords}
 tidy_sotu_words %>%
   filter(president == "Barack Obama") %>%
-  count(doc_id, word, sort = TRUE) %>%
+  count(doc_id, word) %>%
   filter(n > 20) %>%
+  mutate(word = reorder(word, n)) %>% 
   ggplot(aes(word, n, fill=doc_id)) +
-  geom_col() +
-  facet_wrap(~doc_id, ncol = 2) + 
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    geom_col() +
+    coord_flip()
+```
+
+
+>>> CHALLENGE: In any given year, how often is the word 'peace' used and how often is the word 'war' used? Make a bar chart that shows for each year the proportion of each of these two words out of the total of how often both words are used. Bonus: use decades instead of years.
+ 
+```{r challenge-word-years, eval=FALSE, echo=FALSE}
+# steps:
+# Select only the words 'war' and 'peace'.
+# count ocurrences of each per year
+# plot n by year, and use position 'fill' to show the proportion
+
+tidy_sotu_words %>%
+  filter(word %in% c("war", "peace")) %>% 
+  count(year, word) %>% 
+  ggplot(aes(year, n, fill = word)) +
+    geom_col(position = "fill")
+
+# with decade instead of year
+tidy_sotu_words %>%
+  filter(word %in% c("war", "peace")) %>% 
+  mutate(decade = floor(year/10) * 10) %>% 
+  count(decade, word) %>% 
+  ggplot(aes(decade, n, fill = word)) +
+    geom_col(position = "fill")
+```
+
+
+As another example let us calculate the average number of words per speech for each president. How long was the average speech of each president and who are the top 'wordiest' presidents?  
+
+First we summarize the words per president per speech
+
+```{r word-president-count}
+tidy_sotu_words %>%
+  count(president, doc_id)
+```
+
+Then we use the output table and group it by president. That allows us to calculate the average number of words per speech.
+
+```{r word-president-avg}
+tidy_sotu_words %>%
+  count(president, doc_id)  %>% 
+  group_by(president) %>% 
+  summarize(avg_words = mean(n)) %>% 
+  arrange(desc(avg_words))
 ```
 
 
 ## Term frequency
 
-Sometimes, a raw count of a word is less important than understanding how often that word appears in respect to the total number of words in a text. This ratio would be the **term frequency**. 
+Often a raw count of a word is less important than understanding how often that word appears relative to the total number of words in a text. This ratio would be the **term frequency**. We can use `dplyr` to calculate it like this:
 
-```{r}
-doc_words <- doc_words %>%
-  mutate(term_freq = n / total)
-
-doc_words 
+```{r termfreq}
+tidy_sotu_words %>%
+  count(doc_id, word, sort = T)  %>%  # count n for each word
+  group_by(doc_id) %>% 
+  mutate(n_tot = sum(n), # count total number of words per doc
+         term_freq = n/n_tot)
 ```
 
 Let's graph the term frequency for one of these speeches so we can understand the frequency distribution of words over a text.
 
-```{r}
-doc_words %>%
+```{r termfreq-plot, message=FALSE}
+tidy_sotu_words %>%
   filter(doc_id == "harry-s-truman-1946.txt") %>%
+  count(doc_id, word)  %>%  # count n for each word
+  group_by(doc_id) %>% 
+  mutate(n_tot = sum(n), # count total number of words per doc
+         term_freq = n/n_tot) %>% 
   ggplot(aes(term_freq)) +
-  geom_histogram(show.legend = FALSE) +
-  xlim(NA, .012)
+    geom_histogram() 
 ```
 
 This distribution makes sense. Most words are used relatively rarely in a text. Only a few have a high term frequency. 
 
-We could keep filtering this data to see which terms have high frequency, thus maybe increased significance, for different presidents and different particular speeches. We could also subset based on decade, and get a sense of what was important in each decade. We're going to take a slightly different approach though. We've been looking at term frequency per document. What if we want to know about words that seem more important based on the contents of the entire corpus?
+We could keep filtering this data to see which terms have high frequency, thus maybe increased significance, for different presidents and different particular speeches. 
+
+>>> CHALLENGE: Pick one president. For each of his speeches, which is the term with highest term frequency? Create a table as output. (Hint: `top_n`might be useful)
+
+```{r challenge-termfreq, eval=FALSE, echo=FALSE}
+tidy_sotu_words %>%
+  filter(president == "Ronald Reagan") %>% 
+  count(doc_id, word)  %>%  
+  group_by(doc_id) %>% 
+  mutate(n_tot = sum(n), 
+         term_freq = n/n_tot) %>% 
+  top_n(1)
+```
 
 
 ## Tf-idf 
 
-For this, we can use term-frequency according to inverse document frequency (tf-idf). Tf-idf measures how important a word is within a corpus by scaling term frequency per document according to the inverse of the term's document frequency (number of documents within the corpus in which the term appears divided by the number of documents). 
+So far we've been looking at term frequency per document. What if we want to know about words that seem more important based on the contents of the entire corpus?
 
-We could write our own function for tf-idf, but in this case we'll take advantage of tidytext's implementation. 
-
-```{r}
-doc_words <- doc_words %>%
-  bind_tf_idf(word, doc_id, n)
-
-doc_words
-```
+For this, we can use **term-frequency according to inverse document frequency**, also callled **tf-idf**. Tf-idf measures how important a word is within a corpus by scaling term frequency per document according to the inverse of the term's document frequency (number of documents within the corpus in which the term appears divided by the number of documents). 
 
 The tf-idf value will be:
 
 - lower for words that appear in many documents in the corpus, and lowest when the word occurs in virtually all documents. 
 - high for words that appear many times in few documents in the corpus, this lending high discriminatory power to those documents. 
 
+The `tidytext` package includes a function `bind_tf_idf`. It takes a table that contains one-row-per-term-per-document, the name of the column that contains the words (terms), the name of the column which contains the doc-id, and the name of the column that contains the document-term counts.
+
+So below we aggregate our tibble with the word tokens to create the one-row-per-term-per-document table and then pipe it into the `bind_tf_idf` function.
+
+```{r tf-idf}
+tidy_sotu_words %>%
+  count(doc_id, word, sort = TRUE)  %>%  # aggregate to count n for each word
+  bind_tf_idf(word, doc_id, n) 
+```
+
+We can see in the output that our function added three columns to our aggregated table: which contain term frequency, inverse document frequency and Tf-idf. 
+
+
 Let's look at some of the words in the corpus that have the highest tf-idf scores, which means words that are particularly distinctive for their documents. 
 
-```{r}
-doc_words %>%
-  select(-total) %>%
+```{r tf-idf-sort}
+tidy_sotu_words %>%
+  count(doc_id, word, sort = TRUE)  %>% 
+  bind_tf_idf(word, doc_id, n) %>% 
   arrange(desc(tf_idf))
 ```
 
-These results seem appropriate given our history. To understand the occurrence of the years we might need to look more closely at the speeches themselves, and determine whether the years are significant or whether they need to be removed from the text. It might be that even if they don't need to be removed from the text overall, they still need to be filtered out within the context of this analysis. 
+To understand the occurrence of the years as being particularly distinctive we might need to look more closely at the speeches themselves, and determine whether the years are significant or whether they need to be removed from the text either permanently in the clean up or temporarily using `filter`.
 
-In the same way that we narrowed our analysis to Obama speeches earlier, we could subset the corpus before we calculate the tf-idf score to understand which words are most important for a single president within their sotu speeches. Let's do that for Obama. 
 
-```{r}
-obama_tf_idf <- tidy_sotu_words %>%
-  filter(president == "Barack Obama") %>%
-  count(doc_id, word, sort = TRUE) %>%
+>>> Challenge: Pick the same president you chose above. For each of his speeches, which is the term with highest tf-idf? Create a table as output. What do you think about the differences? (Hint: Remember to group by doc_id before you use top_n)
+
+```{r challenge-tfidf, eval=FALSE, echo=FALSE}
+tidy_sotu_words %>%
+  filter(president == "Ronald Reagan") %>%
+  count(doc_id, word) %>%
   bind_tf_idf(word, doc_id, n) %>%
-  arrange(desc(tf_idf))
-
-obama_tf_idf
-  
-```
-
-Based on what you know of the Obama years and sotu speeches generally, how would you interpret these results?
-
-Let's try graphing these results, showing the top tf-idf terms per speech for Obama's speeches. 
-
-```{r}
-obama_tf_idf %>%
-  group_by(doc_id) %>%
-  mutate(word = factor(word, levels = rev(unique(word)))) %>% 
   group_by(doc_id) %>% 
-  top_n(5) %>% 
-  ungroup() %>%
-  ggplot(aes(word, tf_idf, fill = doc_id)) +
-  geom_col(show.legend = FALSE) +
-  labs(x = NULL, y = "tf-idf") +
-  facet_wrap(~doc_id, ncol = 2, scales = "free") +
-  coord_flip() + 
-  theme(axis.text.y = element_text(angle = 45)) 
+  top_n(1)
 ```
+
 
 ## N-Grams
 
