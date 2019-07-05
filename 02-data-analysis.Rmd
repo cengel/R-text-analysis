@@ -190,7 +190,7 @@ tidy_sotu_words %>%
 To understand the occurrence of the years as being particularly distinctive we might need to look more closely at the speeches themselves, and determine whether the years are significant or whether they need to be removed from the text either permanently in the clean up or temporarily using `filter`.
 
 
->>> Challenge: Pick the same president you chose above. For each of his speeches, which is the term with highest tf-idf? Create a table as output. (Hint: Remember to group by doc_id before you use top_n)
+>>> CHALLENGE: Pick the same president you chose above. For each of his speeches, which is the term with highest tf-idf? Create a table as output. (Hint: Remember to group by doc_id before you use top_n)
 
 ```{r challenge-tfidf, eval=FALSE, echo=FALSE}
 tidy_sotu_words %>%
@@ -265,7 +265,7 @@ sotu_bigrams %>%
   arrange(desc(tf_idf))
 ```
 
->>> Challenge: Again, pick the same president you chose above. For each of his speeches, which is the bigram with highest tf-idf? Create a table as output. 
+>>> CHALLENGE: Again, pick the same president you chose above. For each of his speeches, which is the bigram with highest tf-idf? Create a table as output. 
 
 ```{r challenge-bigram-tfidf, eval=FALSE, echo=FALSE}
 sotu_bigrams %>%
@@ -286,13 +286,16 @@ For this section we will make use of the `widyr` package. The function which hel
 
 Behind the scenes, this function first turns our table into a wide matrix. In our case that matrix will be made up of the individual words and the cell values will be the counts of in how many speeches they co-occur, like this:
 
-    | we  | thus | have 
-we |  NA  |  4   | 5
-thus | 4  | NA   | 2
-have  | 5 | 2    | NA
 
+```{r wide-matrix, echo=FALSE}
+data.frame(we = c(NA, 4, 5), thus = c(4, NA, 2), have = c(5, 2, NA), row.names = c("we", "thus", "have"))
+```
 
 It then will turn the matrix back into a tidy form, where each row contains the word pairs and the count of their co-occurrence. Since we don't care about the order of the words, we will not count the upper triangle of the wide matrix, which leaves us with:
+
+```{r tidy-matrix, echo=FALSE}
+df <- data.frame(w1 = c("we", "we", "thus"), w2 = c("thus", "have", "have"), n = c(4,5,2), row.names = NULL) ; names(df) <-  NULL; df
+```
 
 we | thus | 4
 we | have | 5
@@ -402,8 +405,7 @@ sotu_sentiments <- tidy_sotu_words %>%
 sotu_sentiments
 ```
 
-
-Finally we can visualize the proportion of positive sentiment out of the total of positive and negative over time like this:
+Finally we can visualize the proportion of positive sentiment (out of the total of positive and negative) in US State of the Union Addresses over time like this:
 
 ```{r sentiment-plot, fig.width = 6, fig.height = 4}
 sotu_sentiments %>% 
