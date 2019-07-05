@@ -294,7 +294,7 @@ data.frame(we = c(NA, 4, 5), thus = c(4, NA, 2), have = c(5, 2, NA), row.names =
 It then will turn the matrix back into a tidy form, where each row contains the word pairs and the count of their co-occurrence. Since we don't care about the order of the words, we will not count the upper triangle of the wide matrix, which leaves us with:
 
 ```{r tidy-matrix, echo=FALSE}
-df <- data.frame(w1 = c("we", "we", "thus"), w2 = c("thus", "have", "have"), n = c(4,5,2), row.names = NULL) ; names(df) <-  NULL; df
+df <- data.frame(w1 = c("we", "we", "thus"), w2 = c("thus", "have", "have"), n = c(4,5,2)); names(df) <-  NULL; print(df, row.names = FALSE)
 ```
 
 we | thus | 4
