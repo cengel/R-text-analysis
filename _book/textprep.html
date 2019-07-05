@@ -206,12 +206,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span class="co"># but you could specific where you want them.</span>
 file_paths &lt;-<span class="st"> </span><span class="kw">sotu_dir</span>()
 <span class="kw">head</span>(file_paths)</code></pre>
-<pre><code>#&gt; [1] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file3047619a1dec/george-washington-1790a.txt&quot;
-#&gt; [2] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file3047619a1dec/george-washington-1790b.txt&quot;
-#&gt; [3] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file3047619a1dec/george-washington-1791.txt&quot; 
-#&gt; [4] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file3047619a1dec/george-washington-1792.txt&quot; 
-#&gt; [5] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file3047619a1dec/george-washington-1793.txt&quot; 
-#&gt; [6] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//RtmpVz6bBx/file3047619a1dec/george-washington-1794.txt&quot;</code></pre>
+<pre><code>#&gt; [1] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmp2sxDMZ/file3c0654ac820e/george-washington-1790a.txt&quot;
+#&gt; [2] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmp2sxDMZ/file3c0654ac820e/george-washington-1790b.txt&quot;
+#&gt; [3] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmp2sxDMZ/file3c0654ac820e/george-washington-1791.txt&quot; 
+#&gt; [4] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmp2sxDMZ/file3c0654ac820e/george-washington-1792.txt&quot; 
+#&gt; [5] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmp2sxDMZ/file3c0654ac820e/george-washington-1793.txt&quot; 
+#&gt; [6] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmp2sxDMZ/file3c0654ac820e/george-washington-1794.txt&quot;</code></pre>
 <p>Now that we have the files on disk and a vector of filepaths, we can pass this vector directly into <code>readtext</code> to read the texts into a new variable.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># let&#39;s read in the files with readtext</span>
 sotu_texts &lt;-<span class="st"> </span><span class="kw">readtext</span>(file_paths)

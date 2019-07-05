@@ -172,8 +172,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <blockquote>
 <p>Learning Objectives</p>
 <ul>
-<li>perform basic text analysis operations in R</li>
-<li>determine differnd kinds of frequency counts</li>
+<li>perform different frequency counts and generate plots</li>
 <li>use the <code>widyr</code> package to calculate co-ocurrance</li>
 <li>use <code>igraph</code> and <code>ggraph</code> to plot a co-ocurrance graph</li>
 <li>import and export a Document-Term Matrix into <code>tidytext</code></li>
@@ -220,82 +219,82 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 #&gt;  9 american    2853
 #&gt; 10 world       2581
 #&gt; # … with 29,548 more rows</code></pre>
-<p>We could start adding in a bit of visualization here. Let’s show the most frequent words that occur more than 2000 times.</p>
+<p>We can pipe this into <code>ggplot</code> to make a graph of the words that occur more that 2000 times. We count the words and use <code>geom_col</code> to represent the n values.</p>
 <pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">count</span>(word, <span class="dt">sort =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">filter</span>(n <span class="op">&gt;</span><span class="st"> </span><span class="dv">2000</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">word =</span> <span class="kw">reorder</span>(word, n)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">count</span>(word) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(n <span class="op">&gt;</span><span class="st"> </span><span class="dv">2000</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">word =</span> <span class="kw">reorder</span>(word, n)) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># reorder values by frequency</span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(word, n)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_col</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">xlab</span>(<span class="ot">NULL</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">coord_flip</span>()</code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<p>What if we’re interested in most used words per speech?</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Count words by book</span>
-doc_words &lt;-<span class="st"> </span>tidy_sotu_words <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">count</span>(doc_id, word, <span class="dt">sort =</span> <span class="ot">TRUE</span>)
-
-<span class="co"># Calculate the total number of words by book and save them to a tibble</span>
-total_words &lt;-<span class="st"> </span>doc_words <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">group_by</span>(doc_id) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarize</span>(<span class="dt">total =</span> <span class="kw">sum</span>(n))
-
-<span class="co"># Join the total column with the rest of the data so we can calculate frequency</span>
-doc_words &lt;-<span class="st"> </span><span class="kw">left_join</span>(doc_words, total_words)
-
-doc_words </code></pre>
-<pre><code>#&gt; # A tibble: 352,846 x 4
-#&gt;    doc_id                       word               n total
-#&gt;    &lt;chr&gt;                        &lt;chr&gt;          &lt;int&gt; &lt;int&gt;
-#&gt;  1 harry-s-truman-1946.txt      dollars          207 12614
-#&gt;  2 jimmy-carter-1980b.txt       congress         204 16128
-#&gt;  3 harry-s-truman-1946.txt      war              201 12614
-#&gt;  4 william-howard-taft-1910.txt government       164 11178
-#&gt;  5 james-k-polk-1846.txt        mexico           158  7023
-#&gt;  6 richard-m-nixon-1974b.txt    federal          141  9996
-#&gt;  7 harry-s-truman-1946.txt      million          138 12614
-#&gt;  8 harry-s-truman-1946.txt      fiscal           129 12614
-#&gt;  9 jimmy-carter-1981.txt        administration   129 16595
-#&gt; 10 william-howard-taft-1912.txt government       129 10215
-#&gt; # … with 352,836 more rows</code></pre>
-<p>Let’s graph the top words per book.</p>
-<pre class="sourceCode r"><code class="sourceCode r">doc_words <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">filter</span>(n <span class="op">&gt;</span><span class="st"> </span><span class="dv">100</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(word, n, <span class="dt">fill =</span> doc_id)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_col</span>() <span class="op">+</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">xlab</span>(<span class="ot">NULL</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">coord_flip</span>()</code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<p>That’s cool looking, but let’s split it into facets so we can see by speech.</p>
-<pre class="sourceCode r"><code class="sourceCode r">doc_words <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">filter</span>(n <span class="op">&gt;</span><span class="st"> </span><span class="dv">100</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(word, n, <span class="dt">fill =</span> doc_id)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_col</span>(<span class="dt">show.legend =</span> <span class="ot">FALSE</span>) <span class="op">+</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">xlab</span>(<span class="ot">NULL</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>doc_id, <span class="dt">ncol =</span> <span class="dv">2</span>) <span class="op">+</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">90</span>, <span class="dt">hjust =</span> <span class="dv">1</span>))</code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<p>We could keep cleaning this figure up by setting some minimum sizing, determining the spacing between y-axis labels better, and so forth, but for now we’ll accept it as showing some sense of variation across speeches where certain words are used most.</p>
-<p>What if we want to check the most common words per speech for a single president? We could filter this <code>doc_words</code> dataset based on the president’s name being in the doc_id, but I think it’s easier to filter from the initial tidy data and recount.</p>
+<span class="st">     </span><span class="kw">geom_col</span>(<span class="dt">fill =</span> <span class="st">&quot;gray&quot;</span>) <span class="op">+</span>
+<span class="st">     </span><span class="kw">coord_flip</span>()  <span class="co"># flip x and y coordinates so we can read the words better</span></code></pre>
+<p><img src="R-text-analysis_files/figure-html/word-freq-plot-1.png" width="672" /></p>
+<p>What if we want to check the most common words per speech for a single president and see which of the top words apppear in which speech?</p>
 <pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(president <span class="op">==</span><span class="st"> &quot;Barack Obama&quot;</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">count</span>(doc_id, word, <span class="dt">sort =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">count</span>(doc_id, word) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(n <span class="op">&gt;</span><span class="st"> </span><span class="dv">20</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">word =</span> <span class="kw">reorder</span>(word, n)) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(word, n, <span class="dt">fill=</span>doc_id)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_col</span>() <span class="op">+</span>
-<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>doc_id, <span class="dt">ncol =</span> <span class="dv">2</span>) <span class="op">+</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">90</span>, <span class="dt">hjust =</span> <span class="dv">1</span>))</code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<span class="st">    </span><span class="kw">geom_col</span>() <span class="op">+</span>
+<span class="st">    </span><span class="kw">coord_flip</span>()</code></pre>
+<p><img src="R-text-analysis_files/figure-html/obama-topwords-1.png" width="672" /></p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>CHALLENGE: In any given year, how often is the word ‘peace’ used and how often is the word ‘war’ used? Make a bar chart that shows for each year the proportion of each of these two words out of the total of how often both words are used. Bonus: use decades instead of years.</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>As another example let us calculate the average number of words per speech for each president. How long was the average speech of each president and who are the top ‘wordiest’ presidents?</p>
+<p>First we summarize the words per president per speech</p>
+<pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">count</span>(president, doc_id)</code></pre>
+<pre><code>#&gt; # A tibble: 236 x 3
+#&gt;    president       doc_id                       n
+#&gt;    &lt;chr&gt;           &lt;chr&gt;                    &lt;int&gt;
+#&gt;  1 Abraham Lincoln abraham-lincoln-1861.txt  2578
+#&gt;  2 Abraham Lincoln abraham-lincoln-1862.txt  3088
+#&gt;  3 Abraham Lincoln abraham-lincoln-1863.txt  2398
+#&gt;  4 Abraham Lincoln abraham-lincoln-1864.txt  2398
+#&gt;  5 Andrew Jackson  andrew-jackson-1829.txt   3849
+#&gt;  6 Andrew Jackson  andrew-jackson-1830.txt   5428
+#&gt;  7 Andrew Jackson  andrew-jackson-1831.txt   2612
+#&gt;  8 Andrew Jackson  andrew-jackson-1832.txt   2881
+#&gt;  9 Andrew Jackson  andrew-jackson-1833.txt   2869
+#&gt; 10 Andrew Jackson  andrew-jackson-1834.txt   4952
+#&gt; # … with 226 more rows</code></pre>
+<p>Then we use the output table and group it by president. That allows us to calculate the average number of words per speech.</p>
+<pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">count</span>(president, doc_id)  <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(president) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">summarize</span>(<span class="dt">avg_words =</span> <span class="kw">mean</span>(n)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(avg_words))</code></pre>
+<pre><code>#&gt; # A tibble: 41 x 2
+#&gt;    president           avg_words
+#&gt;    &lt;chr&gt;                   &lt;dbl&gt;
+#&gt;  1 William Howard Taft     9126.
+#&gt;  2 William McKinley        7797 
+#&gt;  3 Jimmy Carter            7673.
+#&gt;  4 Theodore Roosevelt      7356 
+#&gt;  5 James K. Polk           6920.
+#&gt;  6 Grover Cleveland        5736.
+#&gt;  7 James Buchanan          5409 
+#&gt;  8 Benjamin Harrison       5308.
+#&gt;  9 Rutherford B. Hayes     4411 
+#&gt; 10 Martin Van Buren        4286.
+#&gt; # … with 31 more rows</code></pre>
 </div>
 <div id="term-frequency" class="section level2">
 <h2><span class="header-section-number">2.2</span> Term frequency</h2>
-<p>Sometimes, a raw count of a word is less important than understanding how often that word appears in respect to the total number of words in a text. This ratio would be the <strong>term frequency</strong>.</p>
-<pre class="sourceCode r"><code class="sourceCode r">doc_words &lt;-<span class="st"> </span>doc_words <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">term_freq =</span> n <span class="op">/</span><span class="st"> </span>total)
-
-doc_words </code></pre>
+<p>Often a raw count of a word is less important than understanding how often that word appears relative to the total number of words in a text. This ratio would be the <strong>term frequency</strong>. We can use <code>dplyr</code> to calculate it like this:</p>
+<pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">count</span>(doc_id, word, <span class="dt">sort =</span> T)  <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># count n for each word</span>
+<span class="st">  </span><span class="kw">group_by</span>(doc_id) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">n_tot =</span> <span class="kw">sum</span>(n), <span class="co"># count total number of words per doc</span>
+         <span class="dt">term_freq =</span> n<span class="op">/</span>n_tot)</code></pre>
 <pre><code>#&gt; # A tibble: 352,846 x 5
-#&gt;    doc_id                       word               n total term_freq
+#&gt; # Groups:   doc_id [236]
+#&gt;    doc_id                       word               n n_tot term_freq
 #&gt;    &lt;chr&gt;                        &lt;chr&gt;          &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;
 #&gt;  1 harry-s-truman-1946.txt      dollars          207 12614   0.0164 
 #&gt;  2 jimmy-carter-1980b.txt       congress         204 16128   0.0126 
@@ -309,102 +308,85 @@ doc_words </code></pre>
 #&gt; 10 william-howard-taft-1912.txt government       129 10215   0.0126 
 #&gt; # … with 352,836 more rows</code></pre>
 <p>Let’s graph the term frequency for one of these speeches so we can understand the frequency distribution of words over a text.</p>
-<pre class="sourceCode r"><code class="sourceCode r">doc_words <span class="op">%&gt;%</span>
+<pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(doc_id <span class="op">==</span><span class="st"> &quot;harry-s-truman-1946.txt&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">count</span>(doc_id, word)  <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># count n for each word</span>
+<span class="st">  </span><span class="kw">group_by</span>(doc_id) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">n_tot =</span> <span class="kw">sum</span>(n), <span class="co"># count total number of words per doc</span>
+         <span class="dt">term_freq =</span> n<span class="op">/</span>n_tot) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(term_freq)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_histogram</span>(<span class="dt">show.legend =</span> <span class="ot">FALSE</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">xlim</span>(<span class="ot">NA</span>, <span class="fl">.012</span>)</code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<span class="st">    </span><span class="kw">geom_histogram</span>() </code></pre>
+<p><img src="R-text-analysis_files/figure-html/termfreq-plot-1.png" width="672" /></p>
 <p>This distribution makes sense. Most words are used relatively rarely in a text. Only a few have a high term frequency.</p>
-<p>We could keep filtering this data to see which terms have high frequency, thus maybe increased significance, for different presidents and different particular speeches. We could also subset based on decade, and get a sense of what was important in each decade. We’re going to take a slightly different approach though. We’ve been looking at term frequency per document. What if we want to know about words that seem more important based on the contents of the entire corpus?</p>
+<p>We could keep filtering this data to see which terms have high frequency, thus maybe increased significance, for different presidents and different particular speeches.</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>CHALLENGE: Pick one president. For each of his speeches, which is the term with highest term frequency? Create a table as output. (Hint: <code>top_n</code>might be useful)</p>
+</blockquote>
+</blockquote>
+</blockquote>
 </div>
 <div id="tf-idf" class="section level2">
 <h2><span class="header-section-number">2.3</span> Tf-idf</h2>
-<p>For this, we can use term-frequency according to inverse document frequency (tf-idf). Tf-idf measures how important a word is within a corpus by scaling term frequency per document according to the inverse of the term’s document frequency (number of documents within the corpus in which the term appears divided by the number of documents).</p>
-<p>We could write our own function for tf-idf, but in this case we’ll take advantage of tidytext’s implementation.</p>
-<pre class="sourceCode r"><code class="sourceCode r">doc_words &lt;-<span class="st"> </span>doc_words <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">bind_tf_idf</span>(word, doc_id, n)
-
-doc_words</code></pre>
-<pre><code>#&gt; # A tibble: 352,846 x 8
-#&gt;    doc_id           word          n total term_freq      tf     idf  tf_idf
-#&gt;    &lt;chr&gt;            &lt;chr&gt;     &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
-#&gt;  1 harry-s-truman-… dollars     207 12614   0.0164  0.0164  0.612   1.00e-2
-#&gt;  2 jimmy-carter-19… congress    204 16128   0.0126  0.0126  0.00425 5.37e-5
-#&gt;  3 harry-s-truman-… war         201 12614   0.0159  0.0159  0.0345  5.50e-4
-#&gt;  4 william-howard-… governme…   164 11178   0.0147  0.0147  0.00425 6.23e-5
-#&gt;  5 james-k-polk-18… mexico      158  7023   0.0225  0.0225  0.810   1.82e-2
-#&gt;  6 richard-m-nixon… federal     141  9996   0.0141  0.0141  0.293   4.14e-3
-#&gt;  7 harry-s-truman-… million     138 12614   0.0109  0.0109  0.728   7.96e-3
-#&gt;  8 harry-s-truman-… fiscal      129 12614   0.0102  0.0102  0.494   5.05e-3
-#&gt;  9 jimmy-carter-19… administ…   129 16595   0.00777 0.00777 0.282   2.19e-3
-#&gt; 10 william-howard-… governme…   129 10215   0.0126  0.0126  0.00425 5.36e-5
-#&gt; # … with 352,836 more rows</code></pre>
+<p>So far we’ve been looking at term frequency per document. What if we want to know about words that seem more important based on the contents of the entire corpus?</p>
+<p>For this, we can use <strong>term-frequency according to inverse document frequency</strong>, also callled <strong>tf-idf</strong>. Tf-idf measures how important a word is within a corpus by scaling term frequency per document according to the inverse of the term’s document frequency (number of documents within the corpus in which the term appears divided by the number of documents).</p>
 <p>The tf-idf value will be:</p>
 <ul>
 <li>lower for words that appear in many documents in the corpus, and lowest when the word occurs in virtually all documents.</li>
 <li>high for words that appear many times in few documents in the corpus, this lending high discriminatory power to those documents.</li>
 </ul>
-<p>Let’s look at some of the words in the corpus that have the highest tf-idf scores, which means words that are particularly distinctive for their documents.</p>
-<pre class="sourceCode r"><code class="sourceCode r">doc_words <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>total) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(tf_idf))</code></pre>
-<pre><code>#&gt; # A tibble: 352,846 x 7
-#&gt;    doc_id                     word         n term_freq      tf   idf tf_idf
-#&gt;    &lt;chr&gt;                      &lt;chr&gt;    &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
-#&gt;  1 lyndon-b-johnson-1966.txt  vietnam     32   0.0152  0.0152   2.42 0.0367
-#&gt;  2 jimmy-carter-1980a.txt     soviet      31   0.0218  0.0218   1.47 0.0321
-#&gt;  3 george-w-bush-2003.txt     hussein     19   0.00811 0.00811  3.85 0.0313
-#&gt;  4 george-w-bush-2003.txt     saddam      19   0.00811 0.00811  3.67 0.0298
-#&gt;  5 franklin-d-roosevelt-1943… 1942        13   0.00758 0.00758  3.85 0.0292
-#&gt;  6 dwight-d-eisenhower-1961.… 1953        23   0.00747 0.00747  3.85 0.0288
-#&gt;  7 john-adams-1800.txt        gentlem…     8   0.0153  0.0153   1.80 0.0275
-#&gt;  8 benjamin-harrison-1892.txt 1892        40   0.00741 0.00741  3.52 0.0261
-#&gt;  9 franklin-d-roosevelt-1942… hitler       7   0.00527 0.00527  4.77 0.0251
-#&gt; 10 herbert-hoover-1930.txt    1928        14   0.00711 0.00711  3.52 0.0250
+<p>The <code>tidytext</code> package includes a function <code>bind_tf_idf</code>. It takes a table that contains one-row-per-term-per-document, the name of the column that contains the words (terms), the name of the column which contains the doc-id, and the name of the column that contains the document-term counts.</p>
+<p>So below we aggregate our tibble with the word tokens to create the one-row-per-term-per-document table and then pipe it into the <code>bind_tf_idf</code> function.</p>
+<pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">count</span>(doc_id, word, <span class="dt">sort =</span> <span class="ot">TRUE</span>)  <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># aggregate to count n for each word</span>
+<span class="st">  </span><span class="kw">bind_tf_idf</span>(word, doc_id, n) </code></pre>
+<pre><code>#&gt; # A tibble: 352,846 x 6
+#&gt;    doc_id                     word               n      tf     idf   tf_idf
+#&gt;    &lt;chr&gt;                      &lt;chr&gt;          &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+#&gt;  1 harry-s-truman-1946.txt    dollars          207 0.0164  0.612    1.00e-2
+#&gt;  2 jimmy-carter-1980b.txt     congress         204 0.0126  0.00425  5.37e-5
+#&gt;  3 harry-s-truman-1946.txt    war              201 0.0159  0.0345   5.50e-4
+#&gt;  4 william-howard-taft-1910.… government       164 0.0147  0.00425  6.23e-5
+#&gt;  5 james-k-polk-1846.txt      mexico           158 0.0225  0.810    1.82e-2
+#&gt;  6 richard-m-nixon-1974b.txt  federal          141 0.0141  0.293    4.14e-3
+#&gt;  7 harry-s-truman-1946.txt    million          138 0.0109  0.728    7.96e-3
+#&gt;  8 harry-s-truman-1946.txt    fiscal           129 0.0102  0.494    5.05e-3
+#&gt;  9 jimmy-carter-1981.txt      administration   129 0.00777 0.282    2.19e-3
+#&gt; 10 william-howard-taft-1912.… government       129 0.0126  0.00425  5.36e-5
 #&gt; # … with 352,836 more rows</code></pre>
-<p>These results seem appropriate given our history. To understand the occurrence of the years we might need to look more closely at the speeches themselves, and determine whether the years are significant or whether they need to be removed from the text. It might be that even if they don’t need to be removed from the text overall, they still need to be filtered out within the context of this analysis.</p>
-<p>In the same way that we narrowed our analysis to Obama speeches earlier, we could subset the corpus before we calculate the tf-idf score to understand which words are most important for a single president within their sotu speeches. Let’s do that for Obama.</p>
-<pre class="sourceCode r"><code class="sourceCode r">obama_tf_idf &lt;-<span class="st"> </span>tidy_sotu_words <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">filter</span>(president <span class="op">==</span><span class="st"> &quot;Barack Obama&quot;</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">count</span>(doc_id, word, <span class="dt">sort =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">bind_tf_idf</span>(word, doc_id, n) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(tf_idf))
-
-obama_tf_idf</code></pre>
-<pre><code>#&gt; # A tibble: 10,656 x 6
-#&gt;    doc_id                word          n      tf   idf  tf_idf
-#&gt;    &lt;chr&gt;                 &lt;chr&gt;     &lt;int&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
-#&gt;  1 barack-obama-2016.txt voices        8 0.00372  2.08 0.00773
-#&gt;  2 barack-obama-2014.txt cory          9 0.00322  2.08 0.00671
-#&gt;  3 barack-obama-2015.txt rebekah       7 0.00273  2.08 0.00567
-#&gt;  4 barack-obama-2012.txt unit          7 0.00255  2.08 0.00531
-#&gt;  5 barack-obama-2016.txt isil          8 0.00372  1.39 0.00515
-#&gt;  6 barack-obama-2009.txt restart       5 0.00221  2.08 0.00460
-#&gt;  7 barack-obama-2013.txt reduction     6 0.00220  2.08 0.00458
-#&gt;  8 barack-obama-2015.txt childcare     8 0.00312  1.39 0.00432
-#&gt;  9 barack-obama-2011.txt brandon       5 0.00197  2.08 0.00409
-#&gt; 10 barack-obama-2015.txt economics     5 0.00195  2.08 0.00405
-#&gt; # … with 10,646 more rows</code></pre>
-<p>Based on what you know of the Obama years and sotu speeches generally, how would you interpret these results?</p>
-<p>Let’s try graphing these results, showing the top tf-idf terms per speech for Obama’s speeches.</p>
-<pre class="sourceCode r"><code class="sourceCode r">obama_tf_idf <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">group_by</span>(doc_id) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">word =</span> <span class="kw">factor</span>(word, <span class="dt">levels =</span> <span class="kw">rev</span>(<span class="kw">unique</span>(word)))) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">group_by</span>(doc_id) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">top_n</span>(<span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(word, tf_idf, <span class="dt">fill =</span> doc_id)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_col</span>(<span class="dt">show.legend =</span> <span class="ot">FALSE</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="st">&quot;tf-idf&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>doc_id, <span class="dt">ncol =</span> <span class="dv">2</span>, <span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">coord_flip</span>() <span class="op">+</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.y =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">45</span>)) </code></pre>
-<p><img src="R-text-analysis_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>We can see in the output that our function added three columns to our aggregated table: which contain term frequency, inverse document frequency and Tf-idf.</p>
+<p>Let’s look at some of the words in the corpus that have the highest tf-idf scores, which means words that are particularly distinctive for their documents.</p>
+<pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">count</span>(doc_id, word, <span class="dt">sort =</span> <span class="ot">TRUE</span>)  <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">bind_tf_idf</span>(word, doc_id, n) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(tf_idf))</code></pre>
+<pre><code>#&gt; # A tibble: 352,846 x 6
+#&gt;    doc_id                        word          n      tf   idf tf_idf
+#&gt;    &lt;chr&gt;                         &lt;chr&gt;     &lt;int&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+#&gt;  1 lyndon-b-johnson-1966.txt     vietnam      32 0.0152   2.42 0.0367
+#&gt;  2 jimmy-carter-1980a.txt        soviet       31 0.0218   1.47 0.0321
+#&gt;  3 george-w-bush-2003.txt        hussein      19 0.00811  3.85 0.0313
+#&gt;  4 george-w-bush-2003.txt        saddam       19 0.00811  3.67 0.0298
+#&gt;  5 franklin-d-roosevelt-1943.txt 1942         13 0.00758  3.85 0.0292
+#&gt;  6 dwight-d-eisenhower-1961.txt  1953         23 0.00747  3.85 0.0288
+#&gt;  7 john-adams-1800.txt           gentlemen     8 0.0153   1.80 0.0275
+#&gt;  8 benjamin-harrison-1892.txt    1892         40 0.00741  3.52 0.0261
+#&gt;  9 franklin-d-roosevelt-1942.txt hitler        7 0.00527  4.77 0.0251
+#&gt; 10 herbert-hoover-1930.txt       1928         14 0.00711  3.52 0.0250
+#&gt; # … with 352,836 more rows</code></pre>
+<p>To understand the occurrence of the years as being particularly distinctive we might need to look more closely at the speeches themselves, and determine whether the years are significant or whether they need to be removed from the text either permanently in the clean up or temporarily using <code>filter</code>.</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>CHALLENGE: Pick the same president you chose above. For each of his speeches, which is the term with highest tf-idf? Create a table as output. (Hint: Remember to group by doc_id before you use top_n)</p>
+</blockquote>
+</blockquote>
+</blockquote>
 </div>
 <div id="n-grams" class="section level2">
 <h2><span class="header-section-number">2.4</span> N-Grams</h2>
-<p>We mentioned n-grams in the intro, but let’s revisit them here and take a look at the most common bigrams in the speeches. Remember this is what we get back:</p>
+<p>We mentioned n-grams in the intro, but let’s revisit them here and take a look at the most common bigrams in the speeches. Remember we use the <code>unnest_token</code> function on our texts and explicitly tell it to generate bigrams:</p>
 <pre class="sourceCode r"><code class="sourceCode r">sotu_whole <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">unnest_tokens</span>(bigram, text, <span class="dt">token =</span> <span class="st">&quot;ngrams&quot;</span>, <span class="dt">n =</span> <span class="dv">2</span>) <span class="co"># create bigram</span></code></pre>
 <pre><code>#&gt; # A tibble: 1,964,976 x 7
@@ -424,7 +406,7 @@ obama_tf_idf</code></pre>
 <p>Let’s see the most common bigrams:</p>
 <pre class="sourceCode r"><code class="sourceCode r">sotu_whole <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">unnest_tokens</span>(bigram, text, <span class="dt">token =</span> <span class="st">&quot;ngrams&quot;</span>, <span class="dt">n =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">count</span>(bigram, <span class="dt">sort =</span> <span class="ot">TRUE</span>) <span class="co"># count ocurrences and sord descending</span></code></pre>
+<span class="st">  </span><span class="kw">count</span>(bigram, <span class="dt">sort =</span> <span class="ot">TRUE</span>) <span class="co"># count ocurrences and sort descending</span></code></pre>
 <pre><code>#&gt; # A tibble: 469,092 x 2
 #&gt;    bigram            n
 #&gt;    &lt;chr&gt;         &lt;int&gt;
@@ -439,66 +421,122 @@ obama_tf_idf</code></pre>
 #&gt;  9 united states  4760
 #&gt; 10 it is          4756
 #&gt; # … with 469,082 more rows</code></pre>
-<p>Ok, so we again need to remove the stopwords. This time let’s use dplyr’s <code>filter</code> function for this. And before that we will <code>separate</code> the two words into two columns.</p>
+<p>Ok, so we again need to remove the stopwords. First let us separate the two words into two columns “word1” and “word2” with <code>separate</code> from the <code>tidyr</code> package:</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_whole <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">unnest_tokens</span>(bigram, text, <span class="dt">token =</span> <span class="st">&quot;ngrams&quot;</span>, <span class="dt">n =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">separate</span>(bigram, <span class="kw">c</span>(<span class="st">&quot;word1&quot;</span>, <span class="st">&quot;word2&quot;</span>), <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>)</code></pre>
+<pre><code>#&gt; # A tibble: 1,964,976 x 8
+#&gt;    president    year years_active party  sotu_type doc_id     word1  word2 
+#&gt;    &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;  &lt;chr&gt; 
+#&gt;  1 Abraham Li…  1861 1861-1865    Repub… written   abraham-l… fellow citiz…
+#&gt;  2 Abraham Li…  1861 1861-1865    Repub… written   abraham-l… citiz… of    
+#&gt;  3 Abraham Li…  1861 1861-1865    Repub… written   abraham-l… of     the   
+#&gt;  4 Abraham Li…  1861 1861-1865    Repub… written   abraham-l… the    senate
+#&gt;  5 Abraham Li…  1861 1861-1865    Repub… written   abraham-l… senate and   
+#&gt;  6 Abraham Li…  1861 1861-1865    Repub… written   abraham-l… and    house 
+#&gt;  7 Abraham Li…  1861 1861-1865    Repub… written   abraham-l… house  of    
+#&gt;  8 Abraham Li…  1861 1861-1865    Repub… written   abraham-l… of     repre…
+#&gt;  9 Abraham Li…  1861 1861-1865    Repub… written   abraham-l… repre… in    
+#&gt; 10 Abraham Li…  1861 1861-1865    Repub… written   abraham-l… in     the   
+#&gt; # … with 1,964,966 more rows</code></pre>
+<p>Now we use dplyr’s <code>filter</code> function to select only the words in each column that are not in the stopwords.</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_whole <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">unnest_tokens</span>(bigram, text, <span class="dt">token =</span> <span class="st">&quot;ngrams&quot;</span>, <span class="dt">n =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">separate</span>(bigram, <span class="kw">c</span>(<span class="st">&quot;word1&quot;</span>, <span class="st">&quot;word2&quot;</span>), <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># separate into cols</span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>word1 <span class="op">%in%</span><span class="st"> </span>stop_words<span class="op">$</span>word) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># remove stopwords</span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>word2 <span class="op">%in%</span><span class="st"> </span>stop_words<span class="op">$</span>word)</code></pre>
+<pre><code>#&gt; # A tibble: 215,992 x 8
+#&gt;    president    year years_active party   sotu_type doc_id    word1  word2 
+#&gt;    &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt; 
+#&gt;  1 Abraham Li…  1861 1861-1865    Republ… written   abraham-… fellow citiz…
+#&gt;  2 Abraham Li…  1861 1861-1865    Republ… written   abraham-… unpre… polit…
+#&gt;  3 Abraham Li…  1861 1861-1865    Republ… written   abraham-… polit… troub…
+#&gt;  4 Abraham Li…  1861 1861-1865    Republ… written   abraham-… abund… harve…
+#&gt;  5 Abraham Li…  1861 1861-1865    Republ… written   abraham-… pecul… exige…
+#&gt;  6 Abraham Li…  1861 1861-1865    Republ… written   abraham-… forei… natio…
+#&gt;  7 Abraham Li…  1861 1861-1865    Republ… written   abraham-… profo… solic…
+#&gt;  8 Abraham Li…  1861 1861-1865    Republ… written   abraham-… solic… chief…
+#&gt;  9 Abraham Li…  1861 1861-1865    Republ… written   abraham-… domes… affai…
+#&gt; 10 Abraham Li…  1861 1861-1865    Republ… written   abraham-… dislo… porti…
+#&gt; # … with 215,982 more rows</code></pre>
+<p>Lastly, we re-unite the two word columns into back into our bigrams and save it into a new table <code>sotu_bigrams</code>.</p>
 <pre class="sourceCode r"><code class="sourceCode r">sotu_bigrams &lt;-<span class="st"> </span>sotu_whole <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">unnest_tokens</span>(bigram, text, <span class="dt">token =</span> <span class="st">&quot;ngrams&quot;</span>, <span class="dt">n =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">separate</span>(bigram, <span class="kw">c</span>(<span class="st">&quot;word1&quot;</span>, <span class="st">&quot;word2&quot;</span>), <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># separate into cols</span>
 <span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>word1 <span class="op">%in%</span><span class="st"> </span>stop_words<span class="op">$</span>word) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># remove stopwords</span>
-<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>word2 <span class="op">%in%</span><span class="st"> </span>stop_words<span class="op">$</span>word)
+<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>word2 <span class="op">%in%</span><span class="st"> </span>stop_words<span class="op">$</span>word) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">unite</span>(bigram, word1, word2, <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>)  <span class="co"># combine columns</span>
+
 
 sotu_bigrams <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">count</span>(word1, word2, <span class="dt">sort =</span> <span class="ot">TRUE</span>)</code></pre>
-<pre><code>#&gt; # A tibble: 129,622 x 3
-#&gt;    word1    word2          n
-#&gt;    &lt;chr&gt;    &lt;chr&gt;      &lt;int&gt;
-#&gt;  1 federal  government   479
-#&gt;  2 american people       428
-#&gt;  3 june     30           325
-#&gt;  4 fellow   citizens     296
-#&gt;  5 public   debt         283
-#&gt;  6 public   lands        256
-#&gt;  7 health   care         240
-#&gt;  8 social   security     232
-#&gt;  9 post     office       202
-#&gt; 10 annual   message      200
+<span class="st">  </span><span class="kw">count</span>(bigram, <span class="dt">sort =</span> <span class="ot">TRUE</span>)</code></pre>
+<pre><code>#&gt; # A tibble: 129,622 x 2
+#&gt;    bigram                 n
+#&gt;    &lt;chr&gt;              &lt;int&gt;
+#&gt;  1 federal government   479
+#&gt;  2 american people      428
+#&gt;  3 june 30              325
+#&gt;  4 fellow citizens      296
+#&gt;  5 public debt          283
+#&gt;  6 public lands         256
+#&gt;  7 health care          240
+#&gt;  8 social security      232
+#&gt;  9 post office          202
+#&gt; 10 annual message       200
 #&gt; # … with 129,612 more rows</code></pre>
 <p>(Bonus question: What happened on that June 30th?)</p>
-<p>A bigram can also be treated as a term in a document in the same way that we treated individual words. That means we can look at tf-idf values in the same way.</p>
-<p>First we will re-unite the two word columns again, and then generate the tf-idf count as above.</p>
-<pre class="sourceCode r"><code class="sourceCode r">bigram_tf_idf &lt;-<span class="st"> </span>sotu_bigrams <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">unite</span>(bigram, word1, word2, <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># combine columns</span>
+<p>A bigram can also be treated as a term in a document in the same way that we treated individual words. That means we can look at tf-idf values in the same way. For example, we can find out the most distinct bigrams that the presidents uttered in all their respective speeches taken together.</p>
+<p>We group by president and bigram and then bind the tf-idf value with the <code>bind_tf_idf</code> function.</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_bigrams <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">count</span>(president, bigram) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">bind_tf_idf</span>(bigram, president, n) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(tf_idf))</code></pre>
-<p>What makes the speeches of different presidents unique?</p>
-<p>Let’s pick a few presidents and plot their highest scoring tf-idf values here.</p>
-<pre class="sourceCode r"><code class="sourceCode r">potus &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;John F. Kennedy&quot;</span>, <span class="st">&quot;Richard M. Nixon&quot;</span>, <span class="st">&quot;George Bush&quot;</span>, <span class="st">&quot;George W. Bush&quot;</span>)
-
-bigram_tf_idf <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">filter</span>(president <span class="op">%in%</span><span class="st"> </span>potus) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">group_by</span>(president) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">top_n</span>(<span class="dv">20</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="kw">reorder</span>(bigram, tf_idf), tf_idf, <span class="dt">fill =</span> president)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_col</span>(<span class="dt">show.legend =</span> <span class="ot">FALSE</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="ot">NULL</span>, <span class="dt">y =</span> <span class="st">&quot;tf-idf&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>president, <span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="dt">nrow =</span> <span class="dv">2</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">coord_flip</span>()</code></pre>
-<p><img src="R-text-analysis_files/figure-html/bigram-tf-idf-plot-1.png" width="672" /></p>
+<pre><code>#&gt; # A tibble: 169,227 x 6
+#&gt;    president          bigram                      n      tf   idf tf_idf
+#&gt;    &lt;chr&gt;              &lt;chr&gt;                   &lt;int&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+#&gt;  1 George W. Bush     al qaida                   35 0.00628  3.02 0.0190
+#&gt;  2 John Adams         john adams                  3 0.00510  3.71 0.0189
+#&gt;  3 John Adams         amity commerce              5 0.00850  2.10 0.0179
+#&gt;  4 John Adams         st croix                    5 0.00850  2.10 0.0179
+#&gt;  5 John Adams         6th article                 4 0.00680  2.33 0.0158
+#&gt;  6 John Adams         7th article                 4 0.00680  2.33 0.0158
+#&gt;  7 John Adams         commissioners acting        3 0.00510  3.02 0.0154
+#&gt;  8 John Adams         damages sustained           3 0.00510  3.02 0.0154
+#&gt;  9 William J. Clinton 21st century               59 0.00830  1.77 0.0147
+#&gt; 10 John Adams         commissioners appointed     7 0.0119   1.23 0.0146
+#&gt; # … with 169,217 more rows</code></pre>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>CHALLENGE: Again, pick the same president you chose above. For each of his speeches, which is the bigram with highest tf-idf? Create a table as output.</p>
+</blockquote>
+</blockquote>
+</blockquote>
 </div>
 <div id="co-occurrence" class="section level2">
 <h2><span class="header-section-number">2.5</span> Co-occurrence</h2>
 <p>Co-occurrences give us a sense of words that appear in the same text, but not necessarily next to each other.</p>
-<p>For this section we will make use of the <code>widyr</code> package. It allows us to turn our table into a wide matrix. In our case that matrix will be made up of the individual words and the cell values will be the counts of how many times they co-occur. Then we will turn the matrix back into a tidy form, where each row contains the word pairs and the count of their co-occurrence. This lets us count common pairs of words co-appearing within the same speech.</p>
-<p>The function which helps us do this is the <code>pairwise_count()</code> function.</p>
-<p>Since processing the entire corpus would take too long here, we will only look at the last 20 words of each speech.</p>
+<p>For this section we will make use of the <code>widyr</code> package. The function which helps us do this is the <code>pairwise_count()</code> function. It lets us count common pairs of words co-appearing within the same speech.</p>
+<p>Behind the scenes, this function first turns our table into a wide matrix. In our case that matrix will be made up of the individual words and the cell values will be the counts of in how many speeches they co-occur, like this:</p>
+<pre><code>#&gt;      we thus have
+#&gt; we   NA    4    5
+#&gt; thus  4   NA    2
+#&gt; have  5    2   NA</code></pre>
+<p>It then will turn the matrix back into a tidy form, where each row contains the word pairs and the count of their co-occurrence. Since we don’t care about the order of the words, we will not count the upper triangle of the wide matrix, which leaves us with:</p>
+<pre><code>#&gt;             
+#&gt;    we thus 4
+#&gt;    we have 5
+#&gt;  thus have 2</code></pre>
+<p>we | thus | 4
+we | have | 5
+thus | have | 2</p>
+<p>Since processing the entire corpus would take too long here, we will only look at the last 100 words of each speech: which words occurr most commonly together at the end of the speeches?</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(widyr)
 
-<span class="co"># extract last 100 words from text</span>
-sotu_whole<span class="op">$</span>speech_end &lt;-<span class="st"> </span><span class="kw">word</span>(sotu_whole<span class="op">$</span>text, <span class="dv">-100</span>, <span class="dt">end =</span> <span class="dv">-1</span>)
-
 sotu_word_pairs &lt;-<span class="st"> </span>sotu_whole <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">unnest_tokens</span>(word, speech_end) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>word <span class="op">%in%</span><span class="st"> </span>stop_words<span class="op">$</span>word) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># remove stopwords</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">speech_end =</span> <span class="kw">word</span>(text, <span class="dv">-100</span>, <span class="dt">end =</span> <span class="dv">-1</span>)) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># extract last 100 words</span>
+<span class="st">  </span><span class="kw">unnest_tokens</span>(word, speech_end) <span class="op">%&gt;%</span><span class="st">   </span><span class="co"># tokenize</span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>word <span class="op">%in%</span><span class="st"> </span>stop_words<span class="op">$</span>word) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># remove stopwords</span>
 <span class="st">  </span><span class="kw">pairwise_count</span>(word, doc_id, <span class="dt">sort =</span> <span class="ot">TRUE</span>, <span class="dt">upper =</span> <span class="ot">FALSE</span>) <span class="co"># don&#39;t include upper triangle of matrix</span>
 
 sotu_word_pairs</code></pre>
@@ -516,7 +554,7 @@ sotu_word_pairs</code></pre>
 #&gt;  9 public     country    21
 #&gt; 10 god        nation     21
 #&gt; # … with 125,566 more rows</code></pre>
-<p>To plot the co-occurrence network, we use the <code>igraph</code> library to convert our table into a network graph and <code>ggraph</code> which adds functionality to ggplot and makes it easier to create a network plot.</p>
+<p>To visualize the co-occurrence network of words that occur together at the end of 10 or more speeches, we use the <code>igraph</code> package to convert our table into a network graph and the <code>ggraph</code> package which adds functionality to ggplot to make it easier to plot a network.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(igraph)
 <span class="kw">library</span>(ggraph)
 
@@ -617,30 +655,34 @@ bing_lex</code></pre>
 #&gt;  9 aborted     negative 
 #&gt; 10 aborts      negative 
 #&gt; # … with 6,776 more rows</code></pre>
-<p>Since this is a regular tibble, we can use these sentiments and join them to the words of our speeches. We will use <code>inner_join</code> from <code>dplyr</code>. Since our columns to join on have the same name (<code>word</code>) we don’t need to explicitly name it.</p>
-<pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">inner_join</span>(bing_lex) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># join</span>
-<span class="st">  </span><span class="kw">count</span>(year, sentiment) <span class="co"># group by year and sentiment</span></code></pre>
-<pre><code>#&gt; # A tibble: 450 x 3
-#&gt;     year sentiment     n
-#&gt;    &lt;int&gt; &lt;chr&gt;     &lt;int&gt;
-#&gt;  1  1790 negative     39
-#&gt;  2  1790 positive    125
-#&gt;  3  1791 negative     52
-#&gt;  4  1791 positive    103
-#&gt;  5  1792 negative     57
-#&gt;  6  1792 positive     78
-#&gt;  7  1793 negative     58
-#&gt;  8  1793 positive     72
-#&gt;  9  1794 negative    110
-#&gt; 10  1794 positive    106
-#&gt; # … with 440 more rows</code></pre>
-<p>Finally we can visualize it like this:</p>
-<pre class="sourceCode r"><code class="sourceCode r">tidy_sotu_words <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">inner_join</span>(bing_lex) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># join</span>
+<p>We can use these sentiments attached to each word and join them to the words of our speeches. We will use <code>inner_join</code> from <code>dplyr</code>. It will take all rows with words from <code>tidy_sotu_words</code> that match words in <code>bing_lex</code>, eliminating rows where the word cannot be found in the lexicon. Since our columns to join on have the same name (<code>word</code>) we don’t need to explicitly name it.</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_sentiments &lt;-<span class="st"> </span>tidy_sotu_words <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">inner_join</span>(bing_lex)  <span class="co"># join to add semtinemt column</span>
+
+sotu_sentiments</code></pre>
+<pre><code>#&gt; # A tibble: 105,206 x 8
+#&gt;    president   year years_active party  sotu_type doc_id    word  sentiment
+#&gt;    &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    
+#&gt;  1 Abraham L…  1861 1861-1865    Repub… written   abraham-… trou… negative 
+#&gt;  2 Abraham L…  1861 1861-1865    Repub… written   abraham-… grat… positive 
+#&gt;  3 Abraham L…  1861 1861-1865    Repub… written   abraham-… unus… negative 
+#&gt;  4 Abraham L…  1861 1861-1865    Repub… written   abraham-… abun… positive 
+#&gt;  5 Abraham L…  1861 1861-1865    Repub… written   abraham-… pecu… negative 
+#&gt;  6 Abraham L…  1861 1861-1865    Repub… written   abraham-… prof… positive 
+#&gt;  7 Abraham L…  1861 1861-1865    Repub… written   abraham-… soli… negative 
+#&gt;  8 Abraham L…  1861 1861-1865    Repub… written   abraham-… disl… negative 
+#&gt;  9 Abraham L…  1861 1861-1865    Repub… written   abraham-… dest… negative 
+#&gt; 10 Abraham L…  1861 1861-1865    Repub… written   abraham-… disr… negative 
+#&gt; # … with 105,196 more rows</code></pre>
+<p>Finally we can visualize the proportion of positive sentiment (out of the total of positive and negative) in US State of the Union Addresses over time like this:</p>
+<pre class="sourceCode r"><code class="sourceCode r">sotu_sentiments <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">count</span>(year, sentiment) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># group by year and sentiment</span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(year, n, <span class="dt">color =</span> sentiment)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_line</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">spread</span>(sentiment, n) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># spread by seniment</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pct_positive_sentiment =</span> positive<span class="op">/</span>(negative <span class="op">+</span><span class="st"> </span>positive) <span class="op">*</span><span class="st"> </span><span class="dv">100</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># calculate %</span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(year, pct_positive_sentiment)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_line</span>(<span class="dt">color=</span><span class="st">&quot;gray&quot;</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_smooth</span>(<span class="dt">span =</span> <span class="fl">0.3</span>, <span class="dt">se =</span> <span class="ot">FALSE</span>) <span class="op">+</span><span class="st"> </span><span class="co"># for easier viewing</span>
+<span class="st">    </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">50</span>, <span class="dt">linetype=</span><span class="st">&quot;dotted&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="co"># 50% as reference</span>
 <span class="st">    </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="dv">1790</span>, <span class="dv">2016</span>, <span class="dt">by =</span> <span class="dv">10</span>)) <span class="op">+</span>
 <span class="st">    </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">45</span>, <span class="dt">hjust =</span> <span class="dv">1</span>))</code></pre>
 <p><img src="R-text-analysis_files/figure-html/sentiment-plot-1.png" width="576" /></p>
