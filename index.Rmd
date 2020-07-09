@@ -43,4 +43,6 @@ Silge, J and D. Robinson, 2017: [Text Mining with R: A Tidy Approach](http://tid
 
 Kasper Welbers, Wouter Van Atteveldt & Kenneth Benoit (2017) Text Analysis in R, Communication Methods and Measures, 11:4, 245-265, DOI: 10.1080/19312458.2017.1387238
 
+Scott Chamberlain (2019). [fulltext: Full Text of 'Scholarly' Articles Across Many Data Sources](https://books.ropensci.org/fulltext/)
+
 [CRAN Task View: Natural Language Processing](https://CRAN.R-project.org/view=NaturalLanguageProcessing)
