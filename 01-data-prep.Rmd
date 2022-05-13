@@ -14,7 +14,7 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE,comment = "#>", purl = FALSE)
 > Learning Objectives
 >
 > - read textual data into R using `readtext`
-> - use `stringr` package to manipulate strings
+> - use the `stringr` package to prepare strings for processing
 > - use `tidytext` functions to tokenize texts and remove stopwords
 > - use `SnowballC` to stem words
 
@@ -38,18 +38,18 @@ library(readtext)
 
 ## Reading text into R
 
-First, let's look at the data in the `sotu` package. The metadata and texts come separately. Below is what the metadata look like. Can you tell how many speeches we have?
+First, let's look at the data in the `sotu` package. The metadata and texts are contained in this package separately in `sotu_meta` and `sotu_text` respectively. We can take a look at those by either typing the names or use funnctions like `glimpse()` or `str()`. Below, or example is what the metadata look like. Can you tell how many speeches there are?
 
 ```{r sotu-meta}
-# Let's take a quick look at the state of the union metadata
+# Let's take a look at the state of the union metadata
 str(sotu_meta)
 ```
 
-In order to work with the speech texts and to later practice reading text files from disk we're going to use a function `sotu_dir` to write the texts out. This function by default writes to a temporary directory with one speech in each file. It returns a character vector where each element is the name of the path to the individual speech file. We save this vector into the `file_paths` variable.
+In order to work with the speech texts and to later practice reading text files from disk we use the function `sotu_dir()` to write the texts out. This function by default writes to a temporary directory with one speech in each file. It returns a character vector where each element is the name of the path to the individual speech file. We save this vector into the `file_paths` variable.
 
 ```{r file-paths}
 # sotu_dir writes the text files to disk in a temporary dir, 
-# but you could specific where you want them.
+# but you could also specify a location.
 file_paths <- sotu_dir()
 head(file_paths)
 ```
@@ -59,10 +59,14 @@ Now that we have the files on disk and a vector of filepaths, we can pass this v
 ```{r readtext}
 # let's read in the files with readtext
 sotu_texts <- readtext(file_paths)
-head(sotu_texts)
 ```
 
-To work with a single tabular dataset, we combine the text and metadata into a single tibble. You can see that our `sotu_texts` are organized by alphabetical order, so first we'll need to sort our metadata to match. 
+`readtext()` generated a dataframe for us with 2 colums: the doc_id, which is the name of the document and the actual text:
+```{r readtext-view}
+glimpse(sotu_texts)
+```
+
+To work with a single table, we combine the text and metadata. Our `sotu_texts` are organized by alphabetical order, so we sort our metadata in `sotu_meta` to match that order and then bind the columns. 
 
 ```{r text-meta-combine}
 sotu_whole <- 
@@ -73,43 +77,53 @@ sotu_whole <-
 glimpse(sotu_whole)
 ```
 
-Now that we have our data, we need to think about cleaning it. Depending on the quality of your data, you might need to explicitly replace certain characters or words, remove urls or types of numbers, such as phone numbers, or otherwise clean up misspellings or errors. There are several ways to handle this sort of cleaning, we'll show a few examples for string manipulation and replacement. 
+Now that we have our data combined, we can start looking at the text. Typically quite a bit of effort goes into pre-processing the text for further analysis. Depending on the quality of your data and your goal, you might for example need to: 
 
+- replace certain characters or words, 
+- remove urls or certain numbers, such as phone numbers,
+- clean up misspellings or errors, 
+- etc.
+
+There are several ways to handle this sort of cleaning, we'll show a few examples below.
 
 ## String operations
 
 R has many functions available to manipulate strings including functions like `grep` and `paste`, which come with the R base install. 
 
-Here we will here take a look at the `stringr` package, which is part of the `tidyverse`. Under the hood it wraps a lot of the functions from the `stringi` package which is perhaps one of the most comprehensive string manipulation packages.
+Here we will here take a look at the `stringr` package, which is part of the `tidyverse`. It refers to a lot of functionality from the `stringi` package which is perhaps one of the most comprehensive string manipulation packages.
 
 Below are examples for a few functions that might be useful.
 
-`str_count` takes a characer vector as input and by default counts the number of pattern matches in a string. 
+
+### Counting ocurrences
+
+`str_count` takes a character vector as input and by default counts the number of pattern matches in a string. 
 
 How man times does the word "citizen" appear in each of the speeches?
 
 ```{r str-count-citizen}
 sotu_whole %>% 
-  pull(text) %>% # extract texts vector
-  str_count("citizen")
+    mutate(n_citizen = str_count(text, "citizen")) 
 ```
 
 It is possible to use regular expressions, for example, this is how we would check how many times either "citizen" or "Citizen" appear in each of the speeches:
 
 ```{r str-count-citizen-regex}
 sotu_whole %>% 
-  pull(text) %>% # extract texts vector
-  str_count("[C|c]itizen")
+    mutate(n_citizen = str_count(text, "citizen"),
+           n_cCitizen = str_count(text, "[C|c]itizen")) 
 ```
 
-When used with the `boundary` argument `str_count` can count different entities like "character", "line_break", "sentence", or "word". Here we add a new column to the dataframe indicating how many words are there in each speech:
+Going into the use of [regular expressions](https://en.wikipedia.org/wiki/Regular_expression) is beyond this introduction. However we want to point out the `str_view()` function which can help you to create your correct expression. Also see [RegExr](https://regexr.com/), an online tool to learn, build, & test regular expressions.
+
+When used with the `boundary` argument `str_count()` can count different entities like "character", "line_break", "sentence", or "word". Here we add a new column to the dataframe indicating how many words are in each speech:
 
 ```{r str-word-count}
 sotu_whole %>% 
   mutate(n_words = str_count(text, boundary("word"))) 
 ```
 
->>> CHALLENGE: Use the code above and add another column `n_sentences` where you calculate the number of sentences per speech. Then create a third column `avg_word_per_sentence`, where you calculate the number of words per sentence for each speech. Finally use `filter` to find which speech has shortest/longest average sentences length and what is the avderage length.
+>>> CHALLENGE: Use the code above and add another column `n_sentences` where you calculate the number of sentences per speech. Then create a third column `avg_word_per_sentence`, where you calculate the number of words per sentence for each speech. Finally use `filter` to find which speech has shortest/longest average sentences length and what is the average length.
 
 ```{r avg-sentence-length, eval=FALSE, echo=FALSE}
 sotu_whole %>% 
@@ -119,6 +133,8 @@ sotu_whole %>%
   filter(avg_word_per_sentence %in% range(avg_word_per_sentence))
 ```
 
+
+### Detecting patterns
 
 `str_detect` also looks for patterns, but instead of counts it returns a logical vector (TRUE/FALSE) indiciating if the pattern is or is not found. So we typically want to use it with the `filter` "verb" from `dplyr`.
 
@@ -130,16 +146,21 @@ sotu_whole %>%
   select(doc_id) 
 ```
 
+### Extracting words
+
 The `word` function extracts specific words from a character vector of words. By default it returns the first word. If for example we wanted to extract the first 5 words of each speech by Woodrow Wilson we provide the `end` argument like this:
 
 ```{r extract-words}
 sotu_whole %>% 
   filter(president == "Woodrow Wilson") %>%  # sample a few speeches as demo
-  pull(text) %>% # extract character vector
-  word(end = 5) # end = 5 to extract words 1 - 5.
+  pull(text) %>% # we pull out the text vector only
+  word(end = 5) 
 ```
 
-To clean this up a little we will first remove the newline characters (`\n`). We use  the `str_replace_all` function to replace all the ocurrences of the `\n` pattern with a white space `" "`. We need to add the escape character `\` in front of our pattern to be replaced so the backslash before the `n` is interpreted correctly.
+
+### Replacing and removing characters
+
+Now let's take a look at text 'cleaninng'. We will first remove the newline characters (`\n`). We use  the `str_replace_all` function to replace all the ocurrences of the `\n` pattern with a white space `" "`. We need to add the escape character `\` in front of our pattern to be replaced so the backslash before the `n` is interpreted correctly.
 
 ```{r str-remove-newl}
 sotu_whole %>% 
@@ -149,7 +170,7 @@ sotu_whole %>%
   word(end = 5) 
 ```
 
-This looks better, but we still have a problem to extract exactly 5 words because of the whitespaces. So let's get rid of any whitespaces before and also of repeated whitespaces within the string with the convenient `str_squish` function.
+This looks better, but we still have a problem to extract exactly 5 words because the too whitespaces are counted as a word. So let's get rid of any whitespaces before and after, as well as repeated whitespaces within the string with the `str_squish()` function.
 
 ```{r str-remove-spaces}
 sotu_whole %>% 
@@ -164,17 +185,17 @@ sotu_whole %>%
 (For spell checks take a look at https://CRAN.R-project.org/package=spelling or https://CRAN.R-project.org/package=hunspell)
 
 
-## Tokenize, lowercase
+## Tokenize
 
-A very common part of preparing your text for analysis involves tokenization. Currently our data contains in each each row a single text with metdata, so the entire speech text is the unit of observation. When we tokenize we break down the text into "tokens" (most commonly single words), so each row contains a single word with its metadata as unit of observation. 
+A very common part of preparing your text for analysis involves *tokenization*. Currently our data contains in each each row a single text with metadata, so the entire speech text is the unit of observation. When we tokenize we break down the text into "tokens" (most commonly single words), so each row contains a single word with its metadata as unit of observation. 
 
-`tidytext` provides a function  `unnest_tokens` to convert our speech table into one that is tokenized. It takes three arguments: 
+`tidytext` provides a function  `unnest_tokens()` to convert our speech table into one that is tokenized. It takes three arguments: 
 
 - a tibble or data frame which contains the text; 
 - the name of the newly created column that will contain the tokens;
 - the name of the column within the data frame which contains the text to be tokenized.
 
-In the example below we name the new column to hold the tokens `word`. Remember that the column that holds the speech text is called `text`.
+In the example below we name the new column to hold the tokens `word`. Remember that the column that holds the speech is called `text`.
 
 ```{r tokenize}
 tidy_sotu <- sotu_whole %>%
@@ -201,17 +222,19 @@ sotu_whole %>%
   select(sentence)
 
 
-# N-gram tokenization
+# N-gram tokenization as trigrams
 sotu_whole %>%
   unnest_tokens(trigram, text, token = "ngrams", n = 3) %>% 
   select(trigram)
 
 ```
 
+(Take note that the trigrams are generated by a moving 3-word window over the text.)
+
 
 ## Stopwords 
 
-Another common task of preparing text for analysis is to remove stopwords. Stopwords are common words that are considered to provide non-relevant information about the content of a text. 
+Another common task of preparing text for analysis is to remove stopwords. Stopwords are highly common words that are considered to provide non-relevant information about the content of a text. 
 
 Let's look at the stopwords that come with the `tidytext` package to get a sense of what they are.
 
@@ -219,9 +242,9 @@ Let's look at the stopwords that come with the `tidytext` package to get a sense
 stop_words
 ```
 
-Depending on the type of analysis you're doing, you might leave these words in or alternatively use your own curated list of stopwords. Stopword lists exist for many languages. For now we will remove the English stopwords as suggested here.
+These are English stopwords, pulled from different lexica ("onix", "SMART", or "snowball"). Depending on the type of analysis you're doing, you might leave these words in or alternatively use your own curated list of stopwords. Stopword lists exist for many languages, see for examle the [`stopwords` package in R](https://cran.r-project.org/package=stopwords). For now we will remove the English stopwords as suggested here.
 
-There are a number of ways how to do this, here we use `anti_join` from `dplyr`. We can use it to return all rows from our table of tokens `tidy_sotu` where there are not matching values in our list of stopwords. Both of these tables have one column name in common `word` so by default the join will be on that colunmn, and dplyr will tell us so.
+For this we use `anti_join` from `dplyr`. We join and return all rows from our table of tokens `tidy_sotu` where there are **no matching values** in our list of stopwords. Both of these tables have one column name in common: `word` so by default the join will be on that column, and dplyr will tell us so.
 
 ```{r remove-stopwords}
 tidy_sotu_words <- tidy_sotu %>% 
@@ -232,7 +255,7 @@ tidy_sotu_words
 
 If we compare this with `tidy_sotu` we see that the records with words like "of", "the", "and", "in"  are now removed.
 
-So we went from `r nrow(tidy_sotu)` to `r nrow(tidy_sotu_words)` rows, which means we had a lot of stopwords in our corpus. This is a huge removal, so for serious analysis, we might want to scrutinize the stopword list carefully and determine if this is feasible. 
+We also went from `r nrow(tidy_sotu)` to `r nrow(tidy_sotu_words)` rows, which means we had a lot of stopwords in our corpus. This is a huge removal, so for serious analysis, we might want to scrutinize the stopword list carefully and determine if this is feasible. 
 
 
 ## Word Stemming 
