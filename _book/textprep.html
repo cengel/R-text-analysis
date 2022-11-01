@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 1 Preparing Textual Data | Text Analysis with R</title>
   <meta name="description" content="Workshop materials for Text Analysis in R" />
-  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.29 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 1 Preparing Textual Data | Text Analysis with R" />
   <meta property="og:type" content="book" />
@@ -211,29 +211,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>First, let’s look at the data in the <code>sotu</code> package. The metadata and texts are contained in this package separately in <code>sotu_meta</code> and <code>sotu_text</code> respectively. We can take a look at those by either typing the names or use funnctions like <code>glimpse()</code> or <code>str()</code>. Below, or example is what the metadata look like. Can you tell how many speeches there are?</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="textprep.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Let&#39;s take a look at the state of the union metadata</span></span>
 <span id="cb2-2"><a href="textprep.html#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(sotu_meta)</span></code></pre></div>
-<pre><code>#&gt; tibble [236 × 5] (S3: tbl_df/tbl/data.frame)
-#&gt;  $ president   : chr [1:236] &quot;George Washington&quot; &quot;George Washington&quot; &quot;George Washington&quot; &quot;George Washington&quot; ...
-#&gt;  $ year        : int [1:236] 1790 1790 1791 1792 1793 1794 1795 1796 1797 1798 ...
-#&gt;  $ years_active: chr [1:236] &quot;1789-1793&quot; &quot;1789-1793&quot; &quot;1789-1793&quot; &quot;1789-1793&quot; ...
-#&gt;  $ party       : chr [1:236] &quot;Nonpartisan&quot; &quot;Nonpartisan&quot; &quot;Nonpartisan&quot; &quot;Nonpartisan&quot; ...
-#&gt;  $ sotu_type   : chr [1:236] &quot;speech&quot; &quot;speech&quot; &quot;speech&quot; &quot;speech&quot; ...</code></pre>
+<pre><code>#&gt; &#39;data.frame&#39;:    240 obs. of  6 variables:
+#&gt;  $ X           : int  1 2 3 4 5 6 7 8 9 10 ...
+#&gt;  $ president   : chr  &quot;George Washington&quot; &quot;George Washington&quot; &quot;George Washington&quot; &quot;George Washington&quot; ...
+#&gt;  $ year        : int  1790 1790 1791 1792 1793 1794 1795 1796 1797 1798 ...
+#&gt;  $ years_active: chr  &quot;1789-1793&quot; &quot;1789-1793&quot; &quot;1789-1793&quot; &quot;1789-1793&quot; ...
+#&gt;  $ party       : chr  &quot;Nonpartisan&quot; &quot;Nonpartisan&quot; &quot;Nonpartisan&quot; &quot;Nonpartisan&quot; ...
+#&gt;  $ sotu_type   : chr  &quot;speech&quot; &quot;speech&quot; &quot;speech&quot; &quot;speech&quot; ...</code></pre>
 <p>In order to work with the speech texts and to later practice reading text files from disk we use the function <code>sotu_dir()</code> to write the texts out. This function by default writes to a temporary directory with one speech in each file. It returns a character vector where each element is the name of the path to the individual speech file. We save this vector into the <code>file_paths</code> variable.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="textprep.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sotu_dir writes the text files to disk in a temporary dir, </span></span>
 <span id="cb4-2"><a href="textprep.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># but you could also specify a location.</span></span>
 <span id="cb4-3"><a href="textprep.html#cb4-3" aria-hidden="true" tabindex="-1"></a>file_paths <span class="ot">&lt;-</span> <span class="fu">sotu_dir</span>()</span>
 <span id="cb4-4"><a href="textprep.html#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(file_paths)</span></code></pre></div>
-<pre><code>#&gt; [1] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmpef14Qw/file836c737cda99/george-washington-1790a.txt&quot;
-#&gt; [2] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmpef14Qw/file836c737cda99/george-washington-1790b.txt&quot;
-#&gt; [3] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmpef14Qw/file836c737cda99/george-washington-1791.txt&quot; 
-#&gt; [4] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmpef14Qw/file836c737cda99/george-washington-1792.txt&quot; 
-#&gt; [5] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmpef14Qw/file836c737cda99/george-washington-1793.txt&quot; 
-#&gt; [6] &quot;/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmpef14Qw/file836c737cda99/george-washington-1794.txt&quot;</code></pre>
+<pre><code>#&gt; [1] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmp3kRRs1/file63921d8a5c72/george-washington-1790a.txt&quot;
+#&gt; [2] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmp3kRRs1/file63921d8a5c72/george-washington-1790b.txt&quot;
+#&gt; [3] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmp3kRRs1/file63921d8a5c72/george-washington-1791.txt&quot; 
+#&gt; [4] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmp3kRRs1/file63921d8a5c72/george-washington-1792.txt&quot; 
+#&gt; [5] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmp3kRRs1/file63921d8a5c72/george-washington-1793.txt&quot; 
+#&gt; [6] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmp3kRRs1/file63921d8a5c72/george-washington-1794.txt&quot;</code></pre>
 <p>Now that we have the files on disk and a vector of filepaths, we can pass this vector directly into <code>readtext</code> to read the texts into a new variable.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="textprep.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let&#39;s read in the files with readtext</span></span>
 <span id="cb6-2"><a href="textprep.html#cb6-2" aria-hidden="true" tabindex="-1"></a>sotu_texts <span class="ot">&lt;-</span> <span class="fu">readtext</span>(file_paths)</span></code></pre></div>
 <p><code>readtext()</code> generated a dataframe for us with 2 colums: the doc_id, which is the name of the document and the actual text:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="textprep.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(sotu_texts)</span></code></pre></div>
-<pre><code>#&gt; Rows: 236
+<pre><code>#&gt; Rows: 240
 #&gt; Columns: 2
 #&gt; $ doc_id &lt;chr&gt; &quot;abraham-lincoln-1861.txt&quot;, &quot;abraham-lincoln-1862.txt&quot;, &quot;abraha…
 #&gt; $ text   &lt;chr&gt; &quot;\n\n Fellow-Citizens of the Senate and House of Representative…</code></pre>
@@ -241,11 +242,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="textprep.html#cb9-1" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="ot">&lt;-</span> </span>
 <span id="cb9-2"><a href="textprep.html#cb9-2" aria-hidden="true" tabindex="-1"></a>  sotu_meta <span class="sc">%&gt;%</span>  </span>
 <span id="cb9-3"><a href="textprep.html#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(president) <span class="sc">%&gt;%</span> <span class="co"># sort metadata</span></span>
-<span id="cb9-4"><a href="textprep.html#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(sotu_texts) <span class="co"># combine with texts</span></span>
-<span id="cb9-5"><a href="textprep.html#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="textprep.html#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(sotu_whole)</span></code></pre></div>
-<pre><code>#&gt; Rows: 236
-#&gt; Columns: 7
+<span id="cb9-4"><a href="textprep.html#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(sotu_texts) <span class="sc">%&gt;%</span> <span class="co"># combine with texts</span></span>
+<span id="cb9-5"><a href="textprep.html#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="co"># convert to tibble for better screen viewing</span></span>
+<span id="cb9-6"><a href="textprep.html#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="textprep.html#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(sotu_whole)</span></code></pre></div>
+<pre><code>#&gt; Rows: 240
+#&gt; Columns: 8
+#&gt; $ X            &lt;int&gt; 73, 74, 75, 76, 41, 42, 43, 44, 45, 46, 47, 48, 77, 78, 7…
 #&gt; $ president    &lt;chr&gt; &quot;Abraham Lincoln&quot;, &quot;Abraham Lincoln&quot;, &quot;Abraham Lincoln&quot;, …
 #&gt; $ year         &lt;int&gt; 1861, 1862, 1863, 1864, 1829, 1830, 1831, 1832, 1833, 183…
 #&gt; $ years_active &lt;chr&gt; &quot;1861-1865&quot;, &quot;1861-1865&quot;, &quot;1861-1865&quot;, &quot;1861-1865&quot;, &quot;1829…
@@ -273,56 +276,57 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>How man times does the word “citizen” appear in each of the speeches?</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="textprep.html#cb11-1" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
 <span id="cb11-2"><a href="textprep.html#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">n_citizen =</span> <span class="fu">str_count</span>(text, <span class="st">&quot;citizen&quot;</span>)) </span></code></pre></div>
-<pre><code>#&gt; # A tibble: 236 × 8
-#&gt;    president        year years_active party     sotu_type doc_id text  n_citizen
-#&gt;    &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;     &lt;int&gt;
-#&gt;  1 Abraham Lincoln  1861 1861-1865    Republic… written   abrah… &quot;\n\…         9
-#&gt;  2 Abraham Lincoln  1862 1861-1865    Republic… written   abrah… &quot;\n\…         7
-#&gt;  3 Abraham Lincoln  1863 1861-1865    Republic… written   abrah… &quot;\n\…        15
-#&gt;  4 Abraham Lincoln  1864 1861-1865    Republic… written   abrah… &quot;\n\…         3
-#&gt;  5 Andrew Jackson   1829 1829-1833    Democrat… written   andre… &quot;\n\…        19
-#&gt;  6 Andrew Jackson   1830 1829-1833    Democrat… written   andre… &quot;\n\…        14
-#&gt;  7 Andrew Jackson   1831 1829-1833    Democrat… written   andre… &quot;\n\…        23
-#&gt;  8 Andrew Jackson   1832 1829-1833    Democrat… written   andre… &quot;\n\…        19
-#&gt;  9 Andrew Jackson   1833 1833-1837    Democrat… written   andre… &quot;\n\…        14
-#&gt; 10 Andrew Jackson   1834 1833-1837    Democrat… written   andre… &quot;\n\…        25
-#&gt; # … with 226 more rows</code></pre>
+<pre><code>#&gt; # A tibble: 240 × 9
+#&gt;        X president        year years_active party   sotu_…¹ doc_id text  n_cit…²
+#&gt;    &lt;int&gt; &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;   &lt;int&gt;
+#&gt;  1    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… &quot;\n\…       9
+#&gt;  2    74 Abraham Lincoln  1862 1861-1865    Republ… written abrah… &quot;\n\…       7
+#&gt;  3    75 Abraham Lincoln  1863 1861-1865    Republ… written abrah… &quot;\n\…      15
+#&gt;  4    76 Abraham Lincoln  1864 1861-1865    Republ… written abrah… &quot;\n\…       3
+#&gt;  5    41 Andrew Jackson   1829 1829-1833    Democr… written andre… &quot;\n\…      19
+#&gt;  6    42 Andrew Jackson   1830 1829-1833    Democr… written andre… &quot;\n\…      14
+#&gt;  7    43 Andrew Jackson   1831 1829-1833    Democr… written andre… &quot;\n\…      23
+#&gt;  8    44 Andrew Jackson   1832 1829-1833    Democr… written andre… &quot;\n\…      19
+#&gt;  9    45 Andrew Jackson   1833 1833-1837    Democr… written andre… &quot;\n\…      14
+#&gt; 10    46 Andrew Jackson   1834 1833-1837    Democr… written andre… &quot;\n\…      25
+#&gt; # … with 230 more rows, and abbreviated variable names ¹​sotu_type, ²​n_citizen</code></pre>
 <p>It is possible to use regular expressions, for example, this is how we would check how many times either “citizen” or “Citizen” appear in each of the speeches:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="textprep.html#cb13-1" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
 <span id="cb13-2"><a href="textprep.html#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">n_citizen =</span> <span class="fu">str_count</span>(text, <span class="st">&quot;citizen&quot;</span>),</span>
 <span id="cb13-3"><a href="textprep.html#cb13-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">n_cCitizen =</span> <span class="fu">str_count</span>(text, <span class="st">&quot;[C|c]itizen&quot;</span>)) </span></code></pre></div>
-<pre><code>#&gt; # A tibble: 236 × 9
-#&gt;    president        year years_active party     sotu_type doc_id text  n_citizen
-#&gt;    &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;     &lt;int&gt;
-#&gt;  1 Abraham Lincoln  1861 1861-1865    Republic… written   abrah… &quot;\n\…         9
-#&gt;  2 Abraham Lincoln  1862 1861-1865    Republic… written   abrah… &quot;\n\…         7
-#&gt;  3 Abraham Lincoln  1863 1861-1865    Republic… written   abrah… &quot;\n\…        15
-#&gt;  4 Abraham Lincoln  1864 1861-1865    Republic… written   abrah… &quot;\n\…         3
-#&gt;  5 Andrew Jackson   1829 1829-1833    Democrat… written   andre… &quot;\n\…        19
-#&gt;  6 Andrew Jackson   1830 1829-1833    Democrat… written   andre… &quot;\n\…        14
-#&gt;  7 Andrew Jackson   1831 1829-1833    Democrat… written   andre… &quot;\n\…        23
-#&gt;  8 Andrew Jackson   1832 1829-1833    Democrat… written   andre… &quot;\n\…        19
-#&gt;  9 Andrew Jackson   1833 1833-1837    Democrat… written   andre… &quot;\n\…        14
-#&gt; 10 Andrew Jackson   1834 1833-1837    Democrat… written   andre… &quot;\n\…        25
-#&gt; # … with 226 more rows, and 1 more variable: n_cCitizen &lt;int&gt;</code></pre>
+<pre><code>#&gt; # A tibble: 240 × 10
+#&gt;        X president       year years…¹ party sotu_…² doc_id text  n_cit…³ n_cCi…⁴
+#&gt;    &lt;int&gt; &lt;chr&gt;          &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;   &lt;int&gt;   &lt;int&gt;
+#&gt;  1    73 Abraham Linco…  1861 1861-1… Repu… written abrah… &quot;\n\…       9      10
+#&gt;  2    74 Abraham Linco…  1862 1861-1… Repu… written abrah… &quot;\n\…       7       8
+#&gt;  3    75 Abraham Linco…  1863 1861-1… Repu… written abrah… &quot;\n\…      15      16
+#&gt;  4    76 Abraham Linco…  1864 1861-1… Repu… written abrah… &quot;\n\…       3       4
+#&gt;  5    41 Andrew Jackson  1829 1829-1… Demo… written andre… &quot;\n\…      19      20
+#&gt;  6    42 Andrew Jackson  1830 1829-1… Demo… written andre… &quot;\n\…      14      15
+#&gt;  7    43 Andrew Jackson  1831 1829-1… Demo… written andre… &quot;\n\…      23      24
+#&gt;  8    44 Andrew Jackson  1832 1829-1… Demo… written andre… &quot;\n\…      19      20
+#&gt;  9    45 Andrew Jackson  1833 1833-1… Demo… written andre… &quot;\n\…      14      15
+#&gt; 10    46 Andrew Jackson  1834 1833-1… Demo… written andre… &quot;\n\…      25      26
+#&gt; # … with 230 more rows, and abbreviated variable names ¹​years_active,
+#&gt; #   ²​sotu_type, ³​n_citizen, ⁴​n_cCitizen</code></pre>
 <p>Going into the use of <a href="https://en.wikipedia.org/wiki/Regular_expression">regular expressions</a> is beyond this introduction. However we want to point out the <code>str_view()</code> function which can help you to create your correct expression. Also see <a href="https://regexr.com/">RegExr</a>, an online tool to learn, build, &amp; test regular expressions.</p>
 <p>When used with the <code>boundary</code> argument <code>str_count()</code> can count different entities like “character”, “line_break”, “sentence”, or “word”. Here we add a new column to the dataframe indicating how many words are in each speech:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="textprep.html#cb15-1" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
 <span id="cb15-2"><a href="textprep.html#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n_words =</span> <span class="fu">str_count</span>(text, <span class="fu">boundary</span>(<span class="st">&quot;word&quot;</span>))) </span></code></pre></div>
-<pre><code>#&gt; # A tibble: 236 × 8
-#&gt;    president        year years_active party      sotu_type doc_id  text  n_words
-#&gt;    &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;   &lt;int&gt;
-#&gt;  1 Abraham Lincoln  1861 1861-1865    Republican written   abraha… &quot;\n\…    6998
-#&gt;  2 Abraham Lincoln  1862 1861-1865    Republican written   abraha… &quot;\n\…    8410
-#&gt;  3 Abraham Lincoln  1863 1861-1865    Republican written   abraha… &quot;\n\…    6132
-#&gt;  4 Abraham Lincoln  1864 1861-1865    Republican written   abraha… &quot;\n\…    5975
-#&gt;  5 Andrew Jackson   1829 1829-1833    Democratic written   andrew… &quot;\n\…   10547
-#&gt;  6 Andrew Jackson   1830 1829-1833    Democratic written   andrew… &quot;\n\…   15109
-#&gt;  7 Andrew Jackson   1831 1829-1833    Democratic written   andrew… &quot;\n\…    7198
-#&gt;  8 Andrew Jackson   1832 1829-1833    Democratic written   andrew… &quot;\n\…    7887
-#&gt;  9 Andrew Jackson   1833 1833-1837    Democratic written   andrew… &quot;\n\…    7912
-#&gt; 10 Andrew Jackson   1834 1833-1837    Democratic written   andrew… &quot;\n\…   13472
-#&gt; # … with 226 more rows</code></pre>
+<pre><code>#&gt; # A tibble: 240 × 9
+#&gt;        X president        year years_active party   sotu_…¹ doc_id text  n_words
+#&gt;    &lt;int&gt; &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;   &lt;int&gt;
+#&gt;  1    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… &quot;\n\…    6998
+#&gt;  2    74 Abraham Lincoln  1862 1861-1865    Republ… written abrah… &quot;\n\…    8410
+#&gt;  3    75 Abraham Lincoln  1863 1861-1865    Republ… written abrah… &quot;\n\…    6132
+#&gt;  4    76 Abraham Lincoln  1864 1861-1865    Republ… written abrah… &quot;\n\…    5975
+#&gt;  5    41 Andrew Jackson   1829 1829-1833    Democr… written andre… &quot;\n\…   10547
+#&gt;  6    42 Andrew Jackson   1830 1829-1833    Democr… written andre… &quot;\n\…   15109
+#&gt;  7    43 Andrew Jackson   1831 1829-1833    Democr… written andre… &quot;\n\…    7198
+#&gt;  8    44 Andrew Jackson   1832 1829-1833    Democr… written andre… &quot;\n\…    7887
+#&gt;  9    45 Andrew Jackson   1833 1833-1837    Democr… written andre… &quot;\n\…    7912
+#&gt; 10    46 Andrew Jackson   1834 1833-1837    Democr… written andre… &quot;\n\…   13472
+#&gt; # … with 230 more rows, and abbreviated variable name ¹​sotu_type</code></pre>
 <blockquote>
 <blockquote>
 <blockquote>
@@ -409,44 +413,44 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb25-2"><a href="textprep.html#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, text)</span>
 <span id="cb25-3"><a href="textprep.html#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-4"><a href="textprep.html#cb25-4" aria-hidden="true" tabindex="-1"></a>tidy_sotu</span></code></pre></div>
-<pre><code>#&gt; # A tibble: 1,965,212 × 7
-#&gt;    president        year years_active party      sotu_type doc_id          word 
-#&gt;    &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;           &lt;chr&gt;
-#&gt;  1 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… fell…
-#&gt;  2 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… citi…
-#&gt;  3 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… of   
-#&gt;  4 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… the  
-#&gt;  5 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… sena…
-#&gt;  6 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… and  
-#&gt;  7 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… house
-#&gt;  8 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… of   
-#&gt;  9 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… repr…
-#&gt; 10 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… in   
-#&gt; # … with 1,965,202 more rows</code></pre>
+<pre><code>#&gt; # A tibble: 1,988,203 × 8
+#&gt;        X president        year years_active party      sotu_type doc_id    word 
+#&gt;    &lt;int&gt; &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;
+#&gt;  1    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… fell…
+#&gt;  2    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… citi…
+#&gt;  3    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… of   
+#&gt;  4    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… the  
+#&gt;  5    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… sena…
+#&gt;  6    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… and  
+#&gt;  7    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… house
+#&gt;  8    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… of   
+#&gt;  9    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… repr…
+#&gt; 10    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… in   
+#&gt; # … with 1,988,193 more rows</code></pre>
 <p>Note that the <code>unnest_tokens</code> function didn’t just tokenize our texts at the word level. It also lowercased each word and stripped off the punctuation. We can tell it not to do this, by adding the following parameters:</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="textprep.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Word tokenization with punctuation and no lowercasing</span></span>
 <span id="cb27-2"><a href="textprep.html#cb27-2" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span></span>
 <span id="cb27-3"><a href="textprep.html#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, text, <span class="at">to_lower =</span> <span class="cn">FALSE</span>, <span class="at">strip_punct =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<pre><code>#&gt; # A tibble: 2,157,777 × 7
-#&gt;    president        year years_active party      sotu_type doc_id          word 
-#&gt;    &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;           &lt;chr&gt;
-#&gt;  1 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… Fell…
-#&gt;  2 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… -    
-#&gt;  3 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… Citi…
-#&gt;  4 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… of   
-#&gt;  5 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… the  
-#&gt;  6 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… Sena…
-#&gt;  7 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… and  
-#&gt;  8 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… House
-#&gt;  9 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… of   
-#&gt; 10 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… Repr…
-#&gt; # … with 2,157,767 more rows</code></pre>
+<pre><code>#&gt; # A tibble: 2,184,602 × 8
+#&gt;        X president        year years_active party      sotu_type doc_id    word 
+#&gt;    &lt;int&gt; &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;
+#&gt;  1    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… Fell…
+#&gt;  2    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… -    
+#&gt;  3    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… Citi…
+#&gt;  4    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… of   
+#&gt;  5    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… the  
+#&gt;  6    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… Sena…
+#&gt;  7    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… and  
+#&gt;  8    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… House
+#&gt;  9    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… of   
+#&gt; 10    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… Repr…
+#&gt; # … with 2,184,592 more rows</code></pre>
 <p>We can also tokenize the text at the level of ngrams or sentences, if those are the best units of analysis for our work.</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="textprep.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sentence tokenization</span></span>
 <span id="cb29-2"><a href="textprep.html#cb29-2" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span></span>
 <span id="cb29-3"><a href="textprep.html#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(sentence, text, <span class="at">token =</span> <span class="st">&quot;sentences&quot;</span>, <span class="at">to_lower =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb29-4"><a href="textprep.html#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sentence)</span></code></pre></div>
-<pre><code>#&gt; # A tibble: 69,158 × 1
+<pre><code>#&gt; # A tibble: 70,761 × 1
 #&gt;    sentence                                                                     
 #&gt;    &lt;chr&gt;                                                                        
 #&gt;  1 Fellow-Citizens of the Senate and House of Representatives:   In the midst o…
@@ -459,12 +463,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 #&gt;  8 If we could dare to believe that foreign nations are actuated by no higher p…
 #&gt;  9 The principal lever relied on by the insurgents for exciting foreign nations…
 #&gt; 10 Those nations, however, not improbably saw from the first that it was the Un…
-#&gt; # … with 69,148 more rows</code></pre>
+#&gt; # … with 70,751 more rows</code></pre>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="textprep.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># N-gram tokenization as trigrams</span></span>
 <span id="cb31-2"><a href="textprep.html#cb31-2" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span></span>
 <span id="cb31-3"><a href="textprep.html#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(trigram, text, <span class="at">token =</span> <span class="st">&quot;ngrams&quot;</span>, <span class="at">n =</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb31-4"><a href="textprep.html#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(trigram)</span></code></pre></div>
-<pre><code>#&gt; # A tibble: 1,964,740 × 1
+<pre><code>#&gt; # A tibble: 1,987,723 × 1
 #&gt;    trigram                 
 #&gt;    &lt;chr&gt;                   
 #&gt;  1 fellow citizens of      
@@ -477,7 +481,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 #&gt;  8 of representatives in   
 #&gt;  9 representatives in the  
 #&gt; 10 in the midst            
-#&gt; # … with 1,964,730 more rows</code></pre>
+#&gt; # … with 1,987,713 more rows</code></pre>
 <p>(Take note that the trigrams are generated by a moving 3-word window over the text.)</p>
 </div>
 <div id="stopwords" class="section level2 hasAnchor" number="1.4">
@@ -505,22 +509,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb35-2"><a href="textprep.html#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(stop_words)</span>
 <span id="cb35-3"><a href="textprep.html#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-4"><a href="textprep.html#cb35-4" aria-hidden="true" tabindex="-1"></a>tidy_sotu_words</span></code></pre></div>
-<pre><code>#&gt; # A tibble: 778,161 × 7
-#&gt;    president        year years_active party      sotu_type doc_id          word 
-#&gt;    &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;           &lt;chr&gt;
-#&gt;  1 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… fell…
-#&gt;  2 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… citi…
-#&gt;  3 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… sena…
-#&gt;  4 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… house
-#&gt;  5 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… repr…
-#&gt;  6 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… midst
-#&gt;  7 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… unpr…
-#&gt;  8 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… poli…
-#&gt;  9 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… trou…
-#&gt; 10 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol… grat…
-#&gt; # … with 778,151 more rows</code></pre>
+<pre><code>#&gt; # A tibble: 787,851 × 8
+#&gt;        X president        year years_active party      sotu_type doc_id    word 
+#&gt;    &lt;int&gt; &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;
+#&gt;  1    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… fell…
+#&gt;  2    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… citi…
+#&gt;  3    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… sena…
+#&gt;  4    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… house
+#&gt;  5    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… repr…
+#&gt;  6    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… midst
+#&gt;  7    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… unpr…
+#&gt;  8    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… poli…
+#&gt;  9    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… trou…
+#&gt; 10    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… grat…
+#&gt; # … with 787,841 more rows</code></pre>
 <p>If we compare this with <code>tidy_sotu</code> we see that the records with words like “of”, “the”, “and”, “in” are now removed.</p>
-<p>We also went from 1965212 to 778161 rows, which means we had a lot of stopwords in our corpus. This is a huge removal, so for serious analysis, we might want to scrutinize the stopword list carefully and determine if this is feasible.</p>
+<p>We also went from 1988203 to 787851 rows, which means we had a lot of stopwords in our corpus. This is a huge removal, so for serious analysis, we might want to scrutinize the stopword list carefully and determine if this is feasible.</p>
 </div>
 <div id="word-stemming" class="section level2 hasAnchor" number="1.5">
 <h2><span class="header-section-number">1.5</span> Word Stemming<a href="textprep.html#word-stemming" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -530,20 +534,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="textprep.html#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SnowballC)</span>
 <span id="cb37-2"><a href="textprep.html#cb37-2" aria-hidden="true" tabindex="-1"></a>tidy_sotu_words <span class="sc">%&gt;%</span></span>
 <span id="cb37-3"><a href="textprep.html#cb37-3" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">word_stem =</span> <span class="fu">wordStem</span>(word))</span></code></pre></div>
-<pre><code>#&gt; # A tibble: 778,161 × 8
-#&gt;    president        year years_active party     sotu_type doc_id word  word_stem
-#&gt;    &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;    
-#&gt;  1 Abraham Lincoln  1861 1861-1865    Republic… written   abrah… fell… fellow   
-#&gt;  2 Abraham Lincoln  1861 1861-1865    Republic… written   abrah… citi… citizen  
-#&gt;  3 Abraham Lincoln  1861 1861-1865    Republic… written   abrah… sena… senat    
-#&gt;  4 Abraham Lincoln  1861 1861-1865    Republic… written   abrah… house hous     
-#&gt;  5 Abraham Lincoln  1861 1861-1865    Republic… written   abrah… repr… repres   
-#&gt;  6 Abraham Lincoln  1861 1861-1865    Republic… written   abrah… midst midst    
-#&gt;  7 Abraham Lincoln  1861 1861-1865    Republic… written   abrah… unpr… unpreced 
-#&gt;  8 Abraham Lincoln  1861 1861-1865    Republic… written   abrah… poli… polit    
-#&gt;  9 Abraham Lincoln  1861 1861-1865    Republic… written   abrah… trou… troubl   
-#&gt; 10 Abraham Lincoln  1861 1861-1865    Republic… written   abrah… grat… gratitud 
-#&gt; # … with 778,151 more rows</code></pre>
+<pre><code>#&gt; # A tibble: 787,851 × 9
+#&gt;        X president        year years_active party   sotu_…¹ doc_id word  word_…²
+#&gt;    &lt;int&gt; &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;  
+#&gt;  1    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… fell… fellow 
+#&gt;  2    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… citi… citizen
+#&gt;  3    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… sena… senat  
+#&gt;  4    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… house hous   
+#&gt;  5    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… repr… repres 
+#&gt;  6    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… midst midst  
+#&gt;  7    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… unpr… unprec…
+#&gt;  8    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… poli… polit  
+#&gt;  9    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… trou… troubl 
+#&gt; 10    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… grat… gratit…
+#&gt; # … with 787,841 more rows, and abbreviated variable names ¹​sotu_type,
+#&gt; #   ²​word_stem</code></pre>
 <p>Lemmatization takes this another step further. While a stemmer operates on a single word without knowledge of the context, lemmatization attempts to discriminate between words which have different meanings depending on part of speech. For example, the word “better” has “good” as its lemma, something a stemmer would not detect.</p>
 <p>For lemmatization in R, you may want to take a look a the <a href="https://CRAN.R-project.org/package=koRpus"><code>koRpus</code></a> package, another <a href="https://cran.r-project.org/web/packages/koRpus/vignettes/koRpus_vignette.html">comprehensive R package for text analysis</a>. It allows to use <a href="http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/">TreeTagger</a>, a widely used part-of-speech tagger. For full functionality of the R package a local installation of TreeTagger is recommended.</p>
 

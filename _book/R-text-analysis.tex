@@ -33,14 +33,6 @@
   \KOMAoptions{parskip=half}}
 \makeatother
 \usepackage{xcolor}
-\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
-\hypersetup{
-  pdftitle={Text Analysis with R},
-  pdfauthor={Claudia Engel, Scott Bailey},
-  hidelinks,
-  pdfcreator={LaTeX via pandoc}}
-\urlstyle{same} % disable monospaced font for URLs
 \usepackage[left=3cm,right=1cm,top=2cm,bottom=2cm]{geometry}
 \usepackage{color}
 \usepackage{fancyvrb}
@@ -122,10 +114,18 @@
 \fi
 \usepackage[]{natbib}
 \bibliographystyle{apalike}
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Text Analysis with R},
+  pdfauthor={Claudia Engel, Scott Bailey},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
 
 \title{Text Analysis with R}
 \author{Claudia Engel, Scott Bailey}
-\date{Last updated: May 12, 2022}
+\date{Last updated: November 01, 2022}
 
 \begin{document}
 \maketitle
@@ -246,12 +246,13 @@ First, let's look at the data in the \texttt{sotu} package. The metadata and tex
 \end{Shaded}
 
 \begin{verbatim}
-#> tibble [236 x 5] (S3: tbl_df/tbl/data.frame)
-#>  $ president   : chr [1:236] "George Washington" "George Washington" "George Washington" "George Washington" ...
-#>  $ year        : int [1:236] 1790 1790 1791 1792 1793 1794 1795 1796 1797 1798 ...
-#>  $ years_active: chr [1:236] "1789-1793" "1789-1793" "1789-1793" "1789-1793" ...
-#>  $ party       : chr [1:236] "Nonpartisan" "Nonpartisan" "Nonpartisan" "Nonpartisan" ...
-#>  $ sotu_type   : chr [1:236] "speech" "speech" "speech" "speech" ...
+#> 'data.frame':    240 obs. of  6 variables:
+#>  $ X           : int  1 2 3 4 5 6 7 8 9 10 ...
+#>  $ president   : chr  "George Washington" "George Washington" "George Washington" "George Washington" ...
+#>  $ year        : int  1790 1790 1791 1792 1793 1794 1795 1796 1797 1798 ...
+#>  $ years_active: chr  "1789-1793" "1789-1793" "1789-1793" "1789-1793" ...
+#>  $ party       : chr  "Nonpartisan" "Nonpartisan" "Nonpartisan" "Nonpartisan" ...
+#>  $ sotu_type   : chr  "speech" "speech" "speech" "speech" ...
 \end{verbatim}
 
 In order to work with the speech texts and to later practice reading text files from disk we use the function \texttt{sotu\_dir()} to write the texts out. This function by default writes to a temporary directory with one speech in each file. It returns a character vector where each element is the name of the path to the individual speech file. We save this vector into the \texttt{file\_paths} variable.
@@ -266,12 +267,12 @@ In order to work with the speech texts and to later practice reading text files 
 \end{Shaded}
 
 \begin{verbatim}
-#> [1] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmpi4gRYm/file84cc50999363/george-washington-1790a.txt"
-#> [2] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmpi4gRYm/file84cc50999363/george-washington-1790b.txt"
-#> [3] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmpi4gRYm/file84cc50999363/george-washington-1791.txt" 
-#> [4] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmpi4gRYm/file84cc50999363/george-washington-1792.txt" 
-#> [5] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmpi4gRYm/file84cc50999363/george-washington-1793.txt" 
-#> [6] "/var/folders/5y/9x92pjcx2xd2h7qxqx39vpmc0000gn/T//Rtmpi4gRYm/file84cc50999363/george-washington-1794.txt"
+#> [1] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmpa7yRx0/file643f362e5ae0/george-washington-1790a.txt"
+#> [2] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmpa7yRx0/file643f362e5ae0/george-washington-1790b.txt"
+#> [3] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmpa7yRx0/file643f362e5ae0/george-washington-1791.txt" 
+#> [4] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmpa7yRx0/file643f362e5ae0/george-washington-1792.txt" 
+#> [5] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmpa7yRx0/file643f362e5ae0/george-washington-1793.txt" 
+#> [6] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmpa7yRx0/file643f362e5ae0/george-washington-1794.txt"
 \end{verbatim}
 
 Now that we have the files on disk and a vector of filepaths, we can pass this vector directly into \texttt{readtext} to read the texts into a new variable.
@@ -292,7 +293,7 @@ Now that we have the files on disk and a vector of filepaths, we can pass this v
 \end{Shaded}
 
 \begin{verbatim}
-#> Rows: 236
+#> Rows: 240
 #> Columns: 2
 #> $ doc_id <chr> "abraham-lincoln-1861.txt", "abraham-lincoln-1862.txt", "abraha~
 #> $ text   <chr> "\n\n Fellow-Citizens of the Senate and House of Representative~
@@ -305,15 +306,17 @@ To work with a single table, we combine the text and metadata. Our \texttt{sotu\
 \NormalTok{sotu\_whole }\OtherTok{\textless{}{-}} 
 \NormalTok{  sotu\_meta }\SpecialCharTok{\%\textgreater{}\%}  
   \FunctionTok{arrange}\NormalTok{(president) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# sort metadata}
-  \FunctionTok{bind\_cols}\NormalTok{(sotu\_texts) }\CommentTok{\# combine with texts}
+  \FunctionTok{bind\_cols}\NormalTok{(sotu\_texts) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# combine with texts}
+  \FunctionTok{as\_tibble}\NormalTok{() }\CommentTok{\# convert to tibble for better screen viewing}
 
 \FunctionTok{glimpse}\NormalTok{(sotu\_whole)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-#> Rows: 236
-#> Columns: 7
+#> Rows: 240
+#> Columns: 8
+#> $ X            <int> 73, 74, 75, 76, 41, 42, 43, 44, 45, 46, 47, 48, 77, 78, 7~
 #> $ president    <chr> "Abraham Lincoln", "Abraham Lincoln", "Abraham Lincoln", ~
 #> $ year         <int> 1861, 1862, 1863, 1864, 1829, 1830, 1831, 1832, 1833, 183~
 #> $ years_active <chr> "1861-1865", "1861-1865", "1861-1865", "1861-1865", "1829~
@@ -363,20 +366,21 @@ How man times does the word ``citizen'' appear in each of the speeches?
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 236 x 8
-#>    president        year years_active party     sotu_type doc_id text  n_citizen
-#>    <chr>           <int> <chr>        <chr>     <chr>     <chr>  <chr>     <int>
-#>  1 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ "\n\~         9
-#>  2 Abraham Lincoln  1862 1861-1865    Republic~ written   abrah~ "\n\~         7
-#>  3 Abraham Lincoln  1863 1861-1865    Republic~ written   abrah~ "\n\~        15
-#>  4 Abraham Lincoln  1864 1861-1865    Republic~ written   abrah~ "\n\~         3
-#>  5 Andrew Jackson   1829 1829-1833    Democrat~ written   andre~ "\n\~        19
-#>  6 Andrew Jackson   1830 1829-1833    Democrat~ written   andre~ "\n\~        14
-#>  7 Andrew Jackson   1831 1829-1833    Democrat~ written   andre~ "\n\~        23
-#>  8 Andrew Jackson   1832 1829-1833    Democrat~ written   andre~ "\n\~        19
-#>  9 Andrew Jackson   1833 1833-1837    Democrat~ written   andre~ "\n\~        14
-#> 10 Andrew Jackson   1834 1833-1837    Democrat~ written   andre~ "\n\~        25
-#> # ... with 226 more rows
+#> # A tibble: 240 x 9
+#>        X president        year years_active party   sotu_~1 doc_id text  n_cit~2
+#>    <int> <chr>           <int> <chr>        <chr>   <chr>   <chr>  <chr>   <int>
+#>  1    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ "\n\~       9
+#>  2    74 Abraham Lincoln  1862 1861-1865    Republ~ written abrah~ "\n\~       7
+#>  3    75 Abraham Lincoln  1863 1861-1865    Republ~ written abrah~ "\n\~      15
+#>  4    76 Abraham Lincoln  1864 1861-1865    Republ~ written abrah~ "\n\~       3
+#>  5    41 Andrew Jackson   1829 1829-1833    Democr~ written andre~ "\n\~      19
+#>  6    42 Andrew Jackson   1830 1829-1833    Democr~ written andre~ "\n\~      14
+#>  7    43 Andrew Jackson   1831 1829-1833    Democr~ written andre~ "\n\~      23
+#>  8    44 Andrew Jackson   1832 1829-1833    Democr~ written andre~ "\n\~      19
+#>  9    45 Andrew Jackson   1833 1833-1837    Democr~ written andre~ "\n\~      14
+#> 10    46 Andrew Jackson   1834 1833-1837    Democr~ written andre~ "\n\~      25
+#> # ... with 230 more rows, and abbreviated variable names 1: sotu_type,
+#> #   2: n_citizen
 \end{verbatim}
 
 It is possible to use regular expressions, for example, this is how we would check how many times either ``citizen'' or ``Citizen'' appear in each of the speeches:
@@ -390,20 +394,21 @@ It is possible to use regular expressions, for example, this is how we would che
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 236 x 9
-#>    president        year years_active party     sotu_type doc_id text  n_citizen
-#>    <chr>           <int> <chr>        <chr>     <chr>     <chr>  <chr>     <int>
-#>  1 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ "\n\~         9
-#>  2 Abraham Lincoln  1862 1861-1865    Republic~ written   abrah~ "\n\~         7
-#>  3 Abraham Lincoln  1863 1861-1865    Republic~ written   abrah~ "\n\~        15
-#>  4 Abraham Lincoln  1864 1861-1865    Republic~ written   abrah~ "\n\~         3
-#>  5 Andrew Jackson   1829 1829-1833    Democrat~ written   andre~ "\n\~        19
-#>  6 Andrew Jackson   1830 1829-1833    Democrat~ written   andre~ "\n\~        14
-#>  7 Andrew Jackson   1831 1829-1833    Democrat~ written   andre~ "\n\~        23
-#>  8 Andrew Jackson   1832 1829-1833    Democrat~ written   andre~ "\n\~        19
-#>  9 Andrew Jackson   1833 1833-1837    Democrat~ written   andre~ "\n\~        14
-#> 10 Andrew Jackson   1834 1833-1837    Democrat~ written   andre~ "\n\~        25
-#> # ... with 226 more rows, and 1 more variable: n_cCitizen <int>
+#> # A tibble: 240 x 10
+#>        X president       year years~1 party sotu_~2 doc_id text  n_cit~3 n_cCi~4
+#>    <int> <chr>          <int> <chr>   <chr> <chr>   <chr>  <chr>   <int>   <int>
+#>  1    73 Abraham Linco~  1861 1861-1~ Repu~ written abrah~ "\n\~       9      10
+#>  2    74 Abraham Linco~  1862 1861-1~ Repu~ written abrah~ "\n\~       7       8
+#>  3    75 Abraham Linco~  1863 1861-1~ Repu~ written abrah~ "\n\~      15      16
+#>  4    76 Abraham Linco~  1864 1861-1~ Repu~ written abrah~ "\n\~       3       4
+#>  5    41 Andrew Jackson  1829 1829-1~ Demo~ written andre~ "\n\~      19      20
+#>  6    42 Andrew Jackson  1830 1829-1~ Demo~ written andre~ "\n\~      14      15
+#>  7    43 Andrew Jackson  1831 1829-1~ Demo~ written andre~ "\n\~      23      24
+#>  8    44 Andrew Jackson  1832 1829-1~ Demo~ written andre~ "\n\~      19      20
+#>  9    45 Andrew Jackson  1833 1833-1~ Demo~ written andre~ "\n\~      14      15
+#> 10    46 Andrew Jackson  1834 1833-1~ Demo~ written andre~ "\n\~      25      26
+#> # ... with 230 more rows, and abbreviated variable names 1: years_active,
+#> #   2: sotu_type, 3: n_citizen, 4: n_cCitizen
 \end{verbatim}
 
 Going into the use of \href{https://en.wikipedia.org/wiki/Regular_expression}{regular expressions} is beyond this introduction. However we want to point out the \texttt{str\_view()} function which can help you to create your correct expression. Also see \href{https://regexr.com/}{RegExr}, an online tool to learn, build, \& test regular expressions.
@@ -418,20 +423,20 @@ When used with the \texttt{boundary} argument \texttt{str\_count()} can count di
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 236 x 8
-#>    president        year years_active party      sotu_type doc_id  text  n_words
-#>    <chr>           <int> <chr>        <chr>      <chr>     <chr>   <chr>   <int>
-#>  1 Abraham Lincoln  1861 1861-1865    Republican written   abraha~ "\n\~    6998
-#>  2 Abraham Lincoln  1862 1861-1865    Republican written   abraha~ "\n\~    8410
-#>  3 Abraham Lincoln  1863 1861-1865    Republican written   abraha~ "\n\~    6132
-#>  4 Abraham Lincoln  1864 1861-1865    Republican written   abraha~ "\n\~    5975
-#>  5 Andrew Jackson   1829 1829-1833    Democratic written   andrew~ "\n\~   10547
-#>  6 Andrew Jackson   1830 1829-1833    Democratic written   andrew~ "\n\~   15109
-#>  7 Andrew Jackson   1831 1829-1833    Democratic written   andrew~ "\n\~    7198
-#>  8 Andrew Jackson   1832 1829-1833    Democratic written   andrew~ "\n\~    7887
-#>  9 Andrew Jackson   1833 1833-1837    Democratic written   andrew~ "\n\~    7912
-#> 10 Andrew Jackson   1834 1833-1837    Democratic written   andrew~ "\n\~   13472
-#> # ... with 226 more rows
+#> # A tibble: 240 x 9
+#>        X president        year years_active party   sotu_~1 doc_id text  n_words
+#>    <int> <chr>           <int> <chr>        <chr>   <chr>   <chr>  <chr>   <int>
+#>  1    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ "\n\~    6998
+#>  2    74 Abraham Lincoln  1862 1861-1865    Republ~ written abrah~ "\n\~    8410
+#>  3    75 Abraham Lincoln  1863 1861-1865    Republ~ written abrah~ "\n\~    6132
+#>  4    76 Abraham Lincoln  1864 1861-1865    Republ~ written abrah~ "\n\~    5975
+#>  5    41 Andrew Jackson   1829 1829-1833    Democr~ written andre~ "\n\~   10547
+#>  6    42 Andrew Jackson   1830 1829-1833    Democr~ written andre~ "\n\~   15109
+#>  7    43 Andrew Jackson   1831 1829-1833    Democr~ written andre~ "\n\~    7198
+#>  8    44 Andrew Jackson   1832 1829-1833    Democr~ written andre~ "\n\~    7887
+#>  9    45 Andrew Jackson   1833 1833-1837    Democr~ written andre~ "\n\~    7912
+#> 10    46 Andrew Jackson   1834 1833-1837    Democr~ written andre~ "\n\~   13472
+#> # ... with 230 more rows, and abbreviated variable name 1: sotu_type
 \end{verbatim}
 
 \begin{quote}
@@ -572,20 +577,20 @@ In the example below we name the new column to hold the tokens \texttt{word}. Re
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 1,965,212 x 7
-#>    president        year years_active party      sotu_type doc_id          word 
-#>    <chr>           <int> <chr>        <chr>      <chr>     <chr>           <chr>
-#>  1 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ fell~
-#>  2 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ citi~
-#>  3 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ of   
-#>  4 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ the  
-#>  5 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ sena~
-#>  6 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ and  
-#>  7 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ house
-#>  8 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ of   
-#>  9 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ repr~
-#> 10 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ in   
-#> # ... with 1,965,202 more rows
+#> # A tibble: 1,988,203 x 8
+#>        X president        year years_active party      sotu_type doc_id    word 
+#>    <int> <chr>           <int> <chr>        <chr>      <chr>     <chr>     <chr>
+#>  1    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ fell~
+#>  2    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ citi~
+#>  3    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ of   
+#>  4    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ the  
+#>  5    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ sena~
+#>  6    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ and  
+#>  7    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ house
+#>  8    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ of   
+#>  9    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ repr~
+#> 10    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ in   
+#> # ... with 1,988,193 more rows
 \end{verbatim}
 
 Note that the \texttt{unnest\_tokens} function didn't just tokenize our texts at the word level. It also lowercased each word and stripped off the punctuation. We can tell it not to do this, by adding the following parameters:
@@ -599,20 +604,20 @@ Note that the \texttt{unnest\_tokens} function didn't just tokenize our texts at
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 2,157,777 x 7
-#>    president        year years_active party      sotu_type doc_id          word 
-#>    <chr>           <int> <chr>        <chr>      <chr>     <chr>           <chr>
-#>  1 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ Fell~
-#>  2 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ -    
-#>  3 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ Citi~
-#>  4 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ of   
-#>  5 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ the  
-#>  6 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ Sena~
-#>  7 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ and  
-#>  8 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ House
-#>  9 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ of   
-#> 10 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ Repr~
-#> # ... with 2,157,767 more rows
+#> # A tibble: 2,184,602 x 8
+#>        X president        year years_active party      sotu_type doc_id    word 
+#>    <int> <chr>           <int> <chr>        <chr>      <chr>     <chr>     <chr>
+#>  1    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ Fell~
+#>  2    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ -    
+#>  3    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ Citi~
+#>  4    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ of   
+#>  5    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ the  
+#>  6    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ Sena~
+#>  7    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ and  
+#>  8    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ House
+#>  9    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ of   
+#> 10    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ Repr~
+#> # ... with 2,184,592 more rows
 \end{verbatim}
 
 We can also tokenize the text at the level of ngrams or sentences, if those are the best units of analysis for our work.
@@ -627,7 +632,7 @@ We can also tokenize the text at the level of ngrams or sentences, if those are 
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 69,158 x 1
+#> # A tibble: 70,761 x 1
 #>    sentence                                                                     
 #>    <chr>                                                                        
 #>  1 Fellow-Citizens of the Senate and House of Representatives:   In the midst o~
@@ -640,7 +645,7 @@ We can also tokenize the text at the level of ngrams or sentences, if those are 
 #>  8 If we could dare to believe that foreign nations are actuated by no higher p~
 #>  9 The principal lever relied on by the insurgents for exciting foreign nations~
 #> 10 Those nations, however, not improbably saw from the first that it was the Un~
-#> # ... with 69,148 more rows
+#> # ... with 70,751 more rows
 \end{verbatim}
 
 \begin{Shaded}
@@ -653,7 +658,7 @@ We can also tokenize the text at the level of ngrams or sentences, if those are 
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 1,964,740 x 1
+#> # A tibble: 1,987,723 x 1
 #>    trigram                 
 #>    <chr>                   
 #>  1 fellow citizens of      
@@ -666,7 +671,7 @@ We can also tokenize the text at the level of ngrams or sentences, if those are 
 #>  8 of representatives in   
 #>  9 representatives in the  
 #> 10 in the midst            
-#> # ... with 1,964,730 more rows
+#> # ... with 1,987,713 more rows
 \end{verbatim}
 
 (Take note that the trigrams are generated by a moving 3-word window over the text.)
@@ -715,25 +720,25 @@ For this we use \texttt{anti\_join} from \texttt{dplyr}. We join and return all 
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 778,161 x 7
-#>    president        year years_active party      sotu_type doc_id          word 
-#>    <chr>           <int> <chr>        <chr>      <chr>     <chr>           <chr>
-#>  1 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ fell~
-#>  2 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ citi~
-#>  3 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ sena~
-#>  4 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ house
-#>  5 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ repr~
-#>  6 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ midst
-#>  7 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ unpr~
-#>  8 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ poli~
-#>  9 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ trou~
-#> 10 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ grat~
-#> # ... with 778,151 more rows
+#> # A tibble: 787,851 x 8
+#>        X president        year years_active party      sotu_type doc_id    word 
+#>    <int> <chr>           <int> <chr>        <chr>      <chr>     <chr>     <chr>
+#>  1    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ fell~
+#>  2    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ citi~
+#>  3    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ sena~
+#>  4    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ house
+#>  5    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ repr~
+#>  6    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ midst
+#>  7    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ unpr~
+#>  8    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ poli~
+#>  9    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ trou~
+#> 10    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ grat~
+#> # ... with 787,841 more rows
 \end{verbatim}
 
 If we compare this with \texttt{tidy\_sotu} we see that the records with words like ``of'', ``the'', ``and'', ``in'' are now removed.
 
-We also went from 1965212 to 778161 rows, which means we had a lot of stopwords in our corpus. This is a huge removal, so for serious analysis, we might want to scrutinize the stopword list carefully and determine if this is feasible.
+We also went from 1988203 to 787851 rows, which means we had a lot of stopwords in our corpus. This is a huge removal, so for serious analysis, we might want to scrutinize the stopword list carefully and determine if this is feasible.
 
 \hypertarget{word-stemming}{%
 \section{Word Stemming}\label{word-stemming}}
@@ -753,20 +758,21 @@ We will give an example here for the \texttt{SnowballC} package which comes with
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 778,161 x 8
-#>    president        year years_active party     sotu_type doc_id word  word_stem
-#>    <chr>           <int> <chr>        <chr>     <chr>     <chr>  <chr> <chr>    
-#>  1 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ fell~ fellow   
-#>  2 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ citi~ citizen  
-#>  3 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ sena~ senat    
-#>  4 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ house hous     
-#>  5 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ repr~ repres   
-#>  6 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ midst midst    
-#>  7 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ unpr~ unpreced 
-#>  8 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ poli~ polit    
-#>  9 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ trou~ troubl   
-#> 10 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ grat~ gratitud 
-#> # ... with 778,151 more rows
+#> # A tibble: 787,851 x 9
+#>        X president        year years_active party   sotu_~1 doc_id word  word_~2
+#>    <int> <chr>           <int> <chr>        <chr>   <chr>   <chr>  <chr> <chr>  
+#>  1    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ fell~ fellow 
+#>  2    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ citi~ citizen
+#>  3    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ sena~ senat  
+#>  4    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ house hous   
+#>  5    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ repr~ repres 
+#>  6    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ midst midst  
+#>  7    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ unpr~ unprec~
+#>  8    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ poli~ polit  
+#>  9    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ trou~ troubl 
+#> 10    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ grat~ gratit~
+#> # ... with 787,841 more rows, and abbreviated variable names 1: sotu_type,
+#> #   2: word_stem
 \end{verbatim}
 
 Lemmatization takes this another step further. While a stemmer operates on a single word without knowledge of the context, lemmatization attempts to discriminate between words which have different meanings depending on part of speech. For example, the word ``better'' has ``good'' as its lemma, something a stemmer would not detect.
@@ -816,20 +822,20 @@ Let's remind ourselves of what our data looks like.
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 778,161 x 7
-#>    president        year years_active party      sotu_type doc_id          word 
-#>    <chr>           <int> <chr>        <chr>      <chr>     <chr>           <chr>
-#>  1 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ fell~
-#>  2 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ citi~
-#>  3 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ sena~
-#>  4 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ house
-#>  5 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ repr~
-#>  6 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ midst
-#>  7 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ unpr~
-#>  8 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ poli~
-#>  9 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ trou~
-#> 10 Abraham Lincoln  1861 1861-1865    Republican written   abraham-lincol~ grat~
-#> # ... with 778,151 more rows
+#> # A tibble: 787,851 x 8
+#>        X president        year years_active party      sotu_type doc_id    word 
+#>    <int> <chr>           <int> <chr>        <chr>      <chr>     <chr>     <chr>
+#>  1    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ fell~
+#>  2    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ citi~
+#>  3    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ sena~
+#>  4    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ house
+#>  5    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ repr~
+#>  6    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ midst
+#>  7    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ unpr~
+#>  8    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ poli~
+#>  9    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ trou~
+#> 10    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ grat~
+#> # ... with 787,841 more rows
 \end{verbatim}
 
 \hypertarget{frequencies}{%
@@ -845,20 +851,20 @@ Since our unit of analysis at this point is a word, let's count to determine whi
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 29,558 x 2
+#> # A tibble: 29,897 x 2
 #>    word           n
 #>    <chr>      <int>
-#>  1 government  7573
-#>  2 congress    5759
-#>  3 united      5102
-#>  4 people      4219
-#>  5 country     3564
-#>  6 public      3413
-#>  7 time        3138
-#>  8 war         2961
-#>  9 american    2853
-#> 10 world       2581
-#> # ... with 29,548 more rows
+#>  1 government  7597
+#>  2 congress    5808
+#>  3 united      5156
+#>  4 people      4298
+#>  5 country     3641
+#>  6 public      3419
+#>  7 time        3188
+#>  8 american    2988
+#>  9 war         2976
+#> 10 world       2633
+#> # ... with 29,887 more rows
 \end{verbatim}
 
 We can pipe this into \texttt{ggplot} to make a graph of the words that occur more that 2000 times. We count the words and use \texttt{geom\_col} to represent the n values.
@@ -892,7 +898,7 @@ Now let's look at a different question: In any given year, how often is the word
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 435 x 3
+#> # A tibble: 442 x 3
 #>     year word      n
 #>    <int> <chr> <int>
 #>  1  1790 peace     3
@@ -905,7 +911,7 @@ Now let's look at a different question: In any given year, how often is the word
 #>  8  1793 war       4
 #>  9  1794 peace     3
 #> 10  1794 war       1
-#> # ... with 425 more rows
+#> # ... with 432 more rows
 \end{verbatim}
 
 Now we can plot this as a bar chart that shows for each year the proportion of each of these two words out of the total of how often both words are used.
@@ -936,7 +942,7 @@ First we summarize the words per president per speech:
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 236 x 3
+#> # A tibble: 240 x 3
 #>    president       doc_id                       n
 #>    <chr>           <chr>                    <int>
 #>  1 Abraham Lincoln abraham-lincoln-1861.txt  2578
@@ -949,7 +955,7 @@ First we summarize the words per president per speech:
 #>  8 Andrew Jackson  andrew-jackson-1832.txt   2881
 #>  9 Andrew Jackson  andrew-jackson-1833.txt   2869
 #> 10 Andrew Jackson  andrew-jackson-1834.txt   4952
-#> # ... with 226 more rows
+#> # ... with 230 more rows
 \end{verbatim}
 
 Then we use the output table and group it by president. That allows us to calculate the average number of words per speech.
@@ -965,7 +971,7 @@ Then we use the output table and group it by president. That allows us to calcul
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 41 x 2
+#> # A tibble: 42 x 2
 #>    president           avg_words
 #>    <chr>                   <dbl>
 #>  1 William Howard Taft     9126.
@@ -978,7 +984,7 @@ Then we use the output table and group it by president. That allows us to calcul
 #>  8 Benjamin Harrison       5308.
 #>  9 Rutherford B. Hayes     4411 
 #> 10 Martin Van Buren        4286.
-#> # ... with 31 more rows
+#> # ... with 32 more rows
 \end{verbatim}
 
 \hypertarget{term-frequency}{%
@@ -997,8 +1003,8 @@ Often a raw count of a word is less important than understanding how often that 
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 352,846 x 5
-#> # Groups:   doc_id [236]
+#> # A tibble: 358,186 x 5
+#> # Groups:   doc_id [240]
 #>    doc_id                       word               n n_tot term_freq
 #>    <chr>                        <chr>          <int> <int>     <dbl>
 #>  1 harry-s-truman-1946.txt      dollars          207 12614   0.0164 
@@ -1011,7 +1017,7 @@ Often a raw count of a word is less important than understanding how often that 
 #>  8 harry-s-truman-1946.txt      fiscal           129 12614   0.0102 
 #>  9 jimmy-carter-1981.txt        administration   129 16595   0.00777
 #> 10 william-howard-taft-1912.txt government       129 10215   0.0126 
-#> # ... with 352,836 more rows
+#> # ... with 358,176 more rows
 \end{verbatim}
 
 Let's plot the distribution of the term frequency for the speeches:
@@ -1048,8 +1054,8 @@ Assuming that terms with high relative frequency are an indicator of significanc
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 43 x 5
-#> # Groups:   president [41]
+#> # A tibble: 44 x 5
+#> # Groups:   president [42]
 #>    president             word           n n_tot term_freq
 #>    <chr>                 <chr>      <int> <int>     <dbl>
 #>  1 John Adams            united        49  2768   0.0177 
@@ -1059,42 +1065,43 @@ Assuming that terms with high relative frequency are an indicator of significanc
 #>  5 Franklin D. Roosevelt war          283 19311   0.0147 
 #>  6 William McKinley      government   452 31188   0.0145 
 #>  7 Andrew Jackson        government   436 31031   0.0141 
-#>  8 Andrew Johnson        government   207 14968   0.0138 
-#>  9 George Washington     united        86  6226   0.0138 
-#> 10 Calvin Coolidge       government   274 20518   0.0134 
-#> 11 James K. Polk         mexico       360 27679   0.0130 
-#> 12 James Buchanan        government   279 21636   0.0129 
-#> 13 Zachary Taylor        congress      38  2948   0.0129 
-#> 14 Ulysses S. Grant      united       359 27933   0.0129 
-#> 15 William Howard Taft   government   461 36506   0.0126 
-#> 16 Grover Cleveland      government   574 45889   0.0125 
-#> 17 Franklin Pierce       united       200 16240   0.0123 
-#> 18 George Bush           world         82  6706   0.0122 
-#> 19 James Monroe          united       184 15157   0.0121 
-#> 20 George W. Bush        america      209 17265   0.0121 
-#> 21 Millard Fillmore      government   135 11986   0.0113 
-#> 22 John Quincy Adams     congress     131 11788   0.0111 
-#> 23 Harry S Truman        war          308 27819   0.0111 
-#> 24 Gerald R. Ford        federal       65  5879   0.0111 
-#> 25 Herbert Hoover        government   121 10947   0.0111 
-#> 26 Rutherford B. Hayes   congress     194 17644   0.0110 
-#> 27 Chester A. Arthur     government   185 16961   0.0109 
-#> 28 Lyndon B. Johnson     congress     115 11207   0.0103 
-#> 29 James Madison         war           85  8327   0.0102 
-#> 30 Barack Obama          america      204 20529   0.00994
-#> 31 Benjamin Harrison     government   209 21230   0.00984
-#> 32 Richard M. Nixon      federal      232 23701   0.00979
-#> 33 Jimmy Carter          congress     518 53710   0.00964
-#> 34 John F. Kennedy       world         68  7302   0.00931
-#> 35 Theodore Roosevelt    government   528 58848   0.00897
-#> 36 Ronald Reagan         government   133 15005   0.00886
-#> 37 Ronald Reagan         people       133 15005   0.00886
-#> 38 Woodrow Wilson        government   105 11982   0.00876
-#> 39 Warren G. Harding     public        39  4583   0.00851
-#> 40 Dwight D. Eisenhower  world        204 24410   0.00836
-#> 41 Thomas Jefferson      country       58  7418   0.00782
-#> 42 Abraham Lincoln       congress      81 10462   0.00774
-#> 43 Abraham Lincoln       united        81 10462   0.00774
+#>  8 Donald Trump          american     135  9690   0.0139 
+#>  9 Andrew Johnson        government   207 14968   0.0138 
+#> 10 George Washington     united        86  6226   0.0138 
+#> 11 Calvin Coolidge       government   274 20518   0.0134 
+#> 12 James K. Polk         mexico       360 27679   0.0130 
+#> 13 James Buchanan        government   279 21636   0.0129 
+#> 14 Zachary Taylor        congress      38  2948   0.0129 
+#> 15 Ulysses S. Grant      united       359 27933   0.0129 
+#> 16 William Howard Taft   government   461 36506   0.0126 
+#> 17 Grover Cleveland      government   574 45889   0.0125 
+#> 18 Franklin Pierce       united       200 16240   0.0123 
+#> 19 George Bush           world         82  6706   0.0122 
+#> 20 James Monroe          united       184 15157   0.0121 
+#> 21 George W. Bush        america      209 17265   0.0121 
+#> 22 Millard Fillmore      government   135 11986   0.0113 
+#> 23 John Quincy Adams     congress     131 11788   0.0111 
+#> 24 Harry S Truman        war          308 27819   0.0111 
+#> 25 Gerald R. Ford        federal       65  5879   0.0111 
+#> 26 Herbert Hoover        government   121 10947   0.0111 
+#> 27 Rutherford B. Hayes   congress     194 17644   0.0110 
+#> 28 Chester A. Arthur     government   185 16961   0.0109 
+#> 29 Lyndon B. Johnson     congress     115 11207   0.0103 
+#> 30 James Madison         war           85  8327   0.0102 
+#> 31 Barack Obama          america      204 20529   0.00994
+#> 32 Benjamin Harrison     government   209 21230   0.00984
+#> 33 Richard M. Nixon      federal      232 23701   0.00979
+#> 34 Jimmy Carter          congress     518 53710   0.00964
+#> 35 John F. Kennedy       world         68  7302   0.00931
+#> 36 Theodore Roosevelt    government   528 58848   0.00897
+#> 37 Ronald Reagan         government   133 15005   0.00886
+#> 38 Ronald Reagan         people       133 15005   0.00886
+#> 39 Woodrow Wilson        government   105 11982   0.00876
+#> 40 Warren G. Harding     public        39  4583   0.00851
+#> 41 Dwight D. Eisenhower  world        204 24410   0.00836
+#> 42 Thomas Jefferson      country       58  7418   0.00782
+#> 43 Abraham Lincoln       congress      81 10462   0.00774
+#> 44 Abraham Lincoln       united        81 10462   0.00774
 \end{verbatim}
 
 \begin{quote}
@@ -1137,20 +1144,20 @@ So below we aggregate our tibble with the word tokens to create the one-row-per-
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 352,846 x 6
+#> # A tibble: 358,186 x 6
 #>    doc_id                       word               n      tf     idf    tf_idf
 #>    <chr>                        <chr>          <int>   <dbl>   <dbl>     <dbl>
-#>  1 harry-s-truman-1946.txt      dollars          207 0.0164  0.612   0.0100   
-#>  2 jimmy-carter-1980b.txt       congress         204 0.0126  0.00425 0.0000537
-#>  3 harry-s-truman-1946.txt      war              201 0.0159  0.0345  0.000550 
-#>  4 william-howard-taft-1910.txt government       164 0.0147  0.00425 0.0000623
-#>  5 james-k-polk-1846.txt        mexico           158 0.0225  0.810   0.0182   
+#>  1 harry-s-truman-1946.txt      dollars          207 0.0164  0.598   0.00981  
+#>  2 jimmy-carter-1980b.txt       congress         204 0.0126  0.00418 0.0000528
+#>  3 harry-s-truman-1946.txt      war              201 0.0159  0.0339  0.000540 
+#>  4 william-howard-taft-1910.txt government       164 0.0147  0.00418 0.0000613
+#>  5 james-k-polk-1846.txt        mexico           158 0.0225  0.799   0.0180   
 #>  6 richard-m-nixon-1974b.txt    federal          141 0.0141  0.293   0.00414  
-#>  7 harry-s-truman-1946.txt      million          138 0.0109  0.728   0.00796  
-#>  8 harry-s-truman-1946.txt      fiscal           129 0.0102  0.494   0.00505  
-#>  9 jimmy-carter-1981.txt        administration   129 0.00777 0.282   0.00219  
-#> 10 william-howard-taft-1912.txt government       129 0.0126  0.00425 0.0000536
-#> # ... with 352,836 more rows
+#>  7 harry-s-truman-1946.txt      million          138 0.0109  0.710   0.00777  
+#>  8 harry-s-truman-1946.txt      fiscal           129 0.0102  0.511   0.00522  
+#>  9 jimmy-carter-1981.txt        administration   129 0.00777 0.277   0.00215  
+#> 10 william-howard-taft-1912.txt government       129 0.0126  0.00418 0.0000527
+#> # ... with 358,176 more rows
 \end{verbatim}
 
 Our function added three columns to the aggregated table which contain term frequency (\texttt{tf}), inverse document frequency (\texttt{idf}) and Tf-idf (\texttt{tf\_idf}).
@@ -1167,20 +1174,20 @@ Let's look at some of the words in the corpus that have the highest tf-idf score
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 352,846 x 6
+#> # A tibble: 358,186 x 6
 #>    doc_id                        word          n      tf   idf tf_idf
 #>    <chr>                         <chr>     <int>   <dbl> <dbl>  <dbl>
-#>  1 lyndon-b-johnson-1966.txt     vietnam      32 0.0152   2.42 0.0367
-#>  2 jimmy-carter-1980a.txt        soviet       31 0.0218   1.47 0.0321
-#>  3 george-w-bush-2003.txt        hussein      19 0.00811  3.85 0.0313
-#>  4 george-w-bush-2003.txt        saddam       19 0.00811  3.67 0.0298
-#>  5 franklin-d-roosevelt-1943.txt 1942         13 0.00758  3.85 0.0292
-#>  6 dwight-d-eisenhower-1961.txt  1953         23 0.00747  3.85 0.0288
-#>  7 john-adams-1800.txt           gentlemen     8 0.0153   1.80 0.0275
-#>  8 benjamin-harrison-1892.txt    1892         40 0.00741  3.52 0.0261
-#>  9 franklin-d-roosevelt-1942.txt hitler        7 0.00527  4.77 0.0251
-#> 10 herbert-hoover-1930.txt       1928         14 0.00711  3.52 0.0250
-#> # ... with 352,836 more rows
+#>  1 donald-trump-2019.txt         applause    104 0.0424   2.22 0.0942
+#>  2 lyndon-b-johnson-1966.txt     vietnam      32 0.0152   2.35 0.0356
+#>  3 jimmy-carter-1980a.txt        soviet       31 0.0218   1.49 0.0325
+#>  4 george-w-bush-2003.txt        hussein      19 0.00811  3.87 0.0314
+#>  5 george-w-bush-2003.txt        saddam       19 0.00811  3.69 0.0299
+#>  6 franklin-d-roosevelt-1943.txt 1942         13 0.00758  3.87 0.0294
+#>  7 dwight-d-eisenhower-1961.txt  1953         23 0.00747  3.87 0.0289
+#>  8 john-adams-1800.txt           gentlemen     8 0.0153   1.77 0.0270
+#>  9 benjamin-harrison-1892.txt    1892         40 0.00741  3.53 0.0262
+#> 10 franklin-d-roosevelt-1942.txt hitler        7 0.00527  4.79 0.0252
+#> # ... with 358,176 more rows
 \end{verbatim}
 
 To understand the occurrence of the years as being particularly distinctive we might need to look more closely at the speeches themselves, and determine whether the years are significant or whether they need to be removed from the text either permanently in the clean up or temporarily using \texttt{filter()}.
@@ -1206,20 +1213,20 @@ We mentioned n-grams in the intro, but let's revisit them here and take a look a
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 1,964,976 x 7
-#>    president        year years_active party      sotu_type doc_id         bigram
-#>    <chr>           <int> <chr>        <chr>      <chr>     <chr>          <chr> 
-#>  1 Abraham Lincoln  1861 1861-1865    Republican written   abraham-linco~ fello~
-#>  2 Abraham Lincoln  1861 1861-1865    Republican written   abraham-linco~ citiz~
-#>  3 Abraham Lincoln  1861 1861-1865    Republican written   abraham-linco~ of the
-#>  4 Abraham Lincoln  1861 1861-1865    Republican written   abraham-linco~ the s~
-#>  5 Abraham Lincoln  1861 1861-1865    Republican written   abraham-linco~ senat~
-#>  6 Abraham Lincoln  1861 1861-1865    Republican written   abraham-linco~ and h~
-#>  7 Abraham Lincoln  1861 1861-1865    Republican written   abraham-linco~ house~
-#>  8 Abraham Lincoln  1861 1861-1865    Republican written   abraham-linco~ of re~
-#>  9 Abraham Lincoln  1861 1861-1865    Republican written   abraham-linco~ repre~
-#> 10 Abraham Lincoln  1861 1861-1865    Republican written   abraham-linco~ in the
-#> # ... with 1,964,966 more rows
+#> # A tibble: 1,987,963 x 8
+#>        X president        year years_active party      sotu_type doc_id   bigram
+#>    <int> <chr>           <int> <chr>        <chr>      <chr>     <chr>    <chr> 
+#>  1    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham~ fello~
+#>  2    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham~ citiz~
+#>  3    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham~ of the
+#>  4    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham~ the s~
+#>  5    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham~ senat~
+#>  6    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham~ and h~
+#>  7    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham~ house~
+#>  8    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham~ of re~
+#>  9    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham~ repre~
+#> 10    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham~ in the
+#> # ... with 1,987,953 more rows
 \end{verbatim}
 
 Let's see the most common bigrams:
@@ -1233,20 +1240,20 @@ Let's see the most common bigrams:
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 469,092 x 2
+#> # A tibble: 475,240 x 2
 #>    bigram            n
 #>    <chr>         <int>
-#>  1 of the        33610
-#>  2 in the        12499
-#>  3 to the        11643
-#>  4 for the        6892
-#>  5 and the        6224
-#>  6 by the         5606
-#>  7 of our         5172
-#>  8 the united     4767
-#>  9 united states  4760
-#> 10 it is          4756
-#> # ... with 469,082 more rows
+#>  1 of the        33699
+#>  2 in the        12608
+#>  3 to the        11684
+#>  4 for the        6926
+#>  5 and the        6265
+#>  6 by the         5625
+#>  7 of our         5219
+#>  8 the united     4816
+#>  9 united states  4808
+#> 10 it is          4774
+#> # ... with 475,230 more rows
 \end{verbatim}
 
 Ok, so we again need to remove the stopwords. First let us separate the two words into two columns ``word1'' and ``word2'' with \texttt{separate} from the \texttt{tidyr} package:
@@ -1260,20 +1267,20 @@ Ok, so we again need to remove the stopwords. First let us separate the two word
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 1,964,976 x 8
-#>    president        year years_active party      sotu_type doc_id    word1 word2
-#>    <chr>           <int> <chr>        <chr>      <chr>     <chr>     <chr> <chr>
-#>  1 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ fell~ citi~
-#>  2 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ citi~ of   
-#>  3 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ of    the  
-#>  4 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ the   sena~
-#>  5 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ sena~ and  
-#>  6 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ and   house
-#>  7 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ house of   
-#>  8 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ of    repr~
-#>  9 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ repr~ in   
-#> 10 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ in    the  
-#> # ... with 1,964,966 more rows
+#> # A tibble: 1,987,963 x 9
+#>        X president        year years_active party     sotu_~1 doc_id word1 word2
+#>    <int> <chr>           <int> <chr>        <chr>     <chr>   <chr>  <chr> <chr>
+#>  1    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ fell~ citi~
+#>  2    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ citi~ of   
+#>  3    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ of    the  
+#>  4    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ the   sena~
+#>  5    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ sena~ and  
+#>  6    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ and   house
+#>  7    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ house of   
+#>  8    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ of    repr~
+#>  9    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ repr~ in   
+#> 10    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ in    the  
+#> # ... with 1,987,953 more rows, and abbreviated variable name 1: sotu_type
 \end{verbatim}
 
 Now we use dplyr's \texttt{filter()} function to select only the words in each column that are not in the stopwords.
@@ -1289,20 +1296,20 @@ Now we use dplyr's \texttt{filter()} function to select only the words in each c
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 215,992 x 8
-#>    president        year years_active party      sotu_type doc_id    word1 word2
-#>    <chr>           <int> <chr>        <chr>      <chr>     <chr>     <chr> <chr>
-#>  1 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ fell~ citi~
-#>  2 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ unpr~ poli~
-#>  3 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ poli~ trou~
-#>  4 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ abun~ harv~
-#>  5 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ pecu~ exig~
-#>  6 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ fore~ nati~
-#>  7 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ prof~ soli~
-#>  8 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ soli~ chie~
-#>  9 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ dome~ affa~
-#> 10 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ disl~ port~
-#> # ... with 215,982 more rows
+#> # A tibble: 219,471 x 9
+#>        X president        year years_active party     sotu_~1 doc_id word1 word2
+#>    <int> <chr>           <int> <chr>        <chr>     <chr>   <chr>  <chr> <chr>
+#>  1    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ fell~ citi~
+#>  2    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ unpr~ poli~
+#>  3    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ poli~ trou~
+#>  4    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ abun~ harv~
+#>  5    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ pecu~ exig~
+#>  6    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ fore~ nati~
+#>  7    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ prof~ soli~
+#>  8    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ soli~ chie~
+#>  9    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ dome~ affa~
+#> 10    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ disl~ port~
+#> # ... with 219,461 more rows, and abbreviated variable name 1: sotu_type
 \end{verbatim}
 
 Lastly, we re-unite the two word columns into back into our bigrams and save it into a new table \texttt{sotu\_bigrams}.
@@ -1323,20 +1330,20 @@ Lastly, we re-unite the two word columns into back into our bigrams and save it 
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 129,622 x 2
+#> # A tibble: 131,899 x 2
 #>    bigram                 n
 #>    <chr>              <int>
 #>  1 federal government   479
-#>  2 american people      428
+#>  2 american people      439
 #>  3 june 30              325
-#>  4 fellow citizens      296
+#>  4 fellow citizens      299
 #>  5 public debt          283
 #>  6 public lands         256
-#>  7 health care          240
-#>  8 social security      232
+#>  7 health care          253
+#>  8 social security      233
 #>  9 post office          202
 #> 10 annual message       200
-#> # ... with 129,612 more rows
+#> # ... with 131,889 more rows
 \end{verbatim}
 
 A bigram can also be treated as a term in a document in the same way that we treated individual words. That means we can look at tf-idf values in the same way. For example, we can find out the most distinct bigrams that the presidents uttered in all their respective speeches taken together.
@@ -1355,21 +1362,21 @@ We count per president and bigram and then bind the tf-idf value with the \textt
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 44 x 6
-#> # Groups:   president [41]
+#> # A tibble: 45 x 6
+#> # Groups:   president [42]
 #>    president          bigram              n      tf   idf tf_idf
 #>    <chr>              <chr>           <int>   <dbl> <dbl>  <dbl>
-#>  1 George W. Bush     al qaida           35 0.00628 3.02  0.0190
-#>  2 John Adams         john adams          3 0.00510 3.71  0.0189
-#>  3 William J. Clinton 21st century       59 0.00830 1.77  0.0147
-#>  4 Thomas Jefferson   gun boats           7 0.00462 3.02  0.0140
-#>  5 Thomas Jefferson   port towns          7 0.00462 3.02  0.0140
-#>  6 Thomas Jefferson   sea port            7 0.00462 3.02  0.0140
-#>  7 Zachary Taylor     german empire       5 0.00789 1.63  0.0129
-#>  8 Lyndon B. Johnson  south vietnam      13 0.00424 3.02  0.0128
-#>  9 James Madison      james madison       8 0.00412 3.02  0.0124
-#> 10 Harry S Truman     million dollars   119 0.0129  0.941 0.0121
-#> # ... with 34 more rows
+#>  1 John Adams         john adams          3 0.00510 3.74  0.0191
+#>  2 George W. Bush     al qaida           35 0.00628 2.64  0.0166
+#>  3 Thomas Jefferson   gun boats           7 0.00462 3.04  0.0141
+#>  4 Thomas Jefferson   port towns          7 0.00462 3.04  0.0141
+#>  5 Thomas Jefferson   sea port            7 0.00462 3.04  0.0141
+#>  6 William J. Clinton 21st century       59 0.00830 1.66  0.0138
+#>  7 Zachary Taylor     german empire       5 0.00789 1.66  0.0131
+#>  8 Lyndon B. Johnson  south vietnam      13 0.00424 3.04  0.0129
+#>  9 James Madison      james madison       8 0.00412 3.04  0.0125
+#> 10 Harry S Truman     million dollars   119 0.0129  0.965 0.0124
+#> # ... with 35 more rows
 \end{verbatim}
 
 \begin{quote}
@@ -1422,20 +1429,20 @@ Since processing the entire corpus would take too long here, we will only look a
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 125,576 x 3
+#> # A tibble: 126,853 x 3
 #>    item1      item2       n
 #>    <chr>      <chr>   <dbl>
-#>  1 god        bless      37
-#>  2 god        america    35
-#>  3 bless      america    30
-#>  4 people     country    26
-#>  5 world      god        22
-#>  6 god        people     22
-#>  7 government people     21
-#>  8 congress   people     21
-#>  9 public     country    21
-#> 10 god        nation     21
-#> # ... with 125,566 more rows
+#>  1 god        bless      41
+#>  2 god        america    39
+#>  3 bless      america    34
+#>  4 people     country    27
+#>  5 god        nation     24
+#>  6 world      god        23
+#>  7 god        people     23
+#>  8 god        country    22
+#>  9 people     america    22
+#> 10 government people     21
+#> # ... with 126,843 more rows
 \end{verbatim}
 
 To visualize the co-occurrence network of words that occur together at the end of 10 or more speeches, we use the \texttt{igraph} package to convert our table into a network graph and the \texttt{ggraph} package which adds functionality to ggplot to make it easier to plot a network.
@@ -1483,7 +1490,7 @@ First we use dplyr to create a table with the document name, the term, and the c
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 352,846 x 3
+#> # A tibble: 358,186 x 3
 #>    doc_id                   word               n
 #>    <chr>                    <chr>          <int>
 #>  1 abraham-lincoln-1861.txt 1,470,018          1
@@ -1496,7 +1503,7 @@ First we use dplyr to create a table with the document name, the term, and the c
 #>  8 abraham-lincoln-1861.txt 1859               1
 #>  9 abraham-lincoln-1861.txt 1860               2
 #> 10 abraham-lincoln-1861.txt 1861               6
-#> # ... with 352,836 more rows
+#> # ... with 358,176 more rows
 \end{verbatim}
 
 Now we cast it as a DTM.
@@ -1552,7 +1559,7 @@ Finally, let's use it in the \texttt{tm} package:
 \begin{verbatim}
 #> $citizen
 #>        laws citizenship  protection   contained    entitled  government 
-#>        0.62        0.59        0.56        0.55        0.53        0.53 
+#>        0.62        0.59        0.56        0.54        0.53        0.53 
 #>    citizens  postmaster     careful    question      report       suits 
 #>        0.52        0.52        0.51        0.51        0.51        0.51
 \end{verbatim}
@@ -1625,20 +1632,21 @@ We can use these sentiments attached to each word and join them to the words of 
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 105,206 x 8
-#>    president        year years_active party     sotu_type doc_id word  sentiment
-#>    <chr>           <int> <chr>        <chr>     <chr>     <chr>  <chr> <chr>    
-#>  1 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ trou~ negative 
-#>  2 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ grat~ positive 
-#>  3 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ unus~ negative 
-#>  4 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ abun~ positive 
-#>  5 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ pecu~ negative 
-#>  6 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ prof~ positive 
-#>  7 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ soli~ negative 
-#>  8 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ disl~ negative 
-#>  9 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ dest~ negative 
-#> 10 Abraham Lincoln  1861 1861-1865    Republic~ written   abrah~ disr~ negative 
-#> # ... with 105,196 more rows
+#> # A tibble: 106,649 x 9
+#>        X president        year years_active party   sotu_~1 doc_id word  senti~2
+#>    <int> <chr>           <int> <chr>        <chr>   <chr>   <chr>  <chr> <chr>  
+#>  1    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ trou~ negati~
+#>  2    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ grat~ positi~
+#>  3    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ unus~ negati~
+#>  4    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ abun~ positi~
+#>  5    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ pecu~ negati~
+#>  6    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ prof~ positi~
+#>  7    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ soli~ negati~
+#>  8    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ disl~ negati~
+#>  9    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ dest~ negati~
+#> 10    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ disr~ negati~
+#> # ... with 106,639 more rows, and abbreviated variable names 1: sotu_type,
+#> #   2: sentiment
 \end{verbatim}
 
 Finally we can visualize the proportion of positive sentiment (out of the total of positive and negative) in US State of the Union Addresses over time like this:

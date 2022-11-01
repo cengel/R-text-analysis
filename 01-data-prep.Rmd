@@ -72,7 +72,8 @@ To work with a single table, we combine the text and metadata. Our `sotu_texts` 
 sotu_whole <- 
   sotu_meta %>%  
   arrange(president) %>% # sort metadata
-  bind_cols(sotu_texts) # combine with texts
+  bind_cols(sotu_texts) %>% # combine with texts
+  as_tibble() # convert to tibble for better screen viewing
 
 glimpse(sotu_whole)
 ```
