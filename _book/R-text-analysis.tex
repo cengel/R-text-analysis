@@ -1,20 +1,25 @@
 % Options for packages loaded elsewhere
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
-%
 \documentclass[
 ]{book}
+\usepackage{xcolor}
+\usepackage[left=3cm,right=1cm,top=2cm,bottom=2cm]{geometry}
 \usepackage{amsmath,amssymb}
-\usepackage{lmodern}
+\setcounter{secnumdepth}{5}
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
 \else % if luatex or xetex
-  \usepackage{unicode-math}
+  \usepackage{unicode-math} % this also loads fontspec
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
 \fi
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -32,8 +37,6 @@
 }{% if KOMA class
   \KOMAoptions{parskip=half}}
 \makeatother
-\usepackage{xcolor}
-\usepackage[left=3cm,right=1cm,top=2cm,bottom=2cm]{geometry}
 \usepackage{color}
 \usepackage{fancyvrb}
 \newcommand{\VerbBar}{|}
@@ -45,13 +48,13 @@
 \newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
 \newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
 \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
 \newcommand{\BuiltInTok}[1]{#1}
 \newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
@@ -59,7 +62,7 @@
 \newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
 \newcommand{\ExtensionTok}[1]{#1}
 \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\ImportTok}[1]{#1}
 \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
@@ -68,7 +71,7 @@
 \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
 \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
@@ -86,21 +89,24 @@
 \makesavenoteenv{longtable}
 \usepackage{graphicx}
 \makeatletter
-\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
-\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
-\makeatother
-% Scale images if necessary, so that they will not overflow the page
-% margins by default, and it is still possible to overwrite the defaults
-% using explicit options in \includegraphics[width, height, ...]{}
-\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
 % Set default figure placement to htbp
-\makeatletter
 \def\fps@figure{htbp}
 \makeatother
 \setlength{\emergencystretch}{3em} % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{5}
+\usepackage[]{natbib}
+\bibliographystyle{apalike}
 \usepackage{booktabs}
 \usepackage{amsthm}
 \makeatletter
@@ -109,23 +115,18 @@
   \thm@postskip=\thm@preskip
 }
 \makeatother
-\ifLuaTeX
-  \usepackage{selnolig}  % disable illegal ligatures
-\fi
-\usepackage[]{natbib}
-\bibliographystyle{apalike}
-\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\usepackage{bookmark}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\urlstyle{same} % disable monospaced font for URLs
+\urlstyle{same}
 \hypersetup{
   pdftitle={Text Analysis with R},
-  pdfauthor={Claudia Engel, Scott Bailey},
+  pdfauthor={Claudia Engel},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
 \title{Text Analysis with R}
-\author{Claudia Engel, Scott Bailey}
-\date{Last updated: November 01, 2022}
+\author{Claudia Engel}
+\date{Last updated: February 06, 2026}
 
 \begin{document}
 \maketitle
@@ -134,8 +135,7 @@
 \setcounter{tocdepth}{1}
 \tableofcontents
 }
-\hypertarget{prerequisites}{%
-\chapter*{Prerequisites}\label{prerequisites}}
+\chapter*{Prerequisites}\label{prerequisites}
 \addcontentsline{toc}{chapter}{Prerequisites}
 
 \begin{itemize}
@@ -171,8 +171,7 @@
 
 Make sure that you not only install, but also load the packages, to confirm the respective versions get along with your R version.
 
-\hypertarget{references}{%
-\section*{References}\label{references}}
+\section*{References}\label{references}
 \addcontentsline{toc}{section}{References}
 
 Feinerer, I., Hornik, K., and Meyer, D. (2008). \href{http://dx.doi.org/10.18637/jss.v025.i05}{Text Mining Infrastructure in R}. Journal of Statistical Software, 25(5), 1 - 54. doi: dx.doi.org/10.18637/jss.v025.i05
@@ -189,8 +188,7 @@ Scott Chamberlain (2019). \href{https://books.ropensci.org/fulltext/}{fulltext: 
 
 \href{https://CRAN.R-project.org/view=NaturalLanguageProcessing}{CRAN Task View: Natural Language Processing}
 
-\hypertarget{textprep}{%
-\chapter{Preparing Textual Data}\label{textprep}}
+\chapter{Preparing Textual Data}\label{textprep}
 
 \begin{quote}
 Learning Objectives
@@ -233,8 +231,7 @@ We'll use several R packages in this section:
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{reading-text-into-r}{%
-\section{Reading text into R}\label{reading-text-into-r}}
+\section{Reading text into R}\label{reading-text-into-r}
 
 First, let's look at the data in the \texttt{sotu} package. The metadata and texts are contained in this package separately in \texttt{sotu\_meta} and \texttt{sotu\_text} respectively. We can take a look at those by either typing the names or use funnctions like \texttt{glimpse()} or \texttt{str()}. Below, or example is what the metadata look like. Can you tell how many speeches there are?
 
@@ -267,12 +264,12 @@ In order to work with the speech texts and to later practice reading text files 
 \end{Shaded}
 
 \begin{verbatim}
-#> [1] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmpa7yRx0/file643f362e5ae0/george-washington-1790a.txt"
-#> [2] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmpa7yRx0/file643f362e5ae0/george-washington-1790b.txt"
-#> [3] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmpa7yRx0/file643f362e5ae0/george-washington-1791.txt" 
-#> [4] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmpa7yRx0/file643f362e5ae0/george-washington-1792.txt" 
-#> [5] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmpa7yRx0/file643f362e5ae0/george-washington-1793.txt" 
-#> [6] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmpa7yRx0/file643f362e5ae0/george-washington-1794.txt"
+#> [1] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//RtmpkxoXA7/file7227d1f4e08/george-washington-1790a.txt"
+#> [2] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//RtmpkxoXA7/file7227d1f4e08/george-washington-1790b.txt"
+#> [3] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//RtmpkxoXA7/file7227d1f4e08/george-washington-1791.txt" 
+#> [4] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//RtmpkxoXA7/file7227d1f4e08/george-washington-1792.txt" 
+#> [5] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//RtmpkxoXA7/file7227d1f4e08/george-washington-1793.txt" 
+#> [6] "/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//RtmpkxoXA7/file7227d1f4e08/george-washington-1794.txt"
 \end{verbatim}
 
 Now that we have the files on disk and a vector of filepaths, we can pass this vector directly into \texttt{readtext} to read the texts into a new variable.
@@ -342,8 +339,7 @@ Now that we have our data combined, we can start looking at the text. Typically 
 
 There are several ways to handle this sort of cleaning, we'll show a few examples below.
 
-\hypertarget{string-operations}{%
-\section{String operations}\label{string-operations}}
+\section{String operations}\label{string-operations}
 
 R has many functions available to manipulate strings including functions like \texttt{grep} and \texttt{paste}, which come with the R base install.
 
@@ -351,8 +347,7 @@ Here we will here take a look at the \texttt{stringr} package, which is part of 
 
 Below are examples for a few functions that might be useful.
 
-\hypertarget{counting-ocurrences}{%
-\subsection{Counting ocurrences}\label{counting-ocurrences}}
+\subsection{Counting ocurrences}\label{counting-ocurrences}
 
 \texttt{str\_count} takes a character vector as input and by default counts the number of pattern matches in a string.
 
@@ -367,20 +362,19 @@ How man times does the word ``citizen'' appear in each of the speeches?
 
 \begin{verbatim}
 #> # A tibble: 240 x 9
-#>        X president        year years_active party   sotu_~1 doc_id text  n_cit~2
-#>    <int> <chr>           <int> <chr>        <chr>   <chr>   <chr>  <chr>   <int>
-#>  1    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ "\n\~       9
-#>  2    74 Abraham Lincoln  1862 1861-1865    Republ~ written abrah~ "\n\~       7
-#>  3    75 Abraham Lincoln  1863 1861-1865    Republ~ written abrah~ "\n\~      15
-#>  4    76 Abraham Lincoln  1864 1861-1865    Republ~ written abrah~ "\n\~       3
-#>  5    41 Andrew Jackson   1829 1829-1833    Democr~ written andre~ "\n\~      19
-#>  6    42 Andrew Jackson   1830 1829-1833    Democr~ written andre~ "\n\~      14
-#>  7    43 Andrew Jackson   1831 1829-1833    Democr~ written andre~ "\n\~      23
-#>  8    44 Andrew Jackson   1832 1829-1833    Democr~ written andre~ "\n\~      19
-#>  9    45 Andrew Jackson   1833 1833-1837    Democr~ written andre~ "\n\~      14
-#> 10    46 Andrew Jackson   1834 1833-1837    Democr~ written andre~ "\n\~      25
-#> # ... with 230 more rows, and abbreviated variable names 1: sotu_type,
-#> #   2: n_citizen
+#>        X president      year years_active party sotu_type doc_id text  n_citizen
+#>    <int> <chr>         <int> <chr>        <chr> <chr>     <chr>  <chr>     <int>
+#>  1    73 Abraham Linc~  1861 1861-1865    Repu~ written   abrah~ "\n\~         9
+#>  2    74 Abraham Linc~  1862 1861-1865    Repu~ written   abrah~ "\n\~         7
+#>  3    75 Abraham Linc~  1863 1861-1865    Repu~ written   abrah~ "\n\~        15
+#>  4    76 Abraham Linc~  1864 1861-1865    Repu~ written   abrah~ "\n\~         3
+#>  5    41 Andrew Jacks~  1829 1829-1833    Demo~ written   andre~ "\n\~        19
+#>  6    42 Andrew Jacks~  1830 1829-1833    Demo~ written   andre~ "\n\~        14
+#>  7    43 Andrew Jacks~  1831 1829-1833    Demo~ written   andre~ "\n\~        23
+#>  8    44 Andrew Jacks~  1832 1829-1833    Demo~ written   andre~ "\n\~        19
+#>  9    45 Andrew Jacks~  1833 1833-1837    Demo~ written   andre~ "\n\~        14
+#> 10    46 Andrew Jacks~  1834 1833-1837    Demo~ written   andre~ "\n\~        25
+#> # i 230 more rows
 \end{verbatim}
 
 It is possible to use regular expressions, for example, this is how we would check how many times either ``citizen'' or ``Citizen'' appear in each of the speeches:
@@ -395,20 +389,20 @@ It is possible to use regular expressions, for example, this is how we would che
 
 \begin{verbatim}
 #> # A tibble: 240 x 10
-#>        X president       year years~1 party sotu_~2 doc_id text  n_cit~3 n_cCi~4
-#>    <int> <chr>          <int> <chr>   <chr> <chr>   <chr>  <chr>   <int>   <int>
-#>  1    73 Abraham Linco~  1861 1861-1~ Repu~ written abrah~ "\n\~       9      10
-#>  2    74 Abraham Linco~  1862 1861-1~ Repu~ written abrah~ "\n\~       7       8
-#>  3    75 Abraham Linco~  1863 1861-1~ Repu~ written abrah~ "\n\~      15      16
-#>  4    76 Abraham Linco~  1864 1861-1~ Repu~ written abrah~ "\n\~       3       4
-#>  5    41 Andrew Jackson  1829 1829-1~ Demo~ written andre~ "\n\~      19      20
-#>  6    42 Andrew Jackson  1830 1829-1~ Demo~ written andre~ "\n\~      14      15
-#>  7    43 Andrew Jackson  1831 1829-1~ Demo~ written andre~ "\n\~      23      24
-#>  8    44 Andrew Jackson  1832 1829-1~ Demo~ written andre~ "\n\~      19      20
-#>  9    45 Andrew Jackson  1833 1833-1~ Demo~ written andre~ "\n\~      14      15
-#> 10    46 Andrew Jackson  1834 1833-1~ Demo~ written andre~ "\n\~      25      26
-#> # ... with 230 more rows, and abbreviated variable names 1: years_active,
-#> #   2: sotu_type, 3: n_citizen, 4: n_cCitizen
+#>        X president      year years_active party sotu_type doc_id text  n_citizen
+#>    <int> <chr>         <int> <chr>        <chr> <chr>     <chr>  <chr>     <int>
+#>  1    73 Abraham Linc~  1861 1861-1865    Repu~ written   abrah~ "\n\~         9
+#>  2    74 Abraham Linc~  1862 1861-1865    Repu~ written   abrah~ "\n\~         7
+#>  3    75 Abraham Linc~  1863 1861-1865    Repu~ written   abrah~ "\n\~        15
+#>  4    76 Abraham Linc~  1864 1861-1865    Repu~ written   abrah~ "\n\~         3
+#>  5    41 Andrew Jacks~  1829 1829-1833    Demo~ written   andre~ "\n\~        19
+#>  6    42 Andrew Jacks~  1830 1829-1833    Demo~ written   andre~ "\n\~        14
+#>  7    43 Andrew Jacks~  1831 1829-1833    Demo~ written   andre~ "\n\~        23
+#>  8    44 Andrew Jacks~  1832 1829-1833    Demo~ written   andre~ "\n\~        19
+#>  9    45 Andrew Jacks~  1833 1833-1837    Demo~ written   andre~ "\n\~        14
+#> 10    46 Andrew Jacks~  1834 1833-1837    Demo~ written   andre~ "\n\~        25
+#> # i 230 more rows
+#> # i 1 more variable: n_cCitizen <int>
 \end{verbatim}
 
 Going into the use of \href{https://en.wikipedia.org/wiki/Regular_expression}{regular expressions} is beyond this introduction. However we want to point out the \texttt{str\_view()} function which can help you to create your correct expression. Also see \href{https://regexr.com/}{RegExr}, an online tool to learn, build, \& test regular expressions.
@@ -424,19 +418,19 @@ When used with the \texttt{boundary} argument \texttt{str\_count()} can count di
 
 \begin{verbatim}
 #> # A tibble: 240 x 9
-#>        X president        year years_active party   sotu_~1 doc_id text  n_words
-#>    <int> <chr>           <int> <chr>        <chr>   <chr>   <chr>  <chr>   <int>
-#>  1    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ "\n\~    6998
-#>  2    74 Abraham Lincoln  1862 1861-1865    Republ~ written abrah~ "\n\~    8410
-#>  3    75 Abraham Lincoln  1863 1861-1865    Republ~ written abrah~ "\n\~    6132
-#>  4    76 Abraham Lincoln  1864 1861-1865    Republ~ written abrah~ "\n\~    5975
-#>  5    41 Andrew Jackson   1829 1829-1833    Democr~ written andre~ "\n\~   10547
-#>  6    42 Andrew Jackson   1830 1829-1833    Democr~ written andre~ "\n\~   15109
-#>  7    43 Andrew Jackson   1831 1829-1833    Democr~ written andre~ "\n\~    7198
-#>  8    44 Andrew Jackson   1832 1829-1833    Democr~ written andre~ "\n\~    7887
-#>  9    45 Andrew Jackson   1833 1833-1837    Democr~ written andre~ "\n\~    7912
-#> 10    46 Andrew Jackson   1834 1833-1837    Democr~ written andre~ "\n\~   13472
-#> # ... with 230 more rows, and abbreviated variable name 1: sotu_type
+#>        X president        year years_active party sotu_type doc_id text  n_words
+#>    <int> <chr>           <int> <chr>        <chr> <chr>     <chr>  <chr>   <int>
+#>  1    73 Abraham Lincoln  1861 1861-1865    Repu~ written   abrah~ "\n\~    6998
+#>  2    74 Abraham Lincoln  1862 1861-1865    Repu~ written   abrah~ "\n\~    8410
+#>  3    75 Abraham Lincoln  1863 1861-1865    Repu~ written   abrah~ "\n\~    6132
+#>  4    76 Abraham Lincoln  1864 1861-1865    Repu~ written   abrah~ "\n\~    5975
+#>  5    41 Andrew Jackson   1829 1829-1833    Demo~ written   andre~ "\n\~   10547
+#>  6    42 Andrew Jackson   1830 1829-1833    Demo~ written   andre~ "\n\~   15109
+#>  7    43 Andrew Jackson   1831 1829-1833    Demo~ written   andre~ "\n\~    7198
+#>  8    44 Andrew Jackson   1832 1829-1833    Demo~ written   andre~ "\n\~    7887
+#>  9    45 Andrew Jackson   1833 1833-1837    Demo~ written   andre~ "\n\~    7912
+#> 10    46 Andrew Jackson   1834 1833-1837    Demo~ written   andre~ "\n\~   13472
+#> # i 230 more rows
 \end{verbatim}
 
 \begin{quote}
@@ -447,8 +441,7 @@ CHALLENGE: Use the code above and add another column \texttt{n\_sentences} where
 \end{quote}
 \end{quote}
 
-\hypertarget{detecting-patterns}{%
-\subsection{Detecting patterns}\label{detecting-patterns}}
+\subsection{Detecting patterns}\label{detecting-patterns}
 
 \texttt{str\_detect} also looks for patterns, but instead of counts it returns a logical vector (TRUE/FALSE) indiciating if the pattern is or is not found. So we typically want to use it with the \texttt{filter} ``verb'' from \texttt{dplyr}.
 
@@ -479,51 +472,63 @@ What are the names of the documents where the words ``citizen'' and ``Citizen'' 
 #> 11 woodrow-wilson-1920.txt
 \end{verbatim}
 
-\hypertarget{extracting-words}{%
-\subsection{Extracting words}\label{extracting-words}}
+\subsection{Extracting words}\label{extracting-words}
 
-The \texttt{word} function extracts specific words from a character vector of words. By default it returns the first word. If for example we wanted to extract the first 5 words of each speech by Woodrow Wilson we provide the \texttt{end} argument like this:
+The \texttt{word} function extracts specific words from a character vector of words. It takes a `start' and `end' argument, which determines the range of the words to be extracted. By default it returns the first word. If for example we wanted to extract the first 5 words of each speech like we could add another column to the table like this:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{sotu\_whole }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(president }\SpecialCharTok{==} \StringTok{"Woodrow Wilson"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}  \CommentTok{\# sample a few speeches as demo}
-  \FunctionTok{pull}\NormalTok{(text) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# we pull out the text vector only}
-  \FunctionTok{word}\NormalTok{(}\AttributeTok{end =} \DecValTok{5}\NormalTok{) }
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{first\_5 =} \FunctionTok{word}\NormalTok{(text, }\AttributeTok{end =} \DecValTok{5}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(first\_5)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-#> [1] "\n\nGentlemen of the Congress:\n\nIn pursuance"
-#> [2] "\n\nGENTLEMEN OF THE CONGRESS: \n\nThe"        
-#> [3] "GENTLEMEN OF THE CONGRESS: \n\nSince"          
-#> [4] "\n\nGENTLEMEN OF THE CONGRESS: \n\nIn"         
-#> [5] "Gentlemen of the Congress:\n\nEight months"    
-#> [6] "\n\nGENTLEMEN OF THE CONGRESS: \n\nThe"        
-#> [7] "\n\nTO THE SENATE AND HOUSE"                   
-#> [8] "\n\nGENTLEMEN OF THE CONGRESS:\n\nWhen I"
+#> # A tibble: 240 x 1
+#>    first_5                             
+#>    <chr>                               
+#>  1 "\n\n Fellow-Citizens of the Senate"
+#>  2 "\n\n Fellow-Citizens of the Senate"
+#>  3 "\n\n Fellow-Citizens of the Senate"
+#>  4 "\n\n Fellow-Citizens of the Senate"
+#>  5 "\n\n Fellow Citizens of the"       
+#>  6 "\n\n Fellow Citizens of the"       
+#>  7 "\n\n Fellow Citizens of the"       
+#>  8 "\n\n Fellow Citizens of the"       
+#>  9 "\n\n Fellow Citizens of the"       
+#> 10 "\n\n Fellow Citizens of the"       
+#> # i 230 more rows
 \end{verbatim}
 
-\hypertarget{replacing-and-removing-characters}{%
-\subsection{Replacing and removing characters}\label{replacing-and-removing-characters}}
+\subsection{Replacing and removing characters}\label{replacing-and-removing-characters}
 
-Now let's take a look at text `cleaninng'. We will first remove the newline characters (\texttt{\textbackslash{}n}). We use the \texttt{str\_replace\_all} function to replace all the ocurrences of the \texttt{\textbackslash{}n} pattern with a white space \texttt{"\ "}. We need to add the escape character \texttt{\textbackslash{}} in front of our pattern to be replaced so the backslash before the \texttt{n} is interpreted correctly.
+Now let's take a look at text `cleaning' and see if we can imrove this output. We will first remove the newline characters (\texttt{\textbackslash{}n}). We use the \texttt{str\_replace\_all} function to replace all the occurrences of the \texttt{\textbackslash{}n} pattern with a white space \texttt{"\ "}. We need to add the escape character \texttt{\textbackslash{}} in front of our pattern to be replaced so the backslash before the \texttt{n} is interpreted correctly.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{sotu\_whole }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(president }\SpecialCharTok{==} \StringTok{"Woodrow Wilson"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}  
-  \FunctionTok{pull}\NormalTok{(text) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{str\_replace\_all}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{n"}\NormalTok{, }\StringTok{" "}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# replace newline}
-  \FunctionTok{word}\NormalTok{(}\AttributeTok{end =} \DecValTok{5}\NormalTok{) }
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{text\_clean =} \FunctionTok{str\_replace\_all}\NormalTok{(text, }\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{n"}\NormalTok{, }\StringTok{" "}\NormalTok{), }\CommentTok{\# replace newline}
+         \AttributeTok{first\_5 =} \FunctionTok{word}\NormalTok{(text, }\AttributeTok{end =} \DecValTok{5}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(first\_5)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-#> [1] "  Gentlemen of the"          "  GENTLEMEN OF THE"         
-#> [3] "GENTLEMEN OF THE CONGRESS: " "  GENTLEMEN OF THE"         
-#> [5] "Gentlemen of the Congress: " "  GENTLEMEN OF THE"         
-#> [7] "  TO THE SENATE"             "  GENTLEMEN OF THE"
+#> # A tibble: 240 x 1
+#>    first_5                             
+#>    <chr>                               
+#>  1 "\n\n Fellow-Citizens of the Senate"
+#>  2 "\n\n Fellow-Citizens of the Senate"
+#>  3 "\n\n Fellow-Citizens of the Senate"
+#>  4 "\n\n Fellow-Citizens of the Senate"
+#>  5 "\n\n Fellow Citizens of the"       
+#>  6 "\n\n Fellow Citizens of the"       
+#>  7 "\n\n Fellow Citizens of the"       
+#>  8 "\n\n Fellow Citizens of the"       
+#>  9 "\n\n Fellow Citizens of the"       
+#> 10 "\n\n Fellow Citizens of the"       
+#> # i 230 more rows
 \end{verbatim}
 
 This looks better, but we still have a problem to extract exactly 5 words because the too whitespaces are counted as a word. So let's get rid of any whitespaces before and after, as well as repeated whitespaces within the string with the \texttt{str\_squish()} function.
@@ -531,25 +536,33 @@ This looks better, but we still have a problem to extract exactly 5 words becaus
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{sotu\_whole }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{filter}\NormalTok{(president }\SpecialCharTok{==} \StringTok{"Woodrow Wilson"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}  
-  \FunctionTok{pull}\NormalTok{(text) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{str\_replace\_all}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{n"}\NormalTok{, }\StringTok{" "}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{str\_squish}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}  \CommentTok{\# remove whitespaces}
-  \FunctionTok{word}\NormalTok{(}\AttributeTok{end =} \DecValTok{5}\NormalTok{) }
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{text\_clean =} \FunctionTok{str\_replace\_all}\NormalTok{(text, }\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{n"}\NormalTok{, }\StringTok{" "}\NormalTok{), }\CommentTok{\# replace newline}
+         \AttributeTok{text\_clean =} \FunctionTok{str\_squish}\NormalTok{(text\_clean),  }\CommentTok{\# remove whitespaces}
+         \AttributeTok{first\_5 =} \FunctionTok{word}\NormalTok{(text, }\AttributeTok{end =} \DecValTok{5}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(first\_5)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-#> [1] "Gentlemen of the Congress: In"    "GENTLEMEN OF THE CONGRESS: The"  
-#> [3] "GENTLEMEN OF THE CONGRESS: Since" "GENTLEMEN OF THE CONGRESS: In"   
-#> [5] "Gentlemen of the Congress: Eight" "GENTLEMEN OF THE CONGRESS: The"  
-#> [7] "TO THE SENATE AND HOUSE"          "GENTLEMEN OF THE CONGRESS: When"
+#> # A tibble: 240 x 1
+#>    first_5                             
+#>    <chr>                               
+#>  1 "\n\n Fellow-Citizens of the Senate"
+#>  2 "\n\n Fellow-Citizens of the Senate"
+#>  3 "\n\n Fellow-Citizens of the Senate"
+#>  4 "\n\n Fellow-Citizens of the Senate"
+#>  5 "\n\n Fellow Citizens of the"       
+#>  6 "\n\n Fellow Citizens of the"       
+#>  7 "\n\n Fellow Citizens of the"       
+#>  8 "\n\n Fellow Citizens of the"       
+#>  9 "\n\n Fellow Citizens of the"       
+#> 10 "\n\n Fellow Citizens of the"       
+#> # i 230 more rows
 \end{verbatim}
 
 (For spell checks take a look at \url{https://CRAN.R-project.org/package=spelling} or \url{https://CRAN.R-project.org/package=hunspell})
 
-\hypertarget{tokenize}{%
-\section{Tokenize}\label{tokenize}}
+\section{Tokenize}\label{tokenize}
 
 A very common part of preparing your text for analysis involves \emph{tokenization}. Currently our data contains in each each row a single text with metadata, so the entire speech text is the unit of observation. When we tokenize we break down the text into ``tokens'' (most commonly single words), so each row contains a single word with its metadata as unit of observation.
 
@@ -590,7 +603,7 @@ In the example below we name the new column to hold the tokens \texttt{word}. Re
 #>  8    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ of   
 #>  9    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ repr~
 #> 10    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ in   
-#> # ... with 1,988,193 more rows
+#> # i 1,988,193 more rows
 \end{verbatim}
 
 Note that the \texttt{unnest\_tokens} function didn't just tokenize our texts at the word level. It also lowercased each word and stripped off the punctuation. We can tell it not to do this, by adding the following parameters:
@@ -617,7 +630,7 @@ Note that the \texttt{unnest\_tokens} function didn't just tokenize our texts at
 #>  8    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ House
 #>  9    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ of   
 #> 10    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ Repr~
-#> # ... with 2,184,592 more rows
+#> # i 2,184,592 more rows
 \end{verbatim}
 
 We can also tokenize the text at the level of ngrams or sentences, if those are the best units of analysis for our work.
@@ -645,7 +658,7 @@ We can also tokenize the text at the level of ngrams or sentences, if those are 
 #>  8 If we could dare to believe that foreign nations are actuated by no higher p~
 #>  9 The principal lever relied on by the insurgents for exciting foreign nations~
 #> 10 Those nations, however, not improbably saw from the first that it was the Un~
-#> # ... with 70,751 more rows
+#> # i 70,751 more rows
 \end{verbatim}
 
 \begin{Shaded}
@@ -671,13 +684,12 @@ We can also tokenize the text at the level of ngrams or sentences, if those are 
 #>  8 of representatives in   
 #>  9 representatives in the  
 #> 10 in the midst            
-#> # ... with 1,987,713 more rows
+#> # i 1,987,713 more rows
 \end{verbatim}
 
 (Take note that the trigrams are generated by a moving 3-word window over the text.)
 
-\hypertarget{stopwords}{%
-\section{Stopwords}\label{stopwords}}
+\section{Stopwords}\label{stopwords}
 
 Another common task of preparing text for analysis is to remove stopwords. Stopwords are highly common words that are considered to provide non-relevant information about the content of a text.
 
@@ -703,7 +715,7 @@ Let's look at the stopwords that come with the \texttt{tidytext} package to get 
 #>  8 across      SMART  
 #>  9 actually    SMART  
 #> 10 after       SMART  
-#> # ... with 1,139 more rows
+#> # i 1,139 more rows
 \end{verbatim}
 
 These are English stopwords, pulled from different lexica (``onix'', ``SMART'', or ``snowball''). Depending on the type of analysis you're doing, you might leave these words in or alternatively use your own curated list of stopwords. Stopword lists exist for many languages, see for examle the \href{https://cran.r-project.org/package=stopwords}{\texttt{stopwords} package in R}. For now we will remove the English stopwords as suggested here.
@@ -733,15 +745,14 @@ For this we use \texttt{anti\_join} from \texttt{dplyr}. We join and return all 
 #>  8    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ poli~
 #>  9    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ trou~
 #> 10    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ grat~
-#> # ... with 787,841 more rows
+#> # i 787,841 more rows
 \end{verbatim}
 
 If we compare this with \texttt{tidy\_sotu} we see that the records with words like ``of'', ``the'', ``and'', ``in'' are now removed.
 
 We also went from 1988203 to 787851 rows, which means we had a lot of stopwords in our corpus. This is a huge removal, so for serious analysis, we might want to scrutinize the stopword list carefully and determine if this is feasible.
 
-\hypertarget{word-stemming}{%
-\section{Word Stemming}\label{word-stemming}}
+\section{Word Stemming}\label{word-stemming}
 
 Another way you may want to clean your data is to stem your words, that is, to reduce them to their word stem or root form, for example reducing \emph{fishing}, \emph{fished}, and \emph{fisher} to the stem \emph{fish}.
 
@@ -753,34 +764,33 @@ We will give an example here for the \texttt{SnowballC} package which comes with
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(SnowballC)}
 \NormalTok{tidy\_sotu\_words }\SpecialCharTok{\%\textgreater{}\%}
-        \FunctionTok{mutate}\NormalTok{(}\AttributeTok{word\_stem =} \FunctionTok{wordStem}\NormalTok{(word))}
+        \FunctionTok{mutate}\NormalTok{(}\AttributeTok{word\_stem =} \FunctionTok{wordStem}\NormalTok{(word)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(word, word\_stem)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-#> # A tibble: 787,851 x 9
-#>        X president        year years_active party   sotu_~1 doc_id word  word_~2
-#>    <int> <chr>           <int> <chr>        <chr>   <chr>   <chr>  <chr> <chr>  
-#>  1    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ fell~ fellow 
-#>  2    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ citi~ citizen
-#>  3    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ sena~ senat  
-#>  4    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ house hous   
-#>  5    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ repr~ repres 
-#>  6    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ midst midst  
-#>  7    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ unpr~ unprec~
-#>  8    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ poli~ polit  
-#>  9    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ trou~ troubl 
-#> 10    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ grat~ gratit~
-#> # ... with 787,841 more rows, and abbreviated variable names 1: sotu_type,
-#> #   2: word_stem
+#> # A tibble: 787,851 x 2
+#>    word            word_stem
+#>    <chr>           <chr>    
+#>  1 fellow          fellow   
+#>  2 citizens        citizen  
+#>  3 senate          senat    
+#>  4 house           hous     
+#>  5 representatives repres   
+#>  6 midst           midst    
+#>  7 unprecedented   unpreced 
+#>  8 political       polit    
+#>  9 troubles        troubl   
+#> 10 gratitude       gratitud 
+#> # i 787,841 more rows
 \end{verbatim}
 
 Lemmatization takes this another step further. While a stemmer operates on a single word without knowledge of the context, lemmatization attempts to discriminate between words which have different meanings depending on part of speech. For example, the word ``better'' has ``good'' as its lemma, something a stemmer would not detect.
 
 For lemmatization in R, you may want to take a look a the \href{https://CRAN.R-project.org/package=koRpus}{\texttt{koRpus}} package, another \href{https://cran.r-project.org/web/packages/koRpus/vignettes/koRpus_vignette.html}{comprehensive R package for text analysis}. It allows to use \href{http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/}{TreeTagger}, a widely used part-of-speech tagger. For full functionality of the R package a local installation of TreeTagger is recommended.
 
-\hypertarget{textanalysis}{%
-\chapter{Analyzing Texts}\label{textanalysis}}
+\chapter{Analyzing Texts}\label{textanalysis}
 
 \begin{quote}
 Learning Objectives
@@ -835,11 +845,10 @@ Let's remind ourselves of what our data looks like.
 #>  8    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ poli~
 #>  9    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ trou~
 #> 10    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-~ grat~
-#> # ... with 787,841 more rows
+#> # i 787,841 more rows
 \end{verbatim}
 
-\hypertarget{frequencies}{%
-\section{Frequencies}\label{frequencies}}
+\section{Frequencies}\label{frequencies}
 
 Since our unit of analysis at this point is a word, let's count to determine which words occur most frequently in the corpus as a whole.
 
@@ -864,7 +873,7 @@ Since our unit of analysis at this point is a word, let's count to determine whi
 #>  8 american    2988
 #>  9 war         2976
 #> 10 world       2633
-#> # ... with 29,887 more rows
+#> # i 29,887 more rows
 \end{verbatim}
 
 We can pipe this into \texttt{ggplot} to make a graph of the words that occur more that 2000 times. We count the words and use \texttt{geom\_col} to represent the n values.
@@ -881,9 +890,9 @@ We can pipe this into \texttt{ggplot} to make a graph of the words that occur mo
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-text-analysis_files/figure-latex/word-freq-plot-1.pdf}
+\pandocbounded{\includegraphics[keepaspectratio]{R-text-analysis_files/figure-latex/word-freq-plot-1.pdf}}
 
-Now let's look at a different question: In any given year, how often is the word `peace' used and how often is the word `war' used?
+As an example for how frequencies might be of interest we ask: In any given year, how often is the word `peace' used and how often is the word `war' used?
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -911,7 +920,7 @@ Now let's look at a different question: In any given year, how often is the word
 #>  8  1793 war       4
 #>  9  1794 peace     3
 #> 10  1794 war       1
-#> # ... with 432 more rows
+#> # i 432 more rows
 \end{verbatim}
 
 Now we can plot this as a bar chart that shows for each year the proportion of each of these two words out of the total of how often both words are used.
@@ -928,9 +937,11 @@ Now we can plot this as a bar chart that shows for each year the proportion of e
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-text-analysis_files/figure-latex/plot-word-years-1.pdf}
+\pandocbounded{\includegraphics[keepaspectratio]{R-text-analysis_files/figure-latex/plot-word-years-1.pdf}}
 
-As another example let us calculate the average number of words per speech for each president: How long was the average speech of each president and who are the most `wordy' presidents?
+\section{Relative frequency}\label{relative-frequency}
+
+As an example let us calculate the average number of words per speech for each president: How long was the average speech of each president's addresses and who are the most `wordy' presidents?
 
 First we summarize the words per president per speech:
 
@@ -955,7 +966,7 @@ First we summarize the words per president per speech:
 #>  8 Andrew Jackson  andrew-jackson-1832.txt   2881
 #>  9 Andrew Jackson  andrew-jackson-1833.txt   2869
 #> 10 Andrew Jackson  andrew-jackson-1834.txt   4952
-#> # ... with 230 more rows
+#> # i 230 more rows
 \end{verbatim}
 
 Then we use the output table and group it by president. That allows us to calculate the average number of words per speech.
@@ -984,11 +995,10 @@ Then we use the output table and group it by president. That allows us to calcul
 #>  8 Benjamin Harrison       5308.
 #>  9 Rutherford B. Hayes     4411 
 #> 10 Martin Van Buren        4286.
-#> # ... with 32 more rows
+#> # i 32 more rows
 \end{verbatim}
 
-\hypertarget{term-frequency}{%
-\section{Term frequency}\label{term-frequency}}
+\section{Term frequency}\label{term-frequency}
 
 Often a raw count of a word is less important than understanding how often that word appears \emph{relative to the total number} of words in a text. This ratio is called the \textbf{term frequency}. We can use \texttt{dplyr} to calculate it like this:
 
@@ -998,29 +1008,30 @@ Often a raw count of a word is less important than understanding how often that 
   \FunctionTok{count}\NormalTok{(doc\_id, word, }\AttributeTok{sort =}\NormalTok{ T)  }\SpecialCharTok{\%\textgreater{}\%}  \CommentTok{\# count occurrence of word and sort descending}
   \FunctionTok{group\_by}\NormalTok{(doc\_id) }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{mutate}\NormalTok{(}\AttributeTok{n\_tot =} \FunctionTok{sum}\NormalTok{(n),              }\CommentTok{\# count total number of words per doc}
-         \AttributeTok{term\_freq =}\NormalTok{ n}\SpecialCharTok{/}\NormalTok{n\_tot)}
+         \AttributeTok{term\_freq =}\NormalTok{ n}\SpecialCharTok{/}\NormalTok{n\_tot) }\SpecialCharTok{\%\textgreater{}\%}     \CommentTok{\# arrange by descending term frequency}
+  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(term\_freq))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 #> # A tibble: 358,186 x 5
 #> # Groups:   doc_id [240]
-#>    doc_id                       word               n n_tot term_freq
-#>    <chr>                        <chr>          <int> <int>     <dbl>
-#>  1 harry-s-truman-1946.txt      dollars          207 12614   0.0164 
-#>  2 jimmy-carter-1980b.txt       congress         204 16128   0.0126 
-#>  3 harry-s-truman-1946.txt      war              201 12614   0.0159 
-#>  4 william-howard-taft-1910.txt government       164 11178   0.0147 
-#>  5 james-k-polk-1846.txt        mexico           158  7023   0.0225 
-#>  6 richard-m-nixon-1974b.txt    federal          141  9996   0.0141 
-#>  7 harry-s-truman-1946.txt      million          138 12614   0.0109 
-#>  8 harry-s-truman-1946.txt      fiscal           129 12614   0.0102 
-#>  9 jimmy-carter-1981.txt        administration   129 16595   0.00777
-#> 10 william-howard-taft-1912.txt government       129 10215   0.0126 
-#> # ... with 358,176 more rows
+#>    doc_id                         word           n n_tot term_freq
+#>    <chr>                          <chr>      <int> <int>     <dbl>
+#>  1 donald-trump-2019.txt          applause     104  2454    0.0424
+#>  2 franklin-d-roosevelt-1945a.txt war           39  1159    0.0336
+#>  3 franklin-d-roosevelt-1944.txt  war           49  1465    0.0334
+#>  4 richard-m-nixon-1971.txt       government    50  1574    0.0318
+#>  5 george-washington-1793.txt     united        22   711    0.0309
+#>  6 richard-m-nixon-1971.txt       people        42  1574    0.0267
+#>  7 franklin-d-roosevelt-1943.txt  war           45  1714    0.0263
+#>  8 franklin-d-roosevelt-1940.txt  world         30  1178    0.0255
+#>  9 harry-s-truman-1953.txt        world         95  3767    0.0252
+#> 10 william-j-clinton-1995.txt     people        73  3054    0.0239
+#> # i 358,176 more rows
 \end{verbatim}
 
-Let's plot the distribution of the term frequency for the speeches:
+Let's take a look at the distribution of the term frequencies for the speeches. We can plot it in a. histogram like this:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1034,7 +1045,7 @@ Let's plot the distribution of the term frequency for the speeches:
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-text-analysis_files/figure-latex/termfreq-plot-1.pdf}
+\pandocbounded{\includegraphics[keepaspectratio]{R-text-analysis_files/figure-latex/termfreq-plot-1.pdf}}
 
 This distribution makes sense. Many words are used relatively rarely in a text. Only a few have a high term frequency.
 
@@ -1112,10 +1123,9 @@ CHALLENGE: Pick one president. For each of his speeches, which is the term with 
 \end{quote}
 \end{quote}
 
-\hypertarget{tf-idf}{%
-\section{Tf-idf}\label{tf-idf}}
+\section{Tf-idf}\label{tf-idf}
 
-So far we've been looking at term frequency per document. What if we want to know about words that seem more important based on the contents of the \emph{entire} corpus?
+So far we've been looking at term frequency per document (i.e.~speech). What if we want to know about words that seem more important based on the contents of the \emph{entire} corpus?
 
 For this, we can use \textbf{term-frequency according to inverse document frequency}, also callled \textbf{tf-idf}. Tf-idf measures how important a word is within a corpus by scaling term frequency per document according to the inverse of the term's document frequency (number of documents within the corpus in which the term appears divided by the number of documents).
 
@@ -1157,7 +1167,7 @@ So below we aggregate our tibble with the word tokens to create the one-row-per-
 #>  8 harry-s-truman-1946.txt      fiscal           129 0.0102  0.511   0.00522  
 #>  9 jimmy-carter-1981.txt        administration   129 0.00777 0.277   0.00215  
 #> 10 william-howard-taft-1912.txt government       129 0.0126  0.00418 0.0000527
-#> # ... with 358,176 more rows
+#> # i 358,176 more rows
 \end{verbatim}
 
 Our function added three columns to the aggregated table which contain term frequency (\texttt{tf}), inverse document frequency (\texttt{idf}) and Tf-idf (\texttt{tf\_idf}).
@@ -1187,7 +1197,7 @@ Let's look at some of the words in the corpus that have the highest tf-idf score
 #>  8 john-adams-1800.txt           gentlemen     8 0.0153   1.77 0.0270
 #>  9 benjamin-harrison-1892.txt    1892         40 0.00741  3.53 0.0262
 #> 10 franklin-d-roosevelt-1942.txt hitler        7 0.00527  4.79 0.0252
-#> # ... with 358,176 more rows
+#> # i 358,176 more rows
 \end{verbatim}
 
 To understand the occurrence of the years as being particularly distinctive we might need to look more closely at the speeches themselves, and determine whether the years are significant or whether they need to be removed from the text either permanently in the clean up or temporarily using \texttt{filter()}.
@@ -1200,8 +1210,7 @@ CHALLENGE: Pick the same president you chose above. For each of his speeches, wh
 \end{quote}
 \end{quote}
 
-\hypertarget{n-grams}{%
-\section{N-Grams}\label{n-grams}}
+\section{N-Grams}\label{n-grams}
 
 We mentioned n-grams in the intro, but let's revisit them here and take a look at the most common bigrams in the speeches. Remember we can use the \texttt{unnest\_token()} function on our texts and explicitly tell it to generate bigrams:
 
@@ -1226,7 +1235,7 @@ We mentioned n-grams in the intro, but let's revisit them here and take a look a
 #>  8    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham~ of re~
 #>  9    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham~ repre~
 #> 10    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham~ in the
-#> # ... with 1,987,953 more rows
+#> # i 1,987,953 more rows
 \end{verbatim}
 
 Let's see the most common bigrams:
@@ -1253,7 +1262,7 @@ Let's see the most common bigrams:
 #>  8 the united     4816
 #>  9 united states  4808
 #> 10 it is          4774
-#> # ... with 475,230 more rows
+#> # i 475,230 more rows
 \end{verbatim}
 
 Ok, so we again need to remove the stopwords. First let us separate the two words into two columns ``word1'' and ``word2'' with \texttt{separate} from the \texttt{tidyr} package:
@@ -1262,25 +1271,25 @@ Ok, so we again need to remove the stopwords. First let us separate the two word
 \begin{Highlighting}[]
 \NormalTok{sotu\_whole }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{unnest\_tokens}\NormalTok{(bigram, text, }\AttributeTok{token =} \StringTok{"ngrams"}\NormalTok{, }\AttributeTok{n =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{separate}\NormalTok{(bigram, }\FunctionTok{c}\NormalTok{(}\StringTok{"word1"}\NormalTok{, }\StringTok{"word2"}\NormalTok{), }\AttributeTok{sep =} \StringTok{" "}\NormalTok{)}
+  \FunctionTok{separate\_wider\_delim}\NormalTok{(bigram, }\StringTok{" "}\NormalTok{, }\AttributeTok{names =} \FunctionTok{c}\NormalTok{(}\StringTok{"word1"}\NormalTok{, }\StringTok{"word2"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 #> # A tibble: 1,987,963 x 9
-#>        X president        year years_active party     sotu_~1 doc_id word1 word2
-#>    <int> <chr>           <int> <chr>        <chr>     <chr>   <chr>  <chr> <chr>
-#>  1    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ fell~ citi~
-#>  2    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ citi~ of   
-#>  3    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ of    the  
-#>  4    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ the   sena~
-#>  5    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ sena~ and  
-#>  6    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ and   house
-#>  7    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ house of   
-#>  8    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ of    repr~
-#>  9    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ repr~ in   
-#> 10    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ in    the  
-#> # ... with 1,987,953 more rows, and abbreviated variable name 1: sotu_type
+#>        X president        year years_active party   sotu_type doc_id word1 word2
+#>    <int> <chr>           <int> <chr>        <chr>   <chr>     <chr>  <chr> <chr>
+#>  1    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ fell~ citi~
+#>  2    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ citi~ of   
+#>  3    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ of    the  
+#>  4    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ the   sena~
+#>  5    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ sena~ and  
+#>  6    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ and   house
+#>  7    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ house of   
+#>  8    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ of    repr~
+#>  9    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ repr~ in   
+#> 10    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ in    the  
+#> # i 1,987,953 more rows
 \end{verbatim}
 
 Now we use dplyr's \texttt{filter()} function to select only the words in each column that are not in the stopwords.
@@ -1289,7 +1298,7 @@ Now we use dplyr's \texttt{filter()} function to select only the words in each c
 \begin{Highlighting}[]
 \NormalTok{sotu\_whole }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{unnest\_tokens}\NormalTok{(bigram, text, }\AttributeTok{token =} \StringTok{"ngrams"}\NormalTok{, }\AttributeTok{n =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{separate}\NormalTok{(bigram, }\FunctionTok{c}\NormalTok{(}\StringTok{"word1"}\NormalTok{, }\StringTok{"word2"}\NormalTok{), }\AttributeTok{sep =} \StringTok{" "}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# separate into cols}
+  \FunctionTok{separate\_wider\_delim}\NormalTok{(bigram, }\StringTok{" "}\NormalTok{, }\AttributeTok{names =} \FunctionTok{c}\NormalTok{(}\StringTok{"word1"}\NormalTok{, }\StringTok{"word2"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# separate into cols}
   \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\NormalTok{word1 }\SpecialCharTok{\%in\%}\NormalTok{ stop\_words}\SpecialCharTok{$}\NormalTok{word, }\CommentTok{\# remove stopwords}
          \SpecialCharTok{!}\NormalTok{word2 }\SpecialCharTok{\%in\%}\NormalTok{ stop\_words}\SpecialCharTok{$}\NormalTok{word)}
 \end{Highlighting}
@@ -1297,19 +1306,19 @@ Now we use dplyr's \texttt{filter()} function to select only the words in each c
 
 \begin{verbatim}
 #> # A tibble: 219,471 x 9
-#>        X president        year years_active party     sotu_~1 doc_id word1 word2
-#>    <int> <chr>           <int> <chr>        <chr>     <chr>   <chr>  <chr> <chr>
-#>  1    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ fell~ citi~
-#>  2    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ unpr~ poli~
-#>  3    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ poli~ trou~
-#>  4    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ abun~ harv~
-#>  5    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ pecu~ exig~
-#>  6    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ fore~ nati~
-#>  7    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ prof~ soli~
-#>  8    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ soli~ chie~
-#>  9    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ dome~ affa~
-#> 10    73 Abraham Lincoln  1861 1861-1865    Republic~ written abrah~ disl~ port~
-#> # ... with 219,461 more rows, and abbreviated variable name 1: sotu_type
+#>        X president        year years_active party   sotu_type doc_id word1 word2
+#>    <int> <chr>           <int> <chr>        <chr>   <chr>     <chr>  <chr> <chr>
+#>  1    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ fell~ citi~
+#>  2    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ unpr~ poli~
+#>  3    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ poli~ trou~
+#>  4    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ abun~ harv~
+#>  5    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ pecu~ exig~
+#>  6    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ fore~ nati~
+#>  7    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ prof~ soli~
+#>  8    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ soli~ chie~
+#>  9    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ dome~ affa~
+#> 10    73 Abraham Lincoln  1861 1861-1865    Republ~ written   abrah~ disl~ port~
+#> # i 219,461 more rows
 \end{verbatim}
 
 Lastly, we re-unite the two word columns into back into our bigrams and save it into a new table \texttt{sotu\_bigrams}.
@@ -1318,7 +1327,7 @@ Lastly, we re-unite the two word columns into back into our bigrams and save it 
 \begin{Highlighting}[]
 \NormalTok{sotu\_bigrams }\OtherTok{\textless{}{-}}\NormalTok{ sotu\_whole }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{unnest\_tokens}\NormalTok{(bigram, text, }\AttributeTok{token =} \StringTok{"ngrams"}\NormalTok{, }\AttributeTok{n =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{separate}\NormalTok{(bigram, }\FunctionTok{c}\NormalTok{(}\StringTok{"word1"}\NormalTok{, }\StringTok{"word2"}\NormalTok{), }\AttributeTok{sep =} \StringTok{" "}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# separate into cols}
+  \FunctionTok{separate\_wider\_delim}\NormalTok{(bigram, }\StringTok{" "}\NormalTok{, }\AttributeTok{names =} \FunctionTok{c}\NormalTok{(}\StringTok{"word1"}\NormalTok{, }\StringTok{"word2"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# separate into cols}
   \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\NormalTok{word1 }\SpecialCharTok{\%in\%}\NormalTok{ stop\_words}\SpecialCharTok{$}\NormalTok{word, }\CommentTok{\# remove stopwords}
          \SpecialCharTok{!}\NormalTok{word2 }\SpecialCharTok{\%in\%}\NormalTok{ stop\_words}\SpecialCharTok{$}\NormalTok{word) }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{unite}\NormalTok{(bigram, word1, word2, }\AttributeTok{sep =} \StringTok{" "}\NormalTok{)  }\CommentTok{\# combine columns}
@@ -1343,7 +1352,34 @@ Lastly, we re-unite the two word columns into back into our bigrams and save it 
 #>  8 social security      233
 #>  9 post office          202
 #> 10 annual message       200
-#> # ... with 131,889 more rows
+#> # i 131,889 more rows
+\end{verbatim}
+
+If we wanted to look at bigrams for a particular term, we could for example filter the bigrams using a pattern search with str\_starts(). This returns all words following the word ``government''
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sotu\_bigrams }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(}\FunctionTok{str\_starts}\NormalTok{(bigram, }\StringTok{"government "}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{count}\NormalTok{(bigram, }\AttributeTok{sort =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+#> # A tibble: 750 x 2
+#>    bigram                      n
+#>    <chr>                   <int>
+#>  1 government spending        25
+#>  2 government expenditures    24
+#>  3 government programs        21
+#>  4 government agencies        12
+#>  5 government control         12
+#>  6 government employees       12
+#>  7 government assistance       9
+#>  8 government bonds            9
+#>  9 government established      9
+#> 10 government program          9
+#> # i 740 more rows
 \end{verbatim}
 
 A bigram can also be treated as a term in a document in the same way that we treated individual words. That means we can look at tf-idf values in the same way. For example, we can find out the most distinct bigrams that the presidents uttered in all their respective speeches taken together.
@@ -1376,7 +1412,7 @@ We count per president and bigram and then bind the tf-idf value with the \textt
 #>  8 Lyndon B. Johnson  south vietnam      13 0.00424 3.04  0.0129
 #>  9 James Madison      james madison       8 0.00412 3.04  0.0125
 #> 10 Harry S Truman     million dollars   119 0.0129  0.965 0.0124
-#> # ... with 35 more rows
+#> # i 35 more rows
 \end{verbatim}
 
 \begin{quote}
@@ -1387,8 +1423,7 @@ CHALLENGE: Again, pick the same president you chose above. For each of his speec
 \end{quote}
 \end{quote}
 
-\hypertarget{co-occurrence}{%
-\section{Co-occurrence}\label{co-occurrence}}
+\section{Co-occurrence}\label{co-occurrence}
 
 Co-occurrences give us a sense of words that appear in the same text, but not necessarily next to each other.
 
@@ -1442,7 +1477,7 @@ Since processing the entire corpus would take too long here, we will only look a
 #>  8 god        country    22
 #>  9 people     america    22
 #> 10 government people     21
-#> # ... with 126,843 more rows
+#> # i 126,843 more rows
 \end{verbatim}
 
 To visualize the co-occurrence network of words that occur together at the end of 10 or more speeches, we use the \texttt{igraph} package to convert our table into a network graph and the \texttt{ggraph} package which adds functionality to ggplot to make it easier to plot a network.
@@ -1464,12 +1499,11 @@ To visualize the co-occurrence network of words that occur together at the end o
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-text-analysis_files/figure-latex/plot-network-1.pdf}
+\pandocbounded{\includegraphics[keepaspectratio]{R-text-analysis_files/figure-latex/plot-network-1.pdf}}
 
 There are alternative approaches for this as well. See for example the \texttt{findAssocs} function in the \texttt{tm} package.
 
-\hypertarget{document-term-matrix}{%
-\section{Document-Term Matrix}\label{document-term-matrix}}
+\section{Document-Term Matrix}\label{document-term-matrix}
 
 A \href{https://en.wikipedia.org/wiki/Document-term_matrix}{document-term matrix (DTM)} is a format which is frequently used in text analysis. It is a matrix where we can see the counts of each term per document. In a DTM each row represents a document, each column represents a term, and the cell values are the counts of the occurrences of the term for the particular document.
 
@@ -1503,7 +1537,7 @@ First we use dplyr to create a table with the document name, the term, and the c
 #>  8 abraham-lincoln-1861.txt 1859               1
 #>  9 abraham-lincoln-1861.txt 1860               2
 #> 10 abraham-lincoln-1861.txt 1861               6
-#> # ... with 358,176 more rows
+#> # i 358,176 more rows
 \end{verbatim}
 
 Now we cast it as a DTM.
@@ -1566,8 +1600,7 @@ Finally, let's use it in the \texttt{tm} package:
 
 Conversely, \texttt{tidytext} implements the \texttt{tidy} function (originally from the \texttt{broom} package) to import DocumentTermMatrix objects. Note that it only takes the cells from the DTM that are not 0, so there will be no rows with 0 counts.
 
-\hypertarget{sentiment-analysis}{%
-\section{Sentiment analysis}\label{sentiment-analysis}}
+\section{Sentiment analysis}\label{sentiment-analysis}
 
 \texttt{tidytext} comes with a dataset \texttt{sentiments} which contains several sentiment lexicons, where each word is attributed a certain sentiment, like this:
 
@@ -1591,7 +1624,7 @@ Conversely, \texttt{tidytext} implements the \texttt{tidy} function (originally 
 #>  8 abort       negative 
 #>  9 aborted     negative 
 #> 10 aborts      negative 
-#> # ... with 6,776 more rows
+#> # i 6,776 more rows
 \end{verbatim}
 
 Here we will take a look at how the sentiment of the speeches change over time. We will use the lexicon from \href{https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html}{Bing Liu and collaborators}, which assigns positive/negative labels for each word:
@@ -1617,7 +1650,7 @@ Here we will take a look at how the sentiment of the speeches change over time. 
 #>  8 abort       negative 
 #>  9 aborted     negative 
 #> 10 aborts      negative 
-#> # ... with 6,776 more rows
+#> # i 6,776 more rows
 \end{verbatim}
 
 We can use these sentiments attached to each word and join them to the words of our speeches. We will use \texttt{inner\_join} from \texttt{dplyr}. It will take all rows with words from \texttt{tidy\_sotu\_words} that match words in \texttt{bing\_lex}, eliminating rows where the word cannot be found in the lexicon. Since our columns to join on have the same name (\texttt{word}) we don't need to explicitly name it.
@@ -1633,20 +1666,19 @@ We can use these sentiments attached to each word and join them to the words of 
 
 \begin{verbatim}
 #> # A tibble: 106,649 x 9
-#>        X president        year years_active party   sotu_~1 doc_id word  senti~2
-#>    <int> <chr>           <int> <chr>        <chr>   <chr>   <chr>  <chr> <chr>  
-#>  1    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ trou~ negati~
-#>  2    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ grat~ positi~
-#>  3    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ unus~ negati~
-#>  4    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ abun~ positi~
-#>  5    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ pecu~ negati~
-#>  6    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ prof~ positi~
-#>  7    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ soli~ negati~
-#>  8    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ disl~ negati~
-#>  9    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ dest~ negati~
-#> 10    73 Abraham Lincoln  1861 1861-1865    Republ~ written abrah~ disr~ negati~
-#> # ... with 106,639 more rows, and abbreviated variable names 1: sotu_type,
-#> #   2: sentiment
+#>        X president      year years_active party sotu_type doc_id word  sentiment
+#>    <int> <chr>         <int> <chr>        <chr> <chr>     <chr>  <chr> <chr>    
+#>  1    73 Abraham Linc~  1861 1861-1865    Repu~ written   abrah~ trou~ negative 
+#>  2    73 Abraham Linc~  1861 1861-1865    Repu~ written   abrah~ grat~ positive 
+#>  3    73 Abraham Linc~  1861 1861-1865    Repu~ written   abrah~ unus~ negative 
+#>  4    73 Abraham Linc~  1861 1861-1865    Repu~ written   abrah~ abun~ positive 
+#>  5    73 Abraham Linc~  1861 1861-1865    Repu~ written   abrah~ pecu~ negative 
+#>  6    73 Abraham Linc~  1861 1861-1865    Repu~ written   abrah~ prof~ positive 
+#>  7    73 Abraham Linc~  1861 1861-1865    Repu~ written   abrah~ soli~ negative 
+#>  8    73 Abraham Linc~  1861 1861-1865    Repu~ written   abrah~ disl~ negative 
+#>  9    73 Abraham Linc~  1861 1861-1865    Repu~ written   abrah~ dest~ negative 
+#> 10    73 Abraham Linc~  1861 1861-1865    Repu~ written   abrah~ disr~ negative 
+#> # i 106,639 more rows
 \end{verbatim}
 
 Finally we can visualize the proportion of positive sentiment (out of the total of positive and negative) in US State of the Union Addresses over time like this:
@@ -1668,8 +1700,8 @@ Finally we can visualize the proportion of positive sentiment (out of the total 
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-text-analysis_files/figure-latex/sentiment-plot-1.pdf}
+\pandocbounded{\includegraphics[keepaspectratio]{R-text-analysis_files/figure-latex/sentiment-plot-1.pdf}}
 
-  \bibliography{book.bib,packages.bib}
+\bibliography{book.bib,packages.bib}
 
 \end{document}

@@ -1,6 +1,6 @@
 --- 
 title: "Text Analysis with R"
-author: "Claudia Engel, Scott Bailey"
+author: "Claudia Engel"
 date: "Last updated: `r format(Sys.time(), '%B %d, %Y')`"
 site: bookdown::bookdown_site
 output: bookdown::gitbook

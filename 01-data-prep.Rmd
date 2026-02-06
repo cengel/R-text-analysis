@@ -149,37 +149,34 @@ sotu_whole %>%
 
 ### Extracting words
 
-The `word` function extracts specific words from a character vector of words. By default it returns the first word. If for example we wanted to extract the first 5 words of each speech by Woodrow Wilson we provide the `end` argument like this:
+The `word` function extracts specific words from a character vector of words. It takes a 'start' and 'end' argument, which determines the range of the words to be extracted. By default it returns the first word. If for example we wanted to extract the first 5 words of each speech like we could add another column to the table like this:
 
 ```{r extract-words}
 sotu_whole %>% 
-  filter(president == "Woodrow Wilson") %>%  # sample a few speeches as demo
-  pull(text) %>% # we pull out the text vector only
-  word(end = 5) 
+  mutate(first_5 = word(text, end = 5)) %>% 
+  select(first_5)
 ```
 
 
 ### Replacing and removing characters
 
-Now let's take a look at text 'cleaninng'. We will first remove the newline characters (`\n`). We use  the `str_replace_all` function to replace all the ocurrences of the `\n` pattern with a white space `" "`. We need to add the escape character `\` in front of our pattern to be replaced so the backslash before the `n` is interpreted correctly.
+Now let's take a look at text 'cleaning' and see if we can imrove this output. We will first remove the newline characters (`\n`). We use  the `str_replace_all` function to replace all the occurrences of the `\n` pattern with a white space `" "`. We need to add the escape character `\` in front of our pattern to be replaced so the backslash before the `n` is interpreted correctly.
 
 ```{r str-remove-newl}
 sotu_whole %>% 
-  filter(president == "Woodrow Wilson") %>%  
-  pull(text) %>%
-  str_replace_all("\\n", " ") %>% # replace newline
-  word(end = 5) 
+  mutate(text_clean = str_replace_all(text, "\\n", " "), # replace newline
+         first_5 = word(text, end = 5)) %>% 
+  select(first_5)
 ```
 
 This looks better, but we still have a problem to extract exactly 5 words because the too whitespaces are counted as a word. So let's get rid of any whitespaces before and after, as well as repeated whitespaces within the string with the `str_squish()` function.
 
 ```{r str-remove-spaces}
 sotu_whole %>% 
-  filter(president == "Woodrow Wilson") %>%  
-  pull(text) %>%
-  str_replace_all("\\n", " ") %>% 
-  str_squish() %>%  # remove whitespaces
-  word(end = 5) 
+  mutate(text_clean = str_replace_all(text, "\\n", " "), # replace newline
+         text_clean = str_squish(text_clean),  # remove whitespaces
+         first_5 = word(text, end = 5)) %>% 
+  select(first_5)
 ```
 
 
@@ -270,7 +267,8 @@ We will give an example here for the `SnowballC` package which comes with a func
 ```{r stemming}
 library(SnowballC)
 tidy_sotu_words %>%
-        mutate(word_stem = wordStem(word))
+        mutate(word_stem = wordStem(word)) %>% 
+  select(word, word_stem)
 ```
 
 Lemmatization takes this another step further. While a stemmer operates on a single word without knowledge of the context, lemmatization attempts to discriminate between words which have different meanings depending on part of speech. For example, the word "better" has "good" as its lemma, something a stemmer would not detect. 

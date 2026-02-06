@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Page not found | Text Analysis with R</title>
   <meta name="description" content="Workshop materials for Text Analysis in R" />
-  <meta name="generator" content="bookdown 0.29 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.45 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Page not found | Text Analysis with R" />
   <meta property="og:type" content="book" />
@@ -20,7 +20,7 @@
   <meta name="twitter:description" content="Workshop materials for Text Analysis in R" />
   
 
-<meta name="author" content="Claudia Engel, Scott Bailey" />
+<meta name="author" content="Claudia Engel" />
 
 
 
@@ -54,6 +54,7 @@
 
 
 <style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -91,7 +92,7 @@ code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -104,7 +105,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -118,6 +119,10 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -156,12 +161,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2" data-path="textanalysis.html"><a href="textanalysis.html"><i class="fa fa-check"></i><b>2</b> Analyzing Texts</a>
 <ul>
 <li class="chapter" data-level="2.1" data-path="textanalysis.html"><a href="textanalysis.html#frequencies"><i class="fa fa-check"></i><b>2.1</b> Frequencies</a></li>
-<li class="chapter" data-level="2.2" data-path="textanalysis.html"><a href="textanalysis.html#term-frequency"><i class="fa fa-check"></i><b>2.2</b> Term frequency</a></li>
-<li class="chapter" data-level="2.3" data-path="textanalysis.html"><a href="textanalysis.html#tf-idf"><i class="fa fa-check"></i><b>2.3</b> Tf-idf</a></li>
-<li class="chapter" data-level="2.4" data-path="textanalysis.html"><a href="textanalysis.html#n-grams"><i class="fa fa-check"></i><b>2.4</b> N-Grams</a></li>
-<li class="chapter" data-level="2.5" data-path="textanalysis.html"><a href="textanalysis.html#co-occurrence"><i class="fa fa-check"></i><b>2.5</b> Co-occurrence</a></li>
-<li class="chapter" data-level="2.6" data-path="textanalysis.html"><a href="textanalysis.html#document-term-matrix"><i class="fa fa-check"></i><b>2.6</b> Document-Term Matrix</a></li>
-<li class="chapter" data-level="2.7" data-path="textanalysis.html"><a href="textanalysis.html#sentiment-analysis"><i class="fa fa-check"></i><b>2.7</b> Sentiment analysis</a></li>
+<li class="chapter" data-level="2.2" data-path="textanalysis.html"><a href="textanalysis.html#relative-frequency"><i class="fa fa-check"></i><b>2.2</b> Relative frequency</a></li>
+<li class="chapter" data-level="2.3" data-path="textanalysis.html"><a href="textanalysis.html#term-frequency"><i class="fa fa-check"></i><b>2.3</b> Term frequency</a></li>
+<li class="chapter" data-level="2.4" data-path="textanalysis.html"><a href="textanalysis.html#tf-idf"><i class="fa fa-check"></i><b>2.4</b> Tf-idf</a></li>
+<li class="chapter" data-level="2.5" data-path="textanalysis.html"><a href="textanalysis.html#n-grams"><i class="fa fa-check"></i><b>2.5</b> N-Grams</a></li>
+<li class="chapter" data-level="2.6" data-path="textanalysis.html"><a href="textanalysis.html#co-occurrence"><i class="fa fa-check"></i><b>2.6</b> Co-occurrence</a></li>
+<li class="chapter" data-level="2.7" data-path="textanalysis.html"><a href="textanalysis.html#document-term-matrix"><i class="fa fa-check"></i><b>2.7</b> Document-Term Matrix</a></li>
+<li class="chapter" data-level="2.8" data-path="textanalysis.html"><a href="textanalysis.html#sentiment-analysis"><i class="fa fa-check"></i><b>2.8</b> Sentiment analysis</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -209,42 +215,42 @@ the table of contents to find the page you are looking for.</p>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": true,
-"facebook": false,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"whatsapp": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "white",
-"family": "sans",
-"size": 2
-},
-"edit": {
-"link": "https://github.com/cengel/R-text-analysis/edit/master/%s",
-"text": "Edit"
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["R-text-analysis.pdf", "R-text-analysis.epub"],
-"search": {
-"engine": "fuse",
-"options": null
-},
-"toc": {
-"collapse": "subsection"
-}
+  "sharing": {
+    "github": true,
+    "facebook": false,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/cengel/R-text-analysis/edit/master/%s",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["R-text-analysis.pdf", "R-text-analysis.epub"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
 });
 });
 </script>

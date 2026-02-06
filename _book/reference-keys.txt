@@ -10,6 +10,7 @@ stopwords
 word-stemming
 textanalysis
 frequencies
+relative-frequency
 term-frequency
 tf-idf
 n-grams

@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 1 Preparing Textual Data | Text Analysis with R</title>
   <meta name="description" content="Workshop materials for Text Analysis in R" />
-  <meta name="generator" content="bookdown 0.29 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.45 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 1 Preparing Textual Data | Text Analysis with R" />
   <meta property="og:type" content="book" />
@@ -20,7 +20,7 @@
   <meta name="twitter:description" content="Workshop materials for Text Analysis in R" />
   
 
-<meta name="author" content="Claudia Engel, Scott Bailey" />
+<meta name="author" content="Claudia Engel" />
 
 
 
@@ -54,6 +54,7 @@
 
 
 <style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -91,7 +92,7 @@ code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -104,7 +105,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -118,6 +119,10 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -156,12 +161,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2" data-path="textanalysis.html"><a href="textanalysis.html"><i class="fa fa-check"></i><b>2</b> Analyzing Texts</a>
 <ul>
 <li class="chapter" data-level="2.1" data-path="textanalysis.html"><a href="textanalysis.html#frequencies"><i class="fa fa-check"></i><b>2.1</b> Frequencies</a></li>
-<li class="chapter" data-level="2.2" data-path="textanalysis.html"><a href="textanalysis.html#term-frequency"><i class="fa fa-check"></i><b>2.2</b> Term frequency</a></li>
-<li class="chapter" data-level="2.3" data-path="textanalysis.html"><a href="textanalysis.html#tf-idf"><i class="fa fa-check"></i><b>2.3</b> Tf-idf</a></li>
-<li class="chapter" data-level="2.4" data-path="textanalysis.html"><a href="textanalysis.html#n-grams"><i class="fa fa-check"></i><b>2.4</b> N-Grams</a></li>
-<li class="chapter" data-level="2.5" data-path="textanalysis.html"><a href="textanalysis.html#co-occurrence"><i class="fa fa-check"></i><b>2.5</b> Co-occurrence</a></li>
-<li class="chapter" data-level="2.6" data-path="textanalysis.html"><a href="textanalysis.html#document-term-matrix"><i class="fa fa-check"></i><b>2.6</b> Document-Term Matrix</a></li>
-<li class="chapter" data-level="2.7" data-path="textanalysis.html"><a href="textanalysis.html#sentiment-analysis"><i class="fa fa-check"></i><b>2.7</b> Sentiment analysis</a></li>
+<li class="chapter" data-level="2.2" data-path="textanalysis.html"><a href="textanalysis.html#relative-frequency"><i class="fa fa-check"></i><b>2.2</b> Relative frequency</a></li>
+<li class="chapter" data-level="2.3" data-path="textanalysis.html"><a href="textanalysis.html#term-frequency"><i class="fa fa-check"></i><b>2.3</b> Term frequency</a></li>
+<li class="chapter" data-level="2.4" data-path="textanalysis.html"><a href="textanalysis.html#tf-idf"><i class="fa fa-check"></i><b>2.4</b> Tf-idf</a></li>
+<li class="chapter" data-level="2.5" data-path="textanalysis.html"><a href="textanalysis.html#n-grams"><i class="fa fa-check"></i><b>2.5</b> N-Grams</a></li>
+<li class="chapter" data-level="2.6" data-path="textanalysis.html"><a href="textanalysis.html#co-occurrence"><i class="fa fa-check"></i><b>2.6</b> Co-occurrence</a></li>
+<li class="chapter" data-level="2.7" data-path="textanalysis.html"><a href="textanalysis.html#document-term-matrix"><i class="fa fa-check"></i><b>2.7</b> Document-Term Matrix</a></li>
+<li class="chapter" data-level="2.8" data-path="textanalysis.html"><a href="textanalysis.html#sentiment-analysis"><i class="fa fa-check"></i><b>2.8</b> Sentiment analysis</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -202,15 +208,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><code>tidytext</code> provides specific functions for a “tidy” approach to working with textual data, where one row represents one “token” or meaningful unit of text, for example a word.</li>
 <li><code>readtext</code> provides a function well suited to reading textual data from a large number of formats into R, including metadata.</li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="textprep.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sotu)</span>
-<span id="cb1-2"><a href="textprep.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-3"><a href="textprep.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
-<span id="cb1-4"><a href="textprep.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readtext)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="textprep.html#cb1-1" tabindex="-1"></a><span class="fu">library</span>(sotu)</span>
+<span id="cb1-2"><a href="textprep.html#cb1-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="textprep.html#cb1-3" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
+<span id="cb1-4"><a href="textprep.html#cb1-4" tabindex="-1"></a><span class="fu">library</span>(readtext)</span></code></pre></div>
 <div id="reading-text-into-r" class="section level2 hasAnchor" number="1.1">
 <h2><span class="header-section-number">1.1</span> Reading text into R<a href="textprep.html#reading-text-into-r" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>First, let’s look at the data in the <code>sotu</code> package. The metadata and texts are contained in this package separately in <code>sotu_meta</code> and <code>sotu_text</code> respectively. We can take a look at those by either typing the names or use funnctions like <code>glimpse()</code> or <code>str()</code>. Below, or example is what the metadata look like. Can you tell how many speeches there are?</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="textprep.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Let&#39;s take a look at the state of the union metadata</span></span>
-<span id="cb2-2"><a href="textprep.html#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(sotu_meta)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="textprep.html#cb2-1" tabindex="-1"></a><span class="co"># Let&#39;s take a look at the state of the union metadata</span></span>
+<span id="cb2-2"><a href="textprep.html#cb2-2" tabindex="-1"></a><span class="fu">str</span>(sotu_meta)</span></code></pre></div>
 <pre><code>#&gt; &#39;data.frame&#39;:    240 obs. of  6 variables:
 #&gt;  $ X           : int  1 2 3 4 5 6 7 8 9 10 ...
 #&gt;  $ president   : chr  &quot;George Washington&quot; &quot;George Washington&quot; &quot;George Washington&quot; &quot;George Washington&quot; ...
@@ -219,33 +225,33 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 #&gt;  $ party       : chr  &quot;Nonpartisan&quot; &quot;Nonpartisan&quot; &quot;Nonpartisan&quot; &quot;Nonpartisan&quot; ...
 #&gt;  $ sotu_type   : chr  &quot;speech&quot; &quot;speech&quot; &quot;speech&quot; &quot;speech&quot; ...</code></pre>
 <p>In order to work with the speech texts and to later practice reading text files from disk we use the function <code>sotu_dir()</code> to write the texts out. This function by default writes to a temporary directory with one speech in each file. It returns a character vector where each element is the name of the path to the individual speech file. We save this vector into the <code>file_paths</code> variable.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="textprep.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sotu_dir writes the text files to disk in a temporary dir, </span></span>
-<span id="cb4-2"><a href="textprep.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># but you could also specify a location.</span></span>
-<span id="cb4-3"><a href="textprep.html#cb4-3" aria-hidden="true" tabindex="-1"></a>file_paths <span class="ot">&lt;-</span> <span class="fu">sotu_dir</span>()</span>
-<span id="cb4-4"><a href="textprep.html#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(file_paths)</span></code></pre></div>
-<pre><code>#&gt; [1] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmp3kRRs1/file63921d8a5c72/george-washington-1790a.txt&quot;
-#&gt; [2] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmp3kRRs1/file63921d8a5c72/george-washington-1790b.txt&quot;
-#&gt; [3] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmp3kRRs1/file63921d8a5c72/george-washington-1791.txt&quot; 
-#&gt; [4] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmp3kRRs1/file63921d8a5c72/george-washington-1792.txt&quot; 
-#&gt; [5] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmp3kRRs1/file63921d8a5c72/george-washington-1793.txt&quot; 
-#&gt; [6] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//Rtmp3kRRs1/file63921d8a5c72/george-washington-1794.txt&quot;</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="textprep.html#cb4-1" tabindex="-1"></a><span class="co"># sotu_dir writes the text files to disk in a temporary dir, </span></span>
+<span id="cb4-2"><a href="textprep.html#cb4-2" tabindex="-1"></a><span class="co"># but you could also specify a location.</span></span>
+<span id="cb4-3"><a href="textprep.html#cb4-3" tabindex="-1"></a>file_paths <span class="ot">&lt;-</span> <span class="fu">sotu_dir</span>()</span>
+<span id="cb4-4"><a href="textprep.html#cb4-4" tabindex="-1"></a><span class="fu">head</span>(file_paths)</span></code></pre></div>
+<pre><code>#&gt; [1] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//RtmpHnpobH/file6fd7c35da27/george-washington-1790a.txt&quot;
+#&gt; [2] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//RtmpHnpobH/file6fd7c35da27/george-washington-1790b.txt&quot;
+#&gt; [3] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//RtmpHnpobH/file6fd7c35da27/george-washington-1791.txt&quot; 
+#&gt; [4] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//RtmpHnpobH/file6fd7c35da27/george-washington-1792.txt&quot; 
+#&gt; [5] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//RtmpHnpobH/file6fd7c35da27/george-washington-1793.txt&quot; 
+#&gt; [6] &quot;/var/folders/b5/fxcv6x555j51n30f4nqq4dqr0000gp/T//RtmpHnpobH/file6fd7c35da27/george-washington-1794.txt&quot;</code></pre>
 <p>Now that we have the files on disk and a vector of filepaths, we can pass this vector directly into <code>readtext</code> to read the texts into a new variable.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="textprep.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let&#39;s read in the files with readtext</span></span>
-<span id="cb6-2"><a href="textprep.html#cb6-2" aria-hidden="true" tabindex="-1"></a>sotu_texts <span class="ot">&lt;-</span> <span class="fu">readtext</span>(file_paths)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="textprep.html#cb6-1" tabindex="-1"></a><span class="co"># let&#39;s read in the files with readtext</span></span>
+<span id="cb6-2"><a href="textprep.html#cb6-2" tabindex="-1"></a>sotu_texts <span class="ot">&lt;-</span> <span class="fu">readtext</span>(file_paths)</span></code></pre></div>
 <p><code>readtext()</code> generated a dataframe for us with 2 colums: the doc_id, which is the name of the document and the actual text:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="textprep.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(sotu_texts)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="textprep.html#cb7-1" tabindex="-1"></a><span class="fu">glimpse</span>(sotu_texts)</span></code></pre></div>
 <pre><code>#&gt; Rows: 240
 #&gt; Columns: 2
 #&gt; $ doc_id &lt;chr&gt; &quot;abraham-lincoln-1861.txt&quot;, &quot;abraham-lincoln-1862.txt&quot;, &quot;abraha…
 #&gt; $ text   &lt;chr&gt; &quot;\n\n Fellow-Citizens of the Senate and House of Representative…</code></pre>
 <p>To work with a single table, we combine the text and metadata. Our <code>sotu_texts</code> are organized by alphabetical order, so we sort our metadata in <code>sotu_meta</code> to match that order and then bind the columns.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="textprep.html#cb9-1" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="ot">&lt;-</span> </span>
-<span id="cb9-2"><a href="textprep.html#cb9-2" aria-hidden="true" tabindex="-1"></a>  sotu_meta <span class="sc">%&gt;%</span>  </span>
-<span id="cb9-3"><a href="textprep.html#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(president) <span class="sc">%&gt;%</span> <span class="co"># sort metadata</span></span>
-<span id="cb9-4"><a href="textprep.html#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(sotu_texts) <span class="sc">%&gt;%</span> <span class="co"># combine with texts</span></span>
-<span id="cb9-5"><a href="textprep.html#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="co"># convert to tibble for better screen viewing</span></span>
-<span id="cb9-6"><a href="textprep.html#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="textprep.html#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(sotu_whole)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="textprep.html#cb9-1" tabindex="-1"></a>sotu_whole <span class="ot">&lt;-</span> </span>
+<span id="cb9-2"><a href="textprep.html#cb9-2" tabindex="-1"></a>  sotu_meta <span class="sc">%&gt;%</span>  </span>
+<span id="cb9-3"><a href="textprep.html#cb9-3" tabindex="-1"></a>  <span class="fu">arrange</span>(president) <span class="sc">%&gt;%</span> <span class="co"># sort metadata</span></span>
+<span id="cb9-4"><a href="textprep.html#cb9-4" tabindex="-1"></a>  <span class="fu">bind_cols</span>(sotu_texts) <span class="sc">%&gt;%</span> <span class="co"># combine with texts</span></span>
+<span id="cb9-5"><a href="textprep.html#cb9-5" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="co"># convert to tibble for better screen viewing</span></span>
+<span id="cb9-6"><a href="textprep.html#cb9-6" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="textprep.html#cb9-7" tabindex="-1"></a><span class="fu">glimpse</span>(sotu_whole)</span></code></pre></div>
 <pre><code>#&gt; Rows: 240
 #&gt; Columns: 8
 #&gt; $ X            &lt;int&gt; 73, 74, 75, 76, 41, 42, 43, 44, 45, 46, 47, 48, 77, 78, 7…
@@ -274,59 +280,59 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3><span class="header-section-number">1.2.1</span> Counting ocurrences<a href="textprep.html#counting-ocurrences" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><code>str_count</code> takes a character vector as input and by default counts the number of pattern matches in a string.</p>
 <p>How man times does the word “citizen” appear in each of the speeches?</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="textprep.html#cb11-1" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
-<span id="cb11-2"><a href="textprep.html#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">n_citizen =</span> <span class="fu">str_count</span>(text, <span class="st">&quot;citizen&quot;</span>)) </span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="textprep.html#cb11-1" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="textprep.html#cb11-2" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">n_citizen =</span> <span class="fu">str_count</span>(text, <span class="st">&quot;citizen&quot;</span>)) </span></code></pre></div>
 <pre><code>#&gt; # A tibble: 240 × 9
-#&gt;        X president        year years_active party   sotu_…¹ doc_id text  n_cit…²
-#&gt;    &lt;int&gt; &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;   &lt;int&gt;
-#&gt;  1    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… &quot;\n\…       9
-#&gt;  2    74 Abraham Lincoln  1862 1861-1865    Republ… written abrah… &quot;\n\…       7
-#&gt;  3    75 Abraham Lincoln  1863 1861-1865    Republ… written abrah… &quot;\n\…      15
-#&gt;  4    76 Abraham Lincoln  1864 1861-1865    Republ… written abrah… &quot;\n\…       3
-#&gt;  5    41 Andrew Jackson   1829 1829-1833    Democr… written andre… &quot;\n\…      19
-#&gt;  6    42 Andrew Jackson   1830 1829-1833    Democr… written andre… &quot;\n\…      14
-#&gt;  7    43 Andrew Jackson   1831 1829-1833    Democr… written andre… &quot;\n\…      23
-#&gt;  8    44 Andrew Jackson   1832 1829-1833    Democr… written andre… &quot;\n\…      19
-#&gt;  9    45 Andrew Jackson   1833 1833-1837    Democr… written andre… &quot;\n\…      14
-#&gt; 10    46 Andrew Jackson   1834 1833-1837    Democr… written andre… &quot;\n\…      25
-#&gt; # … with 230 more rows, and abbreviated variable names ¹​sotu_type, ²​n_citizen</code></pre>
+#&gt;        X president      year years_active party sotu_type doc_id text  n_citizen
+#&gt;    &lt;int&gt; &lt;chr&gt;         &lt;int&gt; &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;     &lt;int&gt;
+#&gt;  1    73 Abraham Linc…  1861 1861-1865    Repu… written   abrah… &quot;\n\…         9
+#&gt;  2    74 Abraham Linc…  1862 1861-1865    Repu… written   abrah… &quot;\n\…         7
+#&gt;  3    75 Abraham Linc…  1863 1861-1865    Repu… written   abrah… &quot;\n\…        15
+#&gt;  4    76 Abraham Linc…  1864 1861-1865    Repu… written   abrah… &quot;\n\…         3
+#&gt;  5    41 Andrew Jacks…  1829 1829-1833    Demo… written   andre… &quot;\n\…        19
+#&gt;  6    42 Andrew Jacks…  1830 1829-1833    Demo… written   andre… &quot;\n\…        14
+#&gt;  7    43 Andrew Jacks…  1831 1829-1833    Demo… written   andre… &quot;\n\…        23
+#&gt;  8    44 Andrew Jacks…  1832 1829-1833    Demo… written   andre… &quot;\n\…        19
+#&gt;  9    45 Andrew Jacks…  1833 1833-1837    Demo… written   andre… &quot;\n\…        14
+#&gt; 10    46 Andrew Jacks…  1834 1833-1837    Demo… written   andre… &quot;\n\…        25
+#&gt; # ℹ 230 more rows</code></pre>
 <p>It is possible to use regular expressions, for example, this is how we would check how many times either “citizen” or “Citizen” appear in each of the speeches:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="textprep.html#cb13-1" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
-<span id="cb13-2"><a href="textprep.html#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">n_citizen =</span> <span class="fu">str_count</span>(text, <span class="st">&quot;citizen&quot;</span>),</span>
-<span id="cb13-3"><a href="textprep.html#cb13-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">n_cCitizen =</span> <span class="fu">str_count</span>(text, <span class="st">&quot;[C|c]itizen&quot;</span>)) </span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="textprep.html#cb13-1" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="textprep.html#cb13-2" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">n_citizen =</span> <span class="fu">str_count</span>(text, <span class="st">&quot;citizen&quot;</span>),</span>
+<span id="cb13-3"><a href="textprep.html#cb13-3" tabindex="-1"></a>           <span class="at">n_cCitizen =</span> <span class="fu">str_count</span>(text, <span class="st">&quot;[C|c]itizen&quot;</span>)) </span></code></pre></div>
 <pre><code>#&gt; # A tibble: 240 × 10
-#&gt;        X president       year years…¹ party sotu_…² doc_id text  n_cit…³ n_cCi…⁴
-#&gt;    &lt;int&gt; &lt;chr&gt;          &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;   &lt;int&gt;   &lt;int&gt;
-#&gt;  1    73 Abraham Linco…  1861 1861-1… Repu… written abrah… &quot;\n\…       9      10
-#&gt;  2    74 Abraham Linco…  1862 1861-1… Repu… written abrah… &quot;\n\…       7       8
-#&gt;  3    75 Abraham Linco…  1863 1861-1… Repu… written abrah… &quot;\n\…      15      16
-#&gt;  4    76 Abraham Linco…  1864 1861-1… Repu… written abrah… &quot;\n\…       3       4
-#&gt;  5    41 Andrew Jackson  1829 1829-1… Demo… written andre… &quot;\n\…      19      20
-#&gt;  6    42 Andrew Jackson  1830 1829-1… Demo… written andre… &quot;\n\…      14      15
-#&gt;  7    43 Andrew Jackson  1831 1829-1… Demo… written andre… &quot;\n\…      23      24
-#&gt;  8    44 Andrew Jackson  1832 1829-1… Demo… written andre… &quot;\n\…      19      20
-#&gt;  9    45 Andrew Jackson  1833 1833-1… Demo… written andre… &quot;\n\…      14      15
-#&gt; 10    46 Andrew Jackson  1834 1833-1… Demo… written andre… &quot;\n\…      25      26
-#&gt; # … with 230 more rows, and abbreviated variable names ¹​years_active,
-#&gt; #   ²​sotu_type, ³​n_citizen, ⁴​n_cCitizen</code></pre>
+#&gt;        X president      year years_active party sotu_type doc_id text  n_citizen
+#&gt;    &lt;int&gt; &lt;chr&gt;         &lt;int&gt; &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;     &lt;int&gt;
+#&gt;  1    73 Abraham Linc…  1861 1861-1865    Repu… written   abrah… &quot;\n\…         9
+#&gt;  2    74 Abraham Linc…  1862 1861-1865    Repu… written   abrah… &quot;\n\…         7
+#&gt;  3    75 Abraham Linc…  1863 1861-1865    Repu… written   abrah… &quot;\n\…        15
+#&gt;  4    76 Abraham Linc…  1864 1861-1865    Repu… written   abrah… &quot;\n\…         3
+#&gt;  5    41 Andrew Jacks…  1829 1829-1833    Demo… written   andre… &quot;\n\…        19
+#&gt;  6    42 Andrew Jacks…  1830 1829-1833    Demo… written   andre… &quot;\n\…        14
+#&gt;  7    43 Andrew Jacks…  1831 1829-1833    Demo… written   andre… &quot;\n\…        23
+#&gt;  8    44 Andrew Jacks…  1832 1829-1833    Demo… written   andre… &quot;\n\…        19
+#&gt;  9    45 Andrew Jacks…  1833 1833-1837    Demo… written   andre… &quot;\n\…        14
+#&gt; 10    46 Andrew Jacks…  1834 1833-1837    Demo… written   andre… &quot;\n\…        25
+#&gt; # ℹ 230 more rows
+#&gt; # ℹ 1 more variable: n_cCitizen &lt;int&gt;</code></pre>
 <p>Going into the use of <a href="https://en.wikipedia.org/wiki/Regular_expression">regular expressions</a> is beyond this introduction. However we want to point out the <code>str_view()</code> function which can help you to create your correct expression. Also see <a href="https://regexr.com/">RegExr</a>, an online tool to learn, build, &amp; test regular expressions.</p>
 <p>When used with the <code>boundary</code> argument <code>str_count()</code> can count different entities like “character”, “line_break”, “sentence”, or “word”. Here we add a new column to the dataframe indicating how many words are in each speech:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="textprep.html#cb15-1" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
-<span id="cb15-2"><a href="textprep.html#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n_words =</span> <span class="fu">str_count</span>(text, <span class="fu">boundary</span>(<span class="st">&quot;word&quot;</span>))) </span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="textprep.html#cb15-1" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="textprep.html#cb15-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n_words =</span> <span class="fu">str_count</span>(text, <span class="fu">boundary</span>(<span class="st">&quot;word&quot;</span>))) </span></code></pre></div>
 <pre><code>#&gt; # A tibble: 240 × 9
-#&gt;        X president        year years_active party   sotu_…¹ doc_id text  n_words
-#&gt;    &lt;int&gt; &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;   &lt;int&gt;
-#&gt;  1    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… &quot;\n\…    6998
-#&gt;  2    74 Abraham Lincoln  1862 1861-1865    Republ… written abrah… &quot;\n\…    8410
-#&gt;  3    75 Abraham Lincoln  1863 1861-1865    Republ… written abrah… &quot;\n\…    6132
-#&gt;  4    76 Abraham Lincoln  1864 1861-1865    Republ… written abrah… &quot;\n\…    5975
-#&gt;  5    41 Andrew Jackson   1829 1829-1833    Democr… written andre… &quot;\n\…   10547
-#&gt;  6    42 Andrew Jackson   1830 1829-1833    Democr… written andre… &quot;\n\…   15109
-#&gt;  7    43 Andrew Jackson   1831 1829-1833    Democr… written andre… &quot;\n\…    7198
-#&gt;  8    44 Andrew Jackson   1832 1829-1833    Democr… written andre… &quot;\n\…    7887
-#&gt;  9    45 Andrew Jackson   1833 1833-1837    Democr… written andre… &quot;\n\…    7912
-#&gt; 10    46 Andrew Jackson   1834 1833-1837    Democr… written andre… &quot;\n\…   13472
-#&gt; # … with 230 more rows, and abbreviated variable name ¹​sotu_type</code></pre>
+#&gt;        X president        year years_active party sotu_type doc_id text  n_words
+#&gt;    &lt;int&gt; &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;   &lt;int&gt;
+#&gt;  1    73 Abraham Lincoln  1861 1861-1865    Repu… written   abrah… &quot;\n\…    6998
+#&gt;  2    74 Abraham Lincoln  1862 1861-1865    Repu… written   abrah… &quot;\n\…    8410
+#&gt;  3    75 Abraham Lincoln  1863 1861-1865    Repu… written   abrah… &quot;\n\…    6132
+#&gt;  4    76 Abraham Lincoln  1864 1861-1865    Repu… written   abrah… &quot;\n\…    5975
+#&gt;  5    41 Andrew Jackson   1829 1829-1833    Demo… written   andre… &quot;\n\…   10547
+#&gt;  6    42 Andrew Jackson   1830 1829-1833    Demo… written   andre… &quot;\n\…   15109
+#&gt;  7    43 Andrew Jackson   1831 1829-1833    Demo… written   andre… &quot;\n\…    7198
+#&gt;  8    44 Andrew Jackson   1832 1829-1833    Demo… written   andre… &quot;\n\…    7887
+#&gt;  9    45 Andrew Jackson   1833 1833-1837    Demo… written   andre… &quot;\n\…    7912
+#&gt; 10    46 Andrew Jackson   1834 1833-1837    Demo… written   andre… &quot;\n\…   13472
+#&gt; # ℹ 230 more rows</code></pre>
 <blockquote>
 <blockquote>
 <blockquote>
@@ -339,9 +345,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3><span class="header-section-number">1.2.2</span> Detecting patterns<a href="textprep.html#detecting-patterns" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><code>str_detect</code> also looks for patterns, but instead of counts it returns a logical vector (TRUE/FALSE) indiciating if the pattern is or is not found. So we typically want to use it with the <code>filter</code> “verb” from <code>dplyr</code>.</p>
 <p>What are the names of the documents where the words “citizen” and “Citizen” do <strong>not</strong> occur?</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="textprep.html#cb17-1" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
-<span id="cb17-2"><a href="textprep.html#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(text, <span class="st">&quot;[C|c]itizen&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb17-3"><a href="textprep.html#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(doc_id) </span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="textprep.html#cb17-1" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
+<span id="cb17-2"><a href="textprep.html#cb17-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(text, <span class="st">&quot;[C|c]itizen&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-3"><a href="textprep.html#cb17-3" tabindex="-1"></a>  <span class="fu">select</span>(doc_id) </span></code></pre></div>
 <pre><code>#&gt; # A tibble: 11 × 1
 #&gt;    doc_id                      
 #&gt;    &lt;chr&gt;                       
@@ -359,43 +365,66 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="extracting-words" class="section level3 hasAnchor" number="1.2.3">
 <h3><span class="header-section-number">1.2.3</span> Extracting words<a href="textprep.html#extracting-words" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>The <code>word</code> function extracts specific words from a character vector of words. By default it returns the first word. If for example we wanted to extract the first 5 words of each speech by Woodrow Wilson we provide the <code>end</code> argument like this:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="textprep.html#cb19-1" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
-<span id="cb19-2"><a href="textprep.html#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(president <span class="sc">==</span> <span class="st">&quot;Woodrow Wilson&quot;</span>) <span class="sc">%&gt;%</span>  <span class="co"># sample a few speeches as demo</span></span>
-<span id="cb19-3"><a href="textprep.html#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(text) <span class="sc">%&gt;%</span> <span class="co"># we pull out the text vector only</span></span>
-<span id="cb19-4"><a href="textprep.html#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">word</span>(<span class="at">end =</span> <span class="dv">5</span>) </span></code></pre></div>
-<pre><code>#&gt; [1] &quot;\n\nGentlemen of the Congress:\n\nIn pursuance&quot;
-#&gt; [2] &quot;\n\nGENTLEMEN OF THE CONGRESS: \n\nThe&quot;        
-#&gt; [3] &quot;GENTLEMEN OF THE CONGRESS: \n\nSince&quot;          
-#&gt; [4] &quot;\n\nGENTLEMEN OF THE CONGRESS: \n\nIn&quot;         
-#&gt; [5] &quot;Gentlemen of the Congress:\n\nEight months&quot;    
-#&gt; [6] &quot;\n\nGENTLEMEN OF THE CONGRESS: \n\nThe&quot;        
-#&gt; [7] &quot;\n\nTO THE SENATE AND HOUSE&quot;                   
-#&gt; [8] &quot;\n\nGENTLEMEN OF THE CONGRESS:\n\nWhen I&quot;</code></pre>
+<p>The <code>word</code> function extracts specific words from a character vector of words. It takes a ‘start’ and ‘end’ argument, which determines the range of the words to be extracted. By default it returns the first word. If for example we wanted to extract the first 5 words of each speech like we could add another column to the table like this:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="textprep.html#cb19-1" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
+<span id="cb19-2"><a href="textprep.html#cb19-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">first_5 =</span> <span class="fu">word</span>(text, <span class="at">end =</span> <span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-3"><a href="textprep.html#cb19-3" tabindex="-1"></a>  <span class="fu">select</span>(first_5)</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 240 × 1
+#&gt;    first_5                             
+#&gt;    &lt;chr&gt;                               
+#&gt;  1 &quot;\n\n Fellow-Citizens of the Senate&quot;
+#&gt;  2 &quot;\n\n Fellow-Citizens of the Senate&quot;
+#&gt;  3 &quot;\n\n Fellow-Citizens of the Senate&quot;
+#&gt;  4 &quot;\n\n Fellow-Citizens of the Senate&quot;
+#&gt;  5 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt;  6 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt;  7 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt;  8 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt;  9 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt; 10 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt; # ℹ 230 more rows</code></pre>
 </div>
 <div id="replacing-and-removing-characters" class="section level3 hasAnchor" number="1.2.4">
 <h3><span class="header-section-number">1.2.4</span> Replacing and removing characters<a href="textprep.html#replacing-and-removing-characters" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Now let’s take a look at text ‘cleaninng’. We will first remove the newline characters (<code>\n</code>). We use the <code>str_replace_all</code> function to replace all the ocurrences of the <code>\n</code> pattern with a white space <code>" "</code>. We need to add the escape character <code>\</code> in front of our pattern to be replaced so the backslash before the <code>n</code> is interpreted correctly.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="textprep.html#cb21-1" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
-<span id="cb21-2"><a href="textprep.html#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(president <span class="sc">==</span> <span class="st">&quot;Woodrow Wilson&quot;</span>) <span class="sc">%&gt;%</span>  </span>
-<span id="cb21-3"><a href="textprep.html#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(text) <span class="sc">%&gt;%</span></span>
-<span id="cb21-4"><a href="textprep.html#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_replace_all</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">n&quot;</span>, <span class="st">&quot; &quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># replace newline</span></span>
-<span id="cb21-5"><a href="textprep.html#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">word</span>(<span class="at">end =</span> <span class="dv">5</span>) </span></code></pre></div>
-<pre><code>#&gt; [1] &quot;  Gentlemen of the&quot;          &quot;  GENTLEMEN OF THE&quot;         
-#&gt; [3] &quot;GENTLEMEN OF THE CONGRESS: &quot; &quot;  GENTLEMEN OF THE&quot;         
-#&gt; [5] &quot;Gentlemen of the Congress: &quot; &quot;  GENTLEMEN OF THE&quot;         
-#&gt; [7] &quot;  TO THE SENATE&quot;             &quot;  GENTLEMEN OF THE&quot;</code></pre>
+<p>Now let’s take a look at text ‘cleaning’ and see if we can imrove this output. We will first remove the newline characters (<code>\n</code>). We use the <code>str_replace_all</code> function to replace all the occurrences of the <code>\n</code> pattern with a white space <code>" "</code>. We need to add the escape character <code>\</code> in front of our pattern to be replaced so the backslash before the <code>n</code> is interpreted correctly.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="textprep.html#cb21-1" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
+<span id="cb21-2"><a href="textprep.html#cb21-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text_clean =</span> <span class="fu">str_replace_all</span>(text, <span class="st">&quot;</span><span class="sc">\\</span><span class="st">n&quot;</span>, <span class="st">&quot; &quot;</span>), <span class="co"># replace newline</span></span>
+<span id="cb21-3"><a href="textprep.html#cb21-3" tabindex="-1"></a>         <span class="at">first_5 =</span> <span class="fu">word</span>(text, <span class="at">end =</span> <span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-4"><a href="textprep.html#cb21-4" tabindex="-1"></a>  <span class="fu">select</span>(first_5)</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 240 × 1
+#&gt;    first_5                             
+#&gt;    &lt;chr&gt;                               
+#&gt;  1 &quot;\n\n Fellow-Citizens of the Senate&quot;
+#&gt;  2 &quot;\n\n Fellow-Citizens of the Senate&quot;
+#&gt;  3 &quot;\n\n Fellow-Citizens of the Senate&quot;
+#&gt;  4 &quot;\n\n Fellow-Citizens of the Senate&quot;
+#&gt;  5 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt;  6 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt;  7 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt;  8 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt;  9 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt; 10 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt; # ℹ 230 more rows</code></pre>
 <p>This looks better, but we still have a problem to extract exactly 5 words because the too whitespaces are counted as a word. So let’s get rid of any whitespaces before and after, as well as repeated whitespaces within the string with the <code>str_squish()</code> function.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="textprep.html#cb23-1" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
-<span id="cb23-2"><a href="textprep.html#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(president <span class="sc">==</span> <span class="st">&quot;Woodrow Wilson&quot;</span>) <span class="sc">%&gt;%</span>  </span>
-<span id="cb23-3"><a href="textprep.html#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(text) <span class="sc">%&gt;%</span></span>
-<span id="cb23-4"><a href="textprep.html#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_replace_all</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">n&quot;</span>, <span class="st">&quot; &quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-5"><a href="textprep.html#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_squish</span>() <span class="sc">%&gt;%</span>  <span class="co"># remove whitespaces</span></span>
-<span id="cb23-6"><a href="textprep.html#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">word</span>(<span class="at">end =</span> <span class="dv">5</span>) </span></code></pre></div>
-<pre><code>#&gt; [1] &quot;Gentlemen of the Congress: In&quot;    &quot;GENTLEMEN OF THE CONGRESS: The&quot;  
-#&gt; [3] &quot;GENTLEMEN OF THE CONGRESS: Since&quot; &quot;GENTLEMEN OF THE CONGRESS: In&quot;   
-#&gt; [5] &quot;Gentlemen of the Congress: Eight&quot; &quot;GENTLEMEN OF THE CONGRESS: The&quot;  
-#&gt; [7] &quot;TO THE SENATE AND HOUSE&quot;          &quot;GENTLEMEN OF THE CONGRESS: When&quot;</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="textprep.html#cb23-1" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span> </span>
+<span id="cb23-2"><a href="textprep.html#cb23-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text_clean =</span> <span class="fu">str_replace_all</span>(text, <span class="st">&quot;</span><span class="sc">\\</span><span class="st">n&quot;</span>, <span class="st">&quot; &quot;</span>), <span class="co"># replace newline</span></span>
+<span id="cb23-3"><a href="textprep.html#cb23-3" tabindex="-1"></a>         <span class="at">text_clean =</span> <span class="fu">str_squish</span>(text_clean),  <span class="co"># remove whitespaces</span></span>
+<span id="cb23-4"><a href="textprep.html#cb23-4" tabindex="-1"></a>         <span class="at">first_5 =</span> <span class="fu">word</span>(text, <span class="at">end =</span> <span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-5"><a href="textprep.html#cb23-5" tabindex="-1"></a>  <span class="fu">select</span>(first_5)</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 240 × 1
+#&gt;    first_5                             
+#&gt;    &lt;chr&gt;                               
+#&gt;  1 &quot;\n\n Fellow-Citizens of the Senate&quot;
+#&gt;  2 &quot;\n\n Fellow-Citizens of the Senate&quot;
+#&gt;  3 &quot;\n\n Fellow-Citizens of the Senate&quot;
+#&gt;  4 &quot;\n\n Fellow-Citizens of the Senate&quot;
+#&gt;  5 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt;  6 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt;  7 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt;  8 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt;  9 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt; 10 &quot;\n\n Fellow Citizens of the&quot;       
+#&gt; # ℹ 230 more rows</code></pre>
 <p>(For spell checks take a look at <a href="https://CRAN.R-project.org/package=spelling" class="uri">https://CRAN.R-project.org/package=spelling</a> or <a href="https://CRAN.R-project.org/package=hunspell" class="uri">https://CRAN.R-project.org/package=hunspell</a>)</p>
 </div>
 </div>
@@ -409,10 +438,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>the name of the column within the data frame which contains the text to be tokenized.</li>
 </ul>
 <p>In the example below we name the new column to hold the tokens <code>word</code>. Remember that the column that holds the speech is called <code>text</code>.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="textprep.html#cb25-1" aria-hidden="true" tabindex="-1"></a>tidy_sotu <span class="ot">&lt;-</span> sotu_whole <span class="sc">%&gt;%</span></span>
-<span id="cb25-2"><a href="textprep.html#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, text)</span>
-<span id="cb25-3"><a href="textprep.html#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="textprep.html#cb25-4" aria-hidden="true" tabindex="-1"></a>tidy_sotu</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="textprep.html#cb25-1" tabindex="-1"></a>tidy_sotu <span class="ot">&lt;-</span> sotu_whole <span class="sc">%&gt;%</span></span>
+<span id="cb25-2"><a href="textprep.html#cb25-2" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, text)</span>
+<span id="cb25-3"><a href="textprep.html#cb25-3" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="textprep.html#cb25-4" tabindex="-1"></a>tidy_sotu</span></code></pre></div>
 <pre><code>#&gt; # A tibble: 1,988,203 × 8
 #&gt;        X president        year years_active party      sotu_type doc_id    word 
 #&gt;    &lt;int&gt; &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;
@@ -426,11 +455,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 #&gt;  8    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… of   
 #&gt;  9    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… repr…
 #&gt; 10    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… in   
-#&gt; # … with 1,988,193 more rows</code></pre>
+#&gt; # ℹ 1,988,193 more rows</code></pre>
 <p>Note that the <code>unnest_tokens</code> function didn’t just tokenize our texts at the word level. It also lowercased each word and stripped off the punctuation. We can tell it not to do this, by adding the following parameters:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="textprep.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Word tokenization with punctuation and no lowercasing</span></span>
-<span id="cb27-2"><a href="textprep.html#cb27-2" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span></span>
-<span id="cb27-3"><a href="textprep.html#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, text, <span class="at">to_lower =</span> <span class="cn">FALSE</span>, <span class="at">strip_punct =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="textprep.html#cb27-1" tabindex="-1"></a><span class="co"># Word tokenization with punctuation and no lowercasing</span></span>
+<span id="cb27-2"><a href="textprep.html#cb27-2" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span></span>
+<span id="cb27-3"><a href="textprep.html#cb27-3" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, text, <span class="at">to_lower =</span> <span class="cn">FALSE</span>, <span class="at">strip_punct =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <pre><code>#&gt; # A tibble: 2,184,602 × 8
 #&gt;        X president        year years_active party      sotu_type doc_id    word 
 #&gt;    &lt;int&gt; &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;
@@ -444,12 +473,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 #&gt;  8    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… House
 #&gt;  9    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… of   
 #&gt; 10    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… Repr…
-#&gt; # … with 2,184,592 more rows</code></pre>
+#&gt; # ℹ 2,184,592 more rows</code></pre>
 <p>We can also tokenize the text at the level of ngrams or sentences, if those are the best units of analysis for our work.</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="textprep.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sentence tokenization</span></span>
-<span id="cb29-2"><a href="textprep.html#cb29-2" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span></span>
-<span id="cb29-3"><a href="textprep.html#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(sentence, text, <span class="at">token =</span> <span class="st">&quot;sentences&quot;</span>, <span class="at">to_lower =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb29-4"><a href="textprep.html#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sentence)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="textprep.html#cb29-1" tabindex="-1"></a><span class="co"># Sentence tokenization</span></span>
+<span id="cb29-2"><a href="textprep.html#cb29-2" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span></span>
+<span id="cb29-3"><a href="textprep.html#cb29-3" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(sentence, text, <span class="at">token =</span> <span class="st">&quot;sentences&quot;</span>, <span class="at">to_lower =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-4"><a href="textprep.html#cb29-4" tabindex="-1"></a>  <span class="fu">select</span>(sentence)</span></code></pre></div>
 <pre><code>#&gt; # A tibble: 70,761 × 1
 #&gt;    sentence                                                                     
 #&gt;    &lt;chr&gt;                                                                        
@@ -463,11 +492,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 #&gt;  8 If we could dare to believe that foreign nations are actuated by no higher p…
 #&gt;  9 The principal lever relied on by the insurgents for exciting foreign nations…
 #&gt; 10 Those nations, however, not improbably saw from the first that it was the Un…
-#&gt; # … with 70,751 more rows</code></pre>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="textprep.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># N-gram tokenization as trigrams</span></span>
-<span id="cb31-2"><a href="textprep.html#cb31-2" aria-hidden="true" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span></span>
-<span id="cb31-3"><a href="textprep.html#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(trigram, text, <span class="at">token =</span> <span class="st">&quot;ngrams&quot;</span>, <span class="at">n =</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb31-4"><a href="textprep.html#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(trigram)</span></code></pre></div>
+#&gt; # ℹ 70,751 more rows</code></pre>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="textprep.html#cb31-1" tabindex="-1"></a><span class="co"># N-gram tokenization as trigrams</span></span>
+<span id="cb31-2"><a href="textprep.html#cb31-2" tabindex="-1"></a>sotu_whole <span class="sc">%&gt;%</span></span>
+<span id="cb31-3"><a href="textprep.html#cb31-3" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(trigram, text, <span class="at">token =</span> <span class="st">&quot;ngrams&quot;</span>, <span class="at">n =</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-4"><a href="textprep.html#cb31-4" tabindex="-1"></a>  <span class="fu">select</span>(trigram)</span></code></pre></div>
 <pre><code>#&gt; # A tibble: 1,987,723 × 1
 #&gt;    trigram                 
 #&gt;    &lt;chr&gt;                   
@@ -481,14 +510,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 #&gt;  8 of representatives in   
 #&gt;  9 representatives in the  
 #&gt; 10 in the midst            
-#&gt; # … with 1,987,713 more rows</code></pre>
+#&gt; # ℹ 1,987,713 more rows</code></pre>
 <p>(Take note that the trigrams are generated by a moving 3-word window over the text.)</p>
 </div>
 <div id="stopwords" class="section level2 hasAnchor" number="1.4">
 <h2><span class="header-section-number">1.4</span> Stopwords<a href="textprep.html#stopwords" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Another common task of preparing text for analysis is to remove stopwords. Stopwords are highly common words that are considered to provide non-relevant information about the content of a text.</p>
 <p>Let’s look at the stopwords that come with the <code>tidytext</code> package to get a sense of what they are.</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="textprep.html#cb33-1" aria-hidden="true" tabindex="-1"></a>stop_words</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="textprep.html#cb33-1" tabindex="-1"></a>stop_words</span></code></pre></div>
 <pre><code>#&gt; # A tibble: 1,149 × 2
 #&gt;    word        lexicon
 #&gt;    &lt;chr&gt;       &lt;chr&gt;  
@@ -502,13 +531,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 #&gt;  8 across      SMART  
 #&gt;  9 actually    SMART  
 #&gt; 10 after       SMART  
-#&gt; # … with 1,139 more rows</code></pre>
+#&gt; # ℹ 1,139 more rows</code></pre>
 <p>These are English stopwords, pulled from different lexica (“onix”, “SMART”, or “snowball”). Depending on the type of analysis you’re doing, you might leave these words in or alternatively use your own curated list of stopwords. Stopword lists exist for many languages, see for examle the <a href="https://cran.r-project.org/package=stopwords"><code>stopwords</code> package in R</a>. For now we will remove the English stopwords as suggested here.</p>
 <p>For this we use <code>anti_join</code> from <code>dplyr</code>. We join and return all rows from our table of tokens <code>tidy_sotu</code> where there are <strong>no matching values</strong> in our list of stopwords. Both of these tables have one column name in common: <code>word</code> so by default the join will be on that column, and dplyr will tell us so.</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="textprep.html#cb35-1" aria-hidden="true" tabindex="-1"></a>tidy_sotu_words <span class="ot">&lt;-</span> tidy_sotu <span class="sc">%&gt;%</span> </span>
-<span id="cb35-2"><a href="textprep.html#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(stop_words)</span>
-<span id="cb35-3"><a href="textprep.html#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-4"><a href="textprep.html#cb35-4" aria-hidden="true" tabindex="-1"></a>tidy_sotu_words</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="textprep.html#cb35-1" tabindex="-1"></a>tidy_sotu_words <span class="ot">&lt;-</span> tidy_sotu <span class="sc">%&gt;%</span> </span>
+<span id="cb35-2"><a href="textprep.html#cb35-2" tabindex="-1"></a>  <span class="fu">anti_join</span>(stop_words)</span>
+<span id="cb35-3"><a href="textprep.html#cb35-3" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="textprep.html#cb35-4" tabindex="-1"></a>tidy_sotu_words</span></code></pre></div>
 <pre><code>#&gt; # A tibble: 787,851 × 8
 #&gt;        X president        year years_active party      sotu_type doc_id    word 
 #&gt;    &lt;int&gt; &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;
@@ -522,7 +551,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 #&gt;  8    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… poli…
 #&gt;  9    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… trou…
 #&gt; 10    73 Abraham Lincoln  1861 1861-1865    Republican written   abraham-… grat…
-#&gt; # … with 787,841 more rows</code></pre>
+#&gt; # ℹ 787,841 more rows</code></pre>
 <p>If we compare this with <code>tidy_sotu</code> we see that the records with words like “of”, “the”, “and”, “in” are now removed.</p>
 <p>We also went from 1988203 to 787851 rows, which means we had a lot of stopwords in our corpus. This is a huge removal, so for serious analysis, we might want to scrutinize the stopword list carefully and determine if this is feasible.</p>
 </div>
@@ -531,24 +560,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Another way you may want to clean your data is to stem your words, that is, to reduce them to their word stem or root form, for example reducing <em>fishing</em>, <em>fished</em>, and <em>fisher</em> to the stem <em>fish</em>.</p>
 <p><code>tidytext</code> does not implement its own word stemmer. Instead it relies on separate packages like <code>hunspell</code> or <code>SnowballC</code>.</p>
 <p>We will give an example here for the <code>SnowballC</code> package which comes with a function <code>wordStem</code>. (<code>hunspell</code> appears to run much slower, and it also returns a list instead of a vector, so in this context <code>SnowballC</code> seems to be more convenient.)</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="textprep.html#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SnowballC)</span>
-<span id="cb37-2"><a href="textprep.html#cb37-2" aria-hidden="true" tabindex="-1"></a>tidy_sotu_words <span class="sc">%&gt;%</span></span>
-<span id="cb37-3"><a href="textprep.html#cb37-3" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">word_stem =</span> <span class="fu">wordStem</span>(word))</span></code></pre></div>
-<pre><code>#&gt; # A tibble: 787,851 × 9
-#&gt;        X president        year years_active party   sotu_…¹ doc_id word  word_…²
-#&gt;    &lt;int&gt; &lt;chr&gt;           &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;  
-#&gt;  1    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… fell… fellow 
-#&gt;  2    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… citi… citizen
-#&gt;  3    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… sena… senat  
-#&gt;  4    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… house hous   
-#&gt;  5    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… repr… repres 
-#&gt;  6    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… midst midst  
-#&gt;  7    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… unpr… unprec…
-#&gt;  8    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… poli… polit  
-#&gt;  9    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… trou… troubl 
-#&gt; 10    73 Abraham Lincoln  1861 1861-1865    Republ… written abrah… grat… gratit…
-#&gt; # … with 787,841 more rows, and abbreviated variable names ¹​sotu_type,
-#&gt; #   ²​word_stem</code></pre>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="textprep.html#cb37-1" tabindex="-1"></a><span class="fu">library</span>(SnowballC)</span>
+<span id="cb37-2"><a href="textprep.html#cb37-2" tabindex="-1"></a>tidy_sotu_words <span class="sc">%&gt;%</span></span>
+<span id="cb37-3"><a href="textprep.html#cb37-3" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">word_stem =</span> <span class="fu">wordStem</span>(word)) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-4"><a href="textprep.html#cb37-4" tabindex="-1"></a>  <span class="fu">select</span>(word, word_stem)</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 787,851 × 2
+#&gt;    word            word_stem
+#&gt;    &lt;chr&gt;           &lt;chr&gt;    
+#&gt;  1 fellow          fellow   
+#&gt;  2 citizens        citizen  
+#&gt;  3 senate          senat    
+#&gt;  4 house           hous     
+#&gt;  5 representatives repres   
+#&gt;  6 midst           midst    
+#&gt;  7 unprecedented   unpreced 
+#&gt;  8 political       polit    
+#&gt;  9 troubles        troubl   
+#&gt; 10 gratitude       gratitud 
+#&gt; # ℹ 787,841 more rows</code></pre>
 <p>Lemmatization takes this another step further. While a stemmer operates on a single word without knowledge of the context, lemmatization attempts to discriminate between words which have different meanings depending on part of speech. For example, the word “better” has “good” as its lemma, something a stemmer would not detect.</p>
 <p>For lemmatization in R, you may want to take a look a the <a href="https://CRAN.R-project.org/package=koRpus"><code>koRpus</code></a> package, another <a href="https://cran.r-project.org/web/packages/koRpus/vignettes/koRpus_vignette.html">comprehensive R package for text analysis</a>. It allows to use <a href="http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/">TreeTagger</a>, a widely used part-of-speech tagger. For full functionality of the R package a local installation of TreeTagger is recommended.</p>
 
@@ -574,42 +603,42 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": true,
-"facebook": false,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"whatsapp": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "white",
-"family": "sans",
-"size": 2
-},
-"edit": {
-"link": "https://github.com/cengel/R-text-analysis/edit/master/01-data-prep.Rmd",
-"text": "Edit"
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["R-text-analysis.pdf", "R-text-analysis.epub"],
-"search": {
-"engine": "fuse",
-"options": null
-},
-"toc": {
-"collapse": "subsection"
-}
+  "sharing": {
+    "github": true,
+    "facebook": false,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/cengel/R-text-analysis/edit/master/01-data-prep.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["R-text-analysis.pdf", "R-text-analysis.epub"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
 });
 });
 </script>
